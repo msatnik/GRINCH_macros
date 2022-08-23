@@ -1,0 +1,499 @@
+makeplot(13325)
+.q
+.L makeplot.C 
+makeplot(13325)
+.q
+.L makeplot.C 
+makeplot(13325)
+.q
+.L makeplot.C 
+makeplot(13325)
+.q
+.L makeplotLED.C 
+makeplotLED(13325)
+.q
+.L makeplotLED.C 
+makeplotLED(13325)
+.q
+.L makeplotLED.C 
+makeplotLED(13325)
+.q
+.L makeplot.C 
+makeplot(13325)
+.q
+.L makeplot.C 
+makeplot(13325)
+.q
+TFile *_file0 = TFile::Open("grinch_13325_grinch_hist.root")
+h_grinch_elem -> Draw()
+h_grinch_tot_elem ->Draw()
+h_grinch_tot_elem ->Draw("colz")
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C(13369)
+.L makeplot.C()
+.L makeplot.C
+makeplot(13369)
+.q
+makeplot(13369)
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+TFile *_file0 = TFile::Open("grinch_13369_grinch_hist.root")
+.q
+TFile *_file0 = TFile::Open("grinch_13369_grinch_hist.root")
+h_EvtHdr_TrigBits ->Draw()
+.q
+.L makeplot.C
+makeplot(13369)
+h_EvtHdr_TrigBits ->Draw()
+.q
+TFile *_file0 = TFile::Open("grinch_13369_grinch_hist.root")
+h_EvtHdr_TrigBits ->Draw()
+.q
+h_EvtHdr_TrigBits ->Draw()
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.L makeplot.C
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13325)
+.q
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+TFile *_file0 = TFile::Open("mkj_133_grinch_hist.root")
+h_grinch_ghits -> Draw()
+.q
+.L makeplotLED.C
+makeplotLED(13411)
+.q
+.L makeplot.C
+makeplot(133369)
+makeplot(133369).q
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplot.C
+.q
+.L makeplotLED.C
+makeplotLED(13411)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplotLED.C
+makeplotLE(13411)
+makeplotLED(13411)
+.q
+.L makeplot.C
+makeplot(13369)
+.q
+.L makeplotLED.C
+makeplotLED(13424)
+.q
+makeplotLED(13424)
+.L makeplotLED.C
+makeplotLED(13424)
+.q
+.L makeplot.C
+makeplot(13452)
+cd ..
+.q
+.L makeplot.C
+makeplot(13452)
+.q
+makeplot(13455)
+.q
+.L makeplot.C
+makeplot(13455)
+.q
+.L makeplot.C
+makeplot(13455)
+.q
+.L makeplot.C
+makeplot(13455)
+.q
+.L makeplot.C
+makeplot(13455)
+.q
+.L makeplot.C
+makeplot(13055)
+makeplot(13455)
+.L makeplotLED.C
+makeplot(13517)
+makeplotLED(13517)
+.q
+.L makeplotLED.C
+makeplotLED(13517)
+.q
+.L makeplotLED.C
+makeplotLED(13517)
+.q
+makeplot(13517)
+.q
+.L makeplotLED.C
+makeplot(13517)
+.L makeplotLED.C
+makeplotLED(13517)
+.q
+.L makeplot.C
+makeplot(13455)
+.q
+.L makeplotLED.C
+makeplotLED(13517)
+.q
+.L makeplot.C
+makeplot(13455)
+.q
+.L makeplotLED.C
+makeplotLED(13517)
+.q
+.L makeplot.C
+makeplot(13455)
+.q
+.L makeplot.C
+makeplot(13550)
+.q
+.L makeplot_m.C
+makeplot_m(13550)
+.q
+.L makeplot_m.C
+makeplot_m(13550)
+.q
+.L makeplot_m.C
+makeplot_m(13550)
+.q
+.L makeplot_m.C
+makeplot_m(13550)
+.q
+.L makeplot_m.C
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot(13620)
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+makeplot_m(136200)
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.x
+.q
+.L makeplot_m.C
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+makeplot_m(13764)
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.L makeplot_m.C 
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+h_grinch_cluster ->Draw("colz")
+h_grinch_cluster_center ->Draw("colz")
+h_grinch_cluster_center_display ->Draw("colz")
+.q
+q
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.q
+TFile *_file0 = TFile::Open("grinch_m_136200_grinch_hist.root")
+h_grinch_amp_elem ->Draw("COLZ")
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.q
+.L makeplot_m.C
+makeplot_m(136200)
+.q
+.L makeplot_m.C
+makeplot_m(13620)
+.L makeplot_m.C
+makeplot_m(137640)
+.q
+.L makeplot_m.C
+makeplot_m(137640)
+.q
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.q
+.L makeplot_m.C
+makeplot_m(13550)
+.q
+.L makeplot_m.C
+makeplot_m(13550)
+.q
+.L makeplot_m.C
+makeplot_m(13764)
+.q
+.L makeplot_clusters.C
+.q
+.q
+.L makeplot_clusters.C
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C 
+makeplot_cluster(132600)
+makeplot_clusters(132600)
+.
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(136200)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(13620)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(13620)
+.q
+.L makeplot_clusters.C 
+makeplot_clusters(13620)
+.q

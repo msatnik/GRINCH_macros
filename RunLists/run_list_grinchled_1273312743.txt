@@ -1,0 +1,8 @@
+../../../Rootfiles/grinchled_12734_fev_0_nev_-1_fseg_0_lseg_2.root
+../../../Rootfiles/grinchled_12733_fev_0_nev_-1_fseg_0_lseg_2.root
+../../../Rootfiles/grinchled_12735_fev_0_nev_-1_fseg_0_lseg_2.root
+../../../Rootfiles/grinchled_12738_fev_0_nev_-1_fseg_0_lseg_2.root
+../../../Rootfiles/grinchled_12740_fev_0_nev_-1_fseg_0_lseg_2.root
+../../../Rootfiles/grinchled_12742_fev_0_nev_-1_fseg_0_lseg_2.root
+../../../Rootfiles/grinchled_12743_fev_0_nev_-1_fseg_0_lseg_2.root
+endlist

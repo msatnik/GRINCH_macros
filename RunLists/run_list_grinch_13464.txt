@@ -1,0 +1,5 @@
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13464_stream0_seg0_0.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13464_stream0_seg1_1.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13464_stream0_seg2_2.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13464_stream0_seg3_3.root
+endlist

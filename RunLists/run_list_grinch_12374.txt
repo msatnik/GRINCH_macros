@@ -1,0 +1,6 @@
+../../../Rootfiles/grinch_12374_fev_0_nev_-1_fseg_0_lseg_0.root
+../../../Rootfiles/grinch_12374_fev_0_nev_-1_fseg_1_lseg_1.root
+../../../Rootfiles/grinch_12374_fev_0_nev_-1_fseg_2_lseg_2.root
+../../../Rootfiles/grinch_12374_fev_0_nev_-1_fseg_3_lseg_9.root
+../../../Rootfiles/grinch_12374_fev_0_nev_-1_fseg_10_lseg_16.root
+endlist

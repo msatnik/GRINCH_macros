@@ -1,0 +1,11 @@
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg0_0.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg1_1.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg2_2.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg3_3.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg4_4.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg5_5.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg6_6.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg7_7.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg8_8.root
+/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13461_stream0_seg9_9.root
+endlist

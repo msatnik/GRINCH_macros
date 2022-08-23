@@ -1,0 +1,226 @@
+void makeplot_clusters(int run)
+{
+  Int_t canvasWidth = 1300;
+  Int_t canvasHeight = 1000;
+  
+  gStyle->SetPalette(1,0);
+  gStyle->SetOptStat(1000011);
+  gStyle->SetOptFit(11);
+  gStyle->SetTitleOffset(1.,"Y");
+  gStyle->SetTitleOffset(.7,"X");
+  gStyle->SetLabelSize(0.04,"XY");
+  gStyle->SetTitleSize(0.06,"XY");
+  gStyle->SetPadLeftMargin(0.12);
+  TFile *_file0 = TFile::Open(Form("grinch_clusters_%d_grinch_hist.root",run));
+  cout<<gFile->GetName()<<endl;
+
+  TLine *line= new TLine(16,0,16,500);
+  line -> SetLineColor(kBlack);
+  line ->SetLineStyle(9);
+  line ->SetLineWidth(2);
+  TLine *line2= new TLine(32,0,32,500);
+  line2 -> SetLineColor(kBlack);
+  line2 -> SetLineStyle(9);
+  line2 ->SetLineWidth(2);
+  TLine *line3= new TLine(48,0,48,500);
+  line3 -> SetLineColor(kBlack);
+  line3 -> SetLineStyle(9);
+  line3 ->SetLineWidth(2);
+  TLine *linetdc =  new TLine(192,0,192,2500);
+  linetdc -> SetLineColor(kBlack);
+  linetdc ->SetLineStyle(9);
+  linetdc ->SetLineWidth(2);
+  TLine *linetdc2 =  new TLine(255,0,255,2500);
+  linetdc2 -> SetLineColor(kBlack);
+  linetdc2 ->SetLineStyle(9);
+  linetdc2 ->SetLineWidth(2);
+
+  TLine *linevetroc1 =  new TLine(128,0,128,2500);
+  linevetroc1 -> SetLineColor(kBlack);
+  linevetroc1  ->SetLineStyle(9);
+  linevetroc1  ->SetLineWidth(1);
+  TLine *linevetroc2 =  new TLine(256,0,256,2500);
+  linevetroc2  -> SetLineColor(kBlack);
+  linevetroc2 ->SetLineStyle(9);
+  linevetroc2 ->SetLineWidth(1);
+
+  TLine *linevetroc3 =  new TLine(384,0,384,2500);
+  linevetroc3 -> SetLineColor(kBlack);
+  linevetroc3 ->SetLineStyle(9);
+  linevetroc3 ->SetLineWidth(1);
+
+
+  TLatex * title = new TLatex(0.15,0.94,Form("Run %d",run));
+  title->SetNDC(kTRUE);
+
+
+
+  TCanvas * c64_cluster = new TCanvas("c64_cluster","c64_cluster",canvasWidth,canvasHeight); 
+  c64_cluster -> SetCanvasSize(1800,2000);
+  c64_cluster -> SetWindowSize(1800,800);
+  c64_cluster -> Divide(8,8);
+  //TH1F* temphisto = (TH1F*) gFile->Get("h_grinch_adc_0");
+  for (int i=0;i<64;i++){
+    TH1F* temphisto = (TH1F*) gFile->Get(Form("h_grinch_cluster_amp_p_%d",i));
+    c64_cluster -> cd(i+1) ->SetLogy(0);  
+    temphisto ->GetXaxis()->SetRange(0,300);
+    temphisto -> Draw("same");
+  }
+
+   
+  TCanvas * cSH = new TCanvas("cSH","cSH",canvasWidth,canvasHeight);  
+  cSH -> Divide(2,2);
+  TH1F* ps_e_histo = (TH1F*) gFile ->Get("h_ps_e");
+  TH1F* TBB_e_histo = (TH1F*) gFile -> Get("h_TBB_e");
+  TH1F* ratio_e_histo = (TH1F*) gFile -> Get("h_ratio_e");
+  cSH -> cd(1) ->SetLogy(1);
+  ps_e_histo -> Draw();
+  title ->Draw();
+  cSH -> cd(2) ->SetLogy(1);
+  TBB_e_histo -> Draw();
+  title ->Draw();
+  cSH -> cd(3) ->SetLogy(1);
+  ratio_e_histo -> Draw();
+  title -> Draw();
+
+  TCanvas *cMisc =  new TCanvas("cMisc","cMisc",canvasWidth,canvasHeight); 
+  cMisc -> Divide(2,2);
+  //TH1F* good_hits = (TH1F*) gFile->Get("h_grinch_ghits");
+  TH1F* cluster_size = (TH1F*) gFile ->Get("h_grinch_cluster_size");
+  TH1F* cluster_size_good = (TH1F*) gFile ->Get("h_grinch_cluster_size_good");
+  TH1F* cluster_size_bad = (TH1F*) gFile ->Get("h_grinch_cluster_size_bad");
+  cMisc -> cd(1)->SetLogz(1);
+  // good_hits -> Draw("colz");
+  //title->Draw();
+  cMisc -> cd(2);  
+  cluster_size -> Draw();
+  cMisc ->cd(3);
+  cluster_size_good ->Draw();
+  cMisc -> cd(4);
+  cluster_size_bad ->Draw();
+
+
+  TCanvas *cClust = new TCanvas("cClust","cClust",canvasWidth,canvasHeight);
+  cClust -> Divide(3,1);
+  TH2F* cluster_center = (TH2F*) gFile ->Get("h_grinch_cluster_center_display");
+  cClust ->cd(1);
+  cluster_center->Draw("colz");
+  cClust ->cd(2);
+  TH2F* cluster_center_good = (TH2F*) gFile ->Get("h_grinch_cluster_center_good_sh_e");
+  cluster_center_good ->Draw("colz");
+  cClust ->cd(3);
+  TH2F* cluster_center_bad = (TH2F*) gFile ->Get("h_grinch_cluster_center_bad_sh_e");
+  cluster_center_bad->Draw("colz");
+
+
+  TCanvas *cClust_Size = new TCanvas("cClust_Size","cClust_Size",canvasWidth,canvasHeight);
+  cClust_Size -> Divide(5,1);
+  cClust_Size ->cd(1);
+  TH2F* cluster_center_3 = (TH2F*) gFile ->Get("h_grinch_cluster_center_3");
+  cluster_center_3 ->Draw("colz");
+  cClust_Size ->cd(2);
+  TH2F* cluster_center_4 = (TH2F*) gFile ->Get("h_grinch_cluster_center_4");
+  cluster_center_4 ->Draw("colz");
+  cClust_Size ->cd(3);
+  TH2F* cluster_center_5 = (TH2F*) gFile ->Get("h_grinch_cluster_center_5");
+  cluster_center_5 ->Draw("colz");
+  cClust_Size ->cd(4);
+  TH2F* cluster_center_6 = (TH2F*) gFile ->Get("h_grinch_cluster_center_6");
+  cluster_center_6 ->Draw("colz");
+  cClust_Size ->cd(5);
+  TH2F* cluster_center_7 = (TH2F*) gFile ->Get("h_grinch_cluster_center_7");
+  cluster_center_7 ->Draw("colz");
+     
+  
+
+TCanvas *cADC_TDC_Clust = new TCanvas("cADC_TDC_Clust","cADC_TDC_Clust",canvasWidth,canvasHeight);
+  cADC_TDC_Clust -> Divide(2,2);
+  TH2F* adc_tdc = (TH2F*) gFile->Get("h_grinch_cluster_adc_tdc");
+  TH2F* adcInt_tdc = (TH2F*) gFile->Get("h_grinch_cluster_adcInt_tdc");
+  TH2F* amp_int = (TH2F*) gFile-> Get("h_grinch_cluster_int_amp");
+  TH2F* adc_tdc_test = (TH2F*) gFile->Get("h_grinch_cluster_adc_tdc_test");
+  cADC_TDC_Clust ->cd(1);
+  adc_tdc ->Draw("COLZ");
+  cADC_TDC_Clust ->cd(2);
+  adcInt_tdc ->Draw("COLZ");
+  cADC_TDC_Clust -> cd(3);
+  amp_int ->Draw("COLZ");
+  cADC_TDC_Clust->cd(4);
+  adc_tdc_test -> Draw("COLZ");
+  
+
+  TCanvas * cADC_cluster =  new TCanvas("cADC_cluster","cADC_cluster",canvasWidth,canvasHeight); 
+  cADC_cluster -> Divide(2,2);
+  TH2F* adcMult_cluster = (TH2F*) gFile->Get("h_grinch_cluster_adcMult_elem");
+  TH2F* amp_cluster = (TH2F*) gFile->Get("h_grinch_cluster_amp_elem");
+  TH2F* adcInt_cluster = (TH2F*) gFile->Get("h_grinch_cluster_int_elem");
+  TH2F* atime_cluster =  (TH2F*) gFile->Get("h_grinch_cluster_atime_elem");
+  cADC_cluster -> cd(1) ->SetLogz(1);
+  amp_cluster -> Draw("colz");
+  title->Draw();  
+  line -> Draw();
+  line2 -> Draw();
+  line3 -> Draw();
+  cADC_cluster -> cd(2) ->SetLogz(1);
+  adcInt_cluster -> Draw("colz"); 
+  title->Draw();  
+  line -> Draw();
+  line2 -> Draw();
+  line3 -> Draw();
+  cADC_cluster -> cd(3) ->SetLogz(1);
+  atime_cluster -> Draw("colz");
+  //atime ->GetXaxis() ->SetRange(0,63);
+  title->Draw();  
+  line -> Draw();
+  line2 -> Draw();
+  line3 -> Draw();
+  cADC_cluster -> cd(4)-> SetLogz(1);
+  //adcMult ->GetXaxis() ->SetRange(0,63);
+  adcMult_cluster -> Draw("colz");
+  title->Draw();  
+  line -> Draw();
+  line2 -> Draw();
+  line3 -> Draw();
+
+  TCanvas *cTDC_cluster =  new TCanvas("cTDC_cluster","cTDC_cluster",canvasWidth,canvasHeight); 
+  cTDC_cluster -> Divide(2,2);
+  TH2F* tot_cluster = (TH2F*) gFile->Get("h_grinch_cluster_tot_elem");
+  TH2F* LE_cluster = (TH2F*) gFile->Get("h_grinch_cluster_le_elem");
+  TH2F* TE_cluster = (TH2F*) gFile->Get("h_grinch_cluster_te_elem");
+  TH2F* tdcMult_cluster = (TH2F*) gFile->Get("h_grinch_cluster_mult_elem");
+  cTDC_cluster -> cd(1)->SetLogz(1);
+  LE_cluster -> Draw("colz");
+  title->Draw(); 
+  // linetdc -> Draw();
+  //linetdc2 -> Draw();
+  linevetroc1 ->Draw();
+  linevetroc2 ->Draw();
+  linevetroc3 ->Draw();
+  cTDC_cluster -> cd(2)->SetLogz(1);
+  TE_cluster -> Draw("colz");
+  title->Draw(); 
+  //netdc -> Draw();
+  //inetdc2 -> Draw();
+  linevetroc1 ->Draw();
+  linevetroc2 ->Draw();
+  linevetroc3 ->Draw();
+  cTDC_cluster -> cd(3)-> SetLogz(1);
+  tot_cluster -> Draw("colz");
+  title->Draw(); 
+  //linetdc -> Draw();
+  //linetdc2 -> Draw();
+  linevetroc1 ->Draw();
+  linevetroc2 ->Draw();
+  linevetroc3 ->Draw();
+  cTDC_cluster -> cd(4) ->SetLogz(1);
+  tdcMult_cluster -> Draw("colz");
+  title->Draw();
+  //linetdc -> Draw();
+  //linetdc2 -> Draw();
+  linevetroc1 ->Draw();
+  linevetroc2 ->Draw();
+  linevetroc3 ->Draw();
+  
+
+
+}

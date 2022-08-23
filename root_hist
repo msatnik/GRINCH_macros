@@ -1,0 +1,461 @@
+h_grinch_cluster_adcMult_elem ->Draw("colz")
+h_grinch_cluster_amp_elem ->Draw("colz")
+h_grinch_cluster_int_elem ->Draw("colz")
+h_grinch_cluster_atime_elem ->Draw("colz")
+h_grinch_cluster_le_elem ->Draw("colz")
+h_grinch_cluster_te_elem ->Draw("colz")
+h_grinch_cluster_tot_elem ->Draw("colz")
+h_grinch_cluster_amp_elem ->Draw("colz")
+.q
+.q
+.x GRINCH_eventDisplay_m.C 
+.q.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x make_hist_grinch_m.C 
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C 
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_center_display ->Draw("colz")
+h_grinch_cluster_center_display ->Draw("colz")
+.x GRINCH_eventDisplay_m.C 
+h_grinch_cluster_size ->Draw("colz")
+h_grinch_le ->Draw("colz")
+h_grinch_le_elem ->Draw("colz")
+.q
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+h_grinch_cluster_adcInt_tdc ->Draw("colz")
+h_grinch_cluster_int_elem ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_adc_tdc ->Draw("colz")
+h_grinch_cluster_adcInt_tdc ->Draw("colz")
+h_grinch_cluster_adc_elem ->Draw("colz")
+h_grinch_cluster_int_elem ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_int_amp ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_int_amp ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_int_amp_test ->Draw("colz")
+h_grinch_cluster_adc_tdc_test ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_le_elem ->Draw("COLZ")
+h_grinch_cluster_center_good_sh_e ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",13620,"run_list_grinch.txt")
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.q
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C(
+.q
+.x make_hist_grinch_m.C("grinch",13764,"run_list_grinch_13764.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",13764,"run_list_grinch_13764.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",13764,"run_list_grinch_13764.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",13764,"run_list_grinch_13764.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",13764,"run_list_grinch_13764.txt")
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x GRINCH_eventDisplay_m.C 
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_amp_p_50 ->Draw()
+TPrint(*cluster*)
+h_grinch_amp_p_10 ->Draw()
+h_grinch_le_elem ->Draw("colz")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_tot_all ->Draw()
+h_grinch_le_5 ->Draw()
+h_grinch_tot_10 ->Draw()
+h_grinch_cluster_tot_10 ->Draw()
+h_grinch_cluster_amp_p_10 ->Draw()
+h_grinch_amp_p_10 ->Draw()
+h_grinch_adc_10 ->Draw()
+h_grinch_tot_10 ->Draw()
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_tot_10 ->Draw()
+h_grinch_adc_10 ->Draw()
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_tot_10 ->Draw()
+h_grinch_cluster_tot_10 ->Draw()
+h_grinch_adc_10 ->Draw()
+h_grinch_adc_60 ->Draw()
+h_grinch_amp_p_60 ->Draw()
+h_grinch_amp_p[60] ->Draw()
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_amp_p_60->Draw()
+h_grinch_cluster_amp_p_60->Draw()
+h_grinch_adc_60->Draw()
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x GRINCH_eventDisplay_m.C
+.q
+.x make_hist_grinch_m.C("grinch_m",13620,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_efficiency_percent.q
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_efficiency_percent ->Draw()
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",137640,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",137640,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",137640,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",137640,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",137640,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",13764,"run_list_grinch.txt")
+ .q
+.x make_hist_grinch_m.C("grinch_m",137640,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",137640,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",13550,"run_list_grinch.txt")
+.q
+.q
+.x make_hist_grinch_m.C("grinch_m",13550,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",13550,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",134550,"run_list_grinch.txt")
+.q
+.x make_hist_grinch_m.C("grinch_m",134550,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",134550,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",134550,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",134550,"run_list_grinch.txt")
+.
+.q
+.x cluster_finding.C("grinch_m",134550,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",134550,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",134550,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",134550,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",134550,"run_list_grinch.txt")
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.x GRINCH_eventDisplay_m_simple.C
+.x GRINCH_eventDisplay_m_simple.C
+.qw
+.x GRINCH_eventDisplay_m_simple.C
+.x GRINCH_eventDisplay_m_simple.C
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+h_grinch_cluster_size ->Draw()
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+h_grinch_cluster_size ->Draw()
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+h_grinch_cluster_size ->Draw()
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+h_grinch_cluster_le_elem ->Draw("colz")
+h_grinch_cluster_te_elem ->Draw("colz")
+h_grinch_cluster_tot_elem ->Draw("colz")
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_size ->Draw()
+h_grinch_cluster_center_display -> Draw("colz", "h_grinch_cluster_size == 3")
+h_grinch_cluster_center_display -> Draw(h_grinch_cluster_size == 2)
+.1
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_m",136200,"run_list_grinch.txt")
+h_grinch_cluster_center_3 ->Draw("colz")
+h_grinch_cluster_center_4 ->Draw("colz")
+h_grinch_cluster_center_5 ->Draw("colz")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",136200,"run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch_clusters",13620,"run_list_grinch.txt")
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x cluster_finding.C("grinch_clusters",13620,"run_list_grinch.txt")
+.q
+.x GRINCH_eventDisplay_m_simple.C
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+h_grinch_le_elem ->Draw("colz")
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+h_grinch_le_5 ->Draw()
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+h_grinch_le_elem ->Draw("colz")
+h_grinch_le_200 ->Draw()
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+h_grinch_le_200 ->Draw()
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+h_grinch_le_200 ->Draw()
+h_grinch_cluster_le_200 ->Draw()
+h_grinch_cluster_le_201 ->Draw()
+h_grinch_cluster_le ->Draw()
+h_grinch_cluster_le_elem ->Draw()
+h_grinch_cluster_le_elem ->Draw("colz")
+h_grinch_cluster_le_250->Draw("colz")
+h_grinch_cluster_tot_250->Draw("colz")
+h_grinch_cluster_le_250->Draw("colz")
+h_grinch_cluster_tot_250->Draw("colz")
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+h_grinch_cluster_tot_250->Draw("colz")
+h_grinch_cluster_le_250->Draw("colz")
+h_grinch_le_250->Draw("colz")
+h_grinch_cluster_le_250->Draw("colz")
+h_grinch_le_elem->Draw("colz")
+h_grinch_cluster_le_elem->Draw("colz")
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+.q
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+h_grinch_cluster_le_250->Draw("colz")
+h_grinch_le_250->Draw("colz")
+h_grinch_le_251->Draw("colz")
+h_grinch_le_2->Draw("colz")
+h_grinch_le_elem->Draw("colz")
+h_grinch_cluster_le_elem->Draw("colz")
+h_grinch_cluster_tot_elem->Draw("colz")
+h_grinch_cluster_tot[250]->Draw("colz")
+h_grinch_cluster_le[250]->Draw("colz")
+h_grinch_le[250]->Draw("colz")
+h_grinch_le_250->Draw("colz")
+.q
+.x cluster_finding.C("grinch",13764,"run_list_grinch_13764.txt")
+h_grinch_le_250 ->Draw()
+h_grinch_cluster_le_250 ->Draw()
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+.q
+.x cluster_finding.C("grinch",136200, "run_list_grinch.txt")
+h_grinch_cluster_le_250 ->Draw()
+h_grinch_le_250 ->Draw()
+.q

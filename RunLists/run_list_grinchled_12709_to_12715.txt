@@ -1,0 +1,6 @@
+../../../Rootfiles/grinchled_12715_fev_0_nev_-1_fseg_1_lseg_5.root
+../../../Rootfiles/grinchled_12709_fev_0_nev_-1_fseg_0_lseg_2.root
+../../../Rootfiles/grinchled_12710_fev_0_nev_-1_fseg_0_lseg_2.root
+../../../Rootfiles/grinchled_12711_fev_0_nev_-1_fseg_0_lseg_2.root
+../../../Rootfiles/grinchled_12714_fev_0_nev_-1_fseg_0_lseg_2.root
+endlist
