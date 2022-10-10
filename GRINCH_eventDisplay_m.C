@@ -315,8 +315,8 @@ void fill_event(Int_t Direction)
       c=new TCanvas("c");
     }
 
-   c -> Range(0,0,1.5, 1.8);// This changes the range of the canvas
-   c -> SetCanvasSize(875,875);
+  c -> Range(0,0,1.5, 1.8);// This changes the range of the canvas
+  c -> SetCanvasSize(875,875);
   // c -> SetWindowSize(400, 2500);
 
   if( c2 )
@@ -363,82 +363,83 @@ void fill_event(Int_t Direction)
       if(abs(tot_e - 3)< 0.5 && ps_e > 0.2 && abs(rat - 1.2) < 0.2 )
 	{
 	  sh_energy_flag = kTRUE;
-	}
       
-      for (int n=0; n<64; n++)
-	{
-	  adc_root_index_array[n]=0;
-	}
+	  for (int n=0; n<64; n++)
+	    {
+	      adc_root_index_array[n]=0;
+	    }
 
 
-      for(int r=0; r<N_PMT; r++)  //Reset individual events tube hits counter for each event.
-	{
-	  EvtTubeHits[r] = 0;
-	  tdcTimeArray[r] = 0;
-	  hit_flag_array[r]=0;
-	  hit_row_array[r]= -1;
-	  hit_col_array[r] = -1;
-	  root_index_array[r]=0;
-	}
+	  for(int r=0; r<N_PMT; r++)  //Reset individual events tube hits counter for each event.
+	    {
+	      EvtTubeHits[r] = 0;
+	      tdcTimeArray[r] = 0;
+	      hit_flag_array[r]=0;
+	      hit_row_array[r]= -1;
+	      hit_col_array[r] = -1;
+	      root_index_array[r]=0;
+	    }
    
-      GRINCH_mult_vs_pmt -> Reset();
-      h_grinch_cluster_le_elem -> Reset();
-      h_grinch_cluster_te_elem -> Reset();
-      h_grinch_cluster_tot_elem -> Reset();
-      h_grinch_cluster_mult_elem -> Reset();
-      h_grinch_cluster_adcMult_elem -> Reset();
-      h_grinch_cluster_atime_elem -> Reset();
-      h_grinch_cluster_amp_elem -> Reset();
-      h_grinch_cluster_int_elem -> Reset();
-      h_grinch_cluster_adc_tdc ->Reset();
+	  GRINCH_mult_vs_pmt -> Reset();
+	  h_grinch_cluster_le_elem -> Reset();
+	  h_grinch_cluster_te_elem -> Reset();
+	  h_grinch_cluster_tot_elem -> Reset();
+	  h_grinch_cluster_mult_elem -> Reset();
+	  h_grinch_cluster_adcMult_elem -> Reset();
+	  h_grinch_cluster_atime_elem -> Reset();
+	  h_grinch_cluster_amp_elem -> Reset();
+	  h_grinch_cluster_int_elem -> Reset();
+	  h_grinch_cluster_adc_tdc ->Reset();
       
       
-      // I want to add ADC info to look at the clusters. 
-      for(Int_t ig=0; ig<GrinchADCNum; ig++)
-	{
-	  Int_t gindex_adc = adcGID[ig];
-	  adc_root_index_array[gindex_adc] = ig;
-	}
+	  // I want to add ADC info to look at the clusters. 
+	  for(Int_t ig=0; ig<GrinchADCNum; ig++)
+	    {
+	      Int_t gindex_adc = adcGID[ig];
+	      adc_root_index_array[gindex_adc] = ig;
+	    }
       
  
-      for(int j=0; j<nChanVETROC; j++)
-	{       
-	  Double_t temp_mult=0;
-	  Int_t temp_hit_flag=0;//was it hit or not
-	  Int_t temp_row = -1;
-	  Int_t temp_col = -1;
+	  for(int j=0; j<nChanVETROC; j++)
+	    {       
+	      Double_t temp_mult=0;
+	      Int_t temp_hit_flag=0;//was it hit or not
+	      Int_t temp_row = -1;
+	      Int_t temp_col = -1;
 	  
 	
-	  for (Int_t ig=0;ig<ntdc;ig++) {
-	    if (grinch_tdc_pmt[ig] == j && abs(grinch_tdc_le[ig]-900) < 20)
-	      {
-		temp_mult=grinch_tdc_mult[ig];
-		temp_hit_flag = 1;
-		temp_row = grinch_pmt_row[ig];
-		temp_col = grinch_pmt_col[ig];
-		root_index_array[j] = ig; // Map the "gindex" (which is the PMT number) to the "ig index" which is what the branch needs.
-		                          // I want to be able to go back after finding clusters to look at ADC and TDC and whatnot on those PMTs.
-		// cout<<"temp_row= "<<temp_row <<", temp_col= "<<temp_col<<" for PMT "<< j <<endl;
+	      for (Int_t ig=0;ig<ntdc;ig++) {
+		if (grinch_tdc_pmt[ig] == j && abs(grinch_tdc_le[ig]-900) < 20 )
+		  {
+		    temp_mult=grinch_tdc_mult[ig];
+		    temp_hit_flag = 1;
+		    temp_row = grinch_pmt_row[ig];
+		    temp_col = grinch_pmt_col[ig];
+		    root_index_array[j] = ig; // Map the "gindex" (which is the PMT number) to the "ig index" which is what the branch needs.
+		    // I want to be able to go back after finding clusters to look at ADC and TDC and whatnot on those PMTs.
+		    // cout<<"temp_row= "<<temp_row <<", temp_col= "<<temp_col<<" for PMT "<< j <<endl;
 
+		  }
 	      }
-	  }
 	    
-	  h_GRINCH_mult->SetBinContent(j,temp_mult);
-	  GRINCH_mult_vs_pmt->Fill( j , temp_mult );
+	      h_GRINCH_mult->SetBinContent(j,temp_mult);
+	      GRINCH_mult_vs_pmt->Fill( j , temp_mult );
 	
-	  tdcTimeArray[j] = temp_mult;
-	  hit_flag_array[j] = temp_hit_flag;
-	  hit_row_array[j] = temp_row;
-	  hit_col_array[j] = temp_col;
+	      tdcTimeArray[j] = temp_mult;
+	      hit_flag_array[j] = temp_hit_flag;
+	      hit_row_array[j] = temp_row;
+	      hit_col_array[j] = temp_col;
 
-	  if(tdcTimeArray[j] > 0)
-	    {
-	      EvtTubeHits[j] = EvtTubeHits[j] + 1;
-	      if(tdcTimeArray[j] <=10)
+	      if(tdcTimeArray[j] > 0)
 		{
-		  eventflag = kTRUE;
-		}
-	    }	  	
+		  EvtTubeHits[j] = EvtTubeHits[j] + 1;
+		  if(tdcTimeArray[j] <=10)
+		    {
+		      eventflag = kTRUE;
+		    }
+		}	  	
+	    }
+      
 	}
 
       if(!eventflag){ // check to see if we found a hit in the detector for this event
@@ -519,15 +520,7 @@ void fill_event(Int_t Direction)
   //want to send cluster_members_stack to a function that makes histos of ADC/TDC for each PMT in the cluster. 
   Make_Histos_for_the_Cluster(cluster_members_stack);
 
-  if(sh_energy_flag)
-    {
-      cout << "event had good shower energy"<<endl;
-    }
-  else if (!sh_energy_flag)
-    {
-      cout << "event did not have good shower energy"<<endl;
-    }
-
+ 
 
   stack <Int_t> copystack = cluster_members_stack;
   Int_t pmttest=0;
@@ -884,52 +877,52 @@ Int_t Sum_Adjacent_Hits(Int_t PMT)
 
 
 /*
-Int_t Sum_Adjacent_Hits(Int_t row, Int_t col, Int_t PMT)
-{   
+  Int_t Sum_Adjacent_Hits(Int_t row, Int_t col, Int_t PMT)
+  {   
   if (row == -1 || col == -1 || PMT < 9 || PMT >500)
-    {
-      // don't want to sum these. return zero
+  {
+  // don't want to sum these. return zero
       
-      return 0;
-    }
+  return 0;
+  }
 
   Int_t hit_sum = -1;//
  
   //cout << "Sum_Adjacent_Hit:  "<<row <<" " <<col<< " "<<PMT<<endl;
   if (row%2==0)//short row of 8
-    {
-      if (col == 0)//on the left edge
-	{
-	  hit_sum = 1 + hit_flag_array[PMT-9]+hit_flag_array[PMT-8]+hit_flag_array[PMT+1]+hit_flag_array[PMT+8]+hit_flag_array[PMT+9];
-	  //sum up -9, -8, +1, +8, +9 (excluding -1)
-	}
-      else if (col == 7)//on the right edge
-	{
-	  // sum up -9, -8, -1, +8,+9 (excluding +1)
-	  hit_sum = 1 + hit_flag_array[PMT-9]+hit_flag_array[PMT-8]+hit_flag_array[PMT-1]+hit_flag_array[PMT+8]+hit_flag_array[PMT+9];
-	}
-      else // not on an edge 
-	{
-	  // sum up all of them  -9, -8, -1, 1, 8, 9
-	  hit_sum = 1 + hit_flag_array[PMT-9]+hit_flag_array[PMT-8]+hit_flag_array[PMT-1]+hit_flag_array[PMT+1]+hit_flag_array[PMT+8]+hit_flag_array[PMT+9];
-	}
-    }
+  {
+  if (col == 0)//on the left edge
+  {
+  hit_sum = 1 + hit_flag_array[PMT-9]+hit_flag_array[PMT-8]+hit_flag_array[PMT+1]+hit_flag_array[PMT+8]+hit_flag_array[PMT+9];
+  //sum up -9, -8, +1, +8, +9 (excluding -1)
+  }
+  else if (col == 7)//on the right edge
+  {
+  // sum up -9, -8, -1, +8,+9 (excluding +1)
+  hit_sum = 1 + hit_flag_array[PMT-9]+hit_flag_array[PMT-8]+hit_flag_array[PMT-1]+hit_flag_array[PMT+8]+hit_flag_array[PMT+9];
+  }
+  else // not on an edge 
+  {
+  // sum up all of them  -9, -8, -1, 1, 8, 9
+  hit_sum = 1 + hit_flag_array[PMT-9]+hit_flag_array[PMT-8]+hit_flag_array[PMT-1]+hit_flag_array[PMT+1]+hit_flag_array[PMT+8]+hit_flag_array[PMT+9];
+  }
+  }
   else // long row of 9
-    {
-      if (col == 0 || col == 8)//on an edge of a long row
-	{
-	  // don't sum anything. I don't want to cluster find on the long row edges. 
-	  hit_sum=0;
-	  //cout<< "Sum_Adjacent_Hits returning zero because it is on an outer col"<<endl;
-	}
-      else // not on an edge
-	{
-	  hit_sum = 1 + hit_flag_array[PMT-9]+hit_flag_array[PMT-8]+hit_flag_array[PMT-1]+hit_flag_array[PMT+1]+hit_flag_array[PMT+8]+hit_flag_array[PMT+9];
-	}
-    }
+  {
+  if (col == 0 || col == 8)//on an edge of a long row
+  {
+  // don't sum anything. I don't want to cluster find on the long row edges. 
+  hit_sum=0;
+  //cout<< "Sum_Adjacent_Hits returning zero because it is on an outer col"<<endl;
+  }
+  else // not on an edge
+  {
+  hit_sum = 1 + hit_flag_array[PMT-9]+hit_flag_array[PMT-8]+hit_flag_array[PMT-1]+hit_flag_array[PMT+1]+hit_flag_array[PMT+8]+hit_flag_array[PMT+9];
+  }
+  }
   // cout<<"Sum_Adjacent_Hits returning at end of function: sum= "<< hit_sum << endl;
   return hit_sum;
-}
+  }
 */
 
 stack <Int_t> Clear_Stack()
@@ -1111,13 +1104,13 @@ Int_t Calculate_Cluster_Size( stack <Int_t> inputstack)
 	      already_counted.push(tube);
 	    } //end if tube checked was not on stack and hit 
 	  /*
-	  else if(hit_flag_array[tube] == 1 && !Is_NOT_In_Stack(already_counted,tube))
+	    else if(hit_flag_array[tube] == 1 && !Is_NOT_In_Stack(already_counted,tube))
 	    {
-	      cout<<"tube "<<tube<< "has a hit but is already in the stack"<<endl;
+	    cout<<"tube "<<tube<< "has a hit but is already in the stack"<<endl;
 	    }
-	  else 
+	    else 
 	    {
-	      cout<<"tube "<<tube<< " was not hit"<<endl;
+	    cout<<"tube "<<tube<< " was not hit"<<endl;
 	    }
 	  */
 	  //cout<< "counter = "<<counter <<endl;

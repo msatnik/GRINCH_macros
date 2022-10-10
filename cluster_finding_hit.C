@@ -68,6 +68,9 @@ Double_t gem_track_nhits;
 Double_t tr_p[100];
 Double_t hcal_e;
 
+UInt_t fTrigBits;
+UInt_t fRun;
+
 Double_t ps_e;  
 Double_t sh_e;
 Double_t pmom;
@@ -79,7 +82,9 @@ Double_t tdcGID[1000];
 Double_t tdcGLe[1000]; 
 Double_t tdcGTot[1000]; 
 Double_t tdcGTe[1000]; 
-Double_t tdcGMult[1000]; 
+Double_t tdcGMult[1000];
+
+Double_t kine_W; 
 
 Double_t hodo_tmean;
 
@@ -107,9 +112,15 @@ Int_t adc_root_index_array[510]; // same as above but for ADC signals
 
 //histograms
 TH1F* h_ps_e = new TH1F("h_ps_e"," ; Total PreShower E ",300,0.0,2.0);
-TH1F* h_TBB_e = new TH1F("h_TBB_e"," ; Total PRe+Shower E ",300,0.0,5.0);
+TH1F* h_sh_e = new TH1F("h_sh_e"," ; Total Shower E ",300,0.0,3.0);
+TH1F* h_sh_tot_e = new TH1F("h_sh_tot_e"," ; Total PRe+Shower E ",300,0.0,5.0);
 TH1F* h_ratio_e = new TH1F("h_ratio_e"," ; Total PRe+Shower E/ track norm ",300,0.0,2.5);
 TH1F* h_gTrigBits = new TH1F("h_gTrigBits", "; gTrigBits;",35,0,35);
+TH1F* h_fTrigBits = new TH1F("h_fTrigBits", "; fTrigBits;",35,0,35);
+TH2F* h_ps_sh_e = new TH2F("h_ps_sh_e", "; sh_e ; ps_e ;",300,0,3,200,0,2);
+TH2F* h_ps_e_tr_p = new TH2F("h_ps_e_tr_p",";tr_p;ps_e;", 200,0,5,200,0,2);
+
+
 
 TH1F *h_hodo_tmean = new TH1F("h_hodo_tmean",";bb.hodotdc.clus.tmean;",40,-20,20); 
 TH1F* h_tr_x = new TH1F("h_tr_x", "bb.tr.x[0]", 200,-1,1);
@@ -136,7 +147,9 @@ TH2F* h_grinch_cluster_track_xy = new TH2F("h_grinch_cluster_track_xy",";bb.tr.y
 
 TH2F* h_good_event_track_xy = new TH2F("h_good_event_track_xy",";bb.tr.y[0];bb.tr.x[0];",  60,-0.3,0.3,200,-1,1);
 
-TH2F* h_grinch_eff_xy = new TH2F("h_grinch_eff_xy",";bb.tr.y[0];bb.tr.x[0];",  8,-0.2,0.2,28,-0.7,0.7);
+TH2F* h_good_electron_no_grinch_hit_track_xy = new TH2F("h_good_electron_no_grinch_hit_track_xy",";bb.tr.y[0];bb.tr.x[0];",  60,-0.3,0.3,200,-1,1);
+
+TH2F* h_grinch_eff_xy = new TH2F("h_grinch_eff_xy",";bb.tr.y[0];bb.tr.x[0];",  32,-0.2,0.2,112,-0.7,0.7);
 
 TH2F* h_grinch_cluster_track_subtraction = new TH2F("h_grinch_cluster_track_subtraction",";clusterx - tr_y[0]; clustery -tr_x[0];", 500,-1, 9,500,-1,60);
 TH1F* h_grinch_cluster_center_vert_tr_subtraction =  new TH1F("h_grinch_cluster_center_vert_tr_subtraction", "clustery - tr_x[0]", 500,-1,60);
@@ -146,9 +159,9 @@ TH1F* h_grinch_cluster_center_horiz_tr_subtraction = new TH1F("h_grinch_cluster_
 TH2F* h_grinch_CUT_cluster_center_display = new TH2F("h_grinch_CUT_cluster_center_display", "; horizontal ; vertical ;",16,0,8,60,-60,0);
 
 
-TH1F* h_grinch_cluster_size = new TH1F("h_grinch_cluster_size" ,"; Cluster Size ",12,3,15);
-TH1F* h_grinch_cluster_size_good = new TH1F("h_grinch_cluster_size_good" ,"; Cluster Size (shower cut) ",12,3,15);
-TH1F* h_grinch_cluster_size_bad = new TH1F("h_grinch_cluster_size_bad" ,"; Cluster Size (outside shower cut)",12,3,15);
+TH1F* h_grinch_cluster_size = new TH1F("h_grinch_cluster_size" ,"; Cluster Size ",18,2,20);
+TH1F* h_grinch_cluster_size_good = new TH1F("h_grinch_cluster_size_good" ,"; Cluster Size (shower cut) ",18,2,20);
+TH1F* h_grinch_cluster_size_bad = new TH1F("h_grinch_cluster_size_bad" ,"; Cluster Size (outside shower cut)",18,2,20);
 TH2F* h_grinch_cluster_center = new TH2F("h_grinch_cluster_center", "; horizontal ; vertical ;",16,0,8,60,0,60);
 TH2F* h_grinch_cluster_center_display = new TH2F("h_grinch_cluster_center_display", "; horizontal ; vertical ;",16,0,8,60,-60,0);
 
@@ -158,7 +171,7 @@ TH2F* h_grinch_cluster_center_spreadcut = new TH2F("h_grinch_cluster_center_spre
 TH2F* test_coord_histo = new TH2F(" test_coord_histo", "; horizontal ; vertical ;",18,0,9,60,0,60);
 TH1F* h_grinch_pmt_good_hit = new TH1F("h_grinch_pmt_good_hit",";PMT ;",510,0,510);
 TH2F* h_grinch_cluster_spread = new TH2F("h_grinch_cluster_spread",";cluster width;  cluster height;",8,1,9,59,1,60);
-TH1F* h_grinch_cluster_size_cuts = new TH1F("h_grinch_cluster_size_cuts" ,"; Cluster Size with cuts",12,3,15);
+TH1F* h_grinch_cluster_size_cuts = new TH1F("h_grinch_cluster_size_cuts" ,"; Cluster Size with cuts",18,2,20);
 TH2F* h_grinch_cluster_center_bad_sh_e  = new TH2F("h_grinch_cluster_center_bad_sh_e ", "; horizontal ; vertical ;",16,0,8,60,-60,0);
 TH2F* h_grinch_cluster_center_good_sh_e  = new TH2F("h_grinch_cluster_center_good_sh_e ", "; horizontal ; vertical ;",16,0,8,60,-60,0);
 
@@ -249,16 +262,18 @@ Int_t no_sh_no_grinch_cnt = 0;// counter for the number of events that do not pa
 Int_t cluster_in_tr_cut_cnt = 0;
 Int_t tr_cut_cnt = 0; 
 
-Int_t cluster_in_tr_cut_cnt_2D[100][50] = {0};
-Int_t tr_cut_cnt_2D[100][50] = {0};
-Double_t nsteps_trx = 28;
-Double_t nsteps_try = 8;
-Double_t stepsize = 0.05;
+Int_t cluster_in_tr_cut_cnt_2D[500][100] = {0};
+Int_t tr_cut_cnt_2D[500][100] = {0};
+Double_t nsteps_trx = 112;// 56 28;
+Double_t nsteps_try = 32;//16 8;
+Double_t stepsize = 0.0125; //0.025 0.5
 Double_t min_trx = -0.7;
 Double_t min_try = -0.2;
-Double_t trx_steps_array[100] = {0};
-Double_t try_steps_array[100] = {0};
+Double_t trx_steps_array[500] = {0};
+Double_t try_steps_array[500] = {0};
 
+
+TH1F* h_kine_W =  new TH1F("h_kine_W", "; W ;", 500,-10,10);
 
 
 TH1F* h_grinch_sh_ps_hit_cnt;
@@ -267,6 +282,10 @@ TH1F* h_grinch_grinch_hit_sh_hit_cnt;
 TH1F* h_grinch_grinch_hit_no_sh_hit_cnt;
 TH1F* h_grinch_no_sh_no_grinch_cnt; 
 TH1F* h_grinch_efficiency_percent = new TH1F("h_grinch_efficiency_percent" ,"; percent efficiency",100,0,100);
+
+
+
+
 
 //function declarations
 void make_row_col_array(); // this is probably already in the database and isn't needed
@@ -285,6 +304,7 @@ void make_tdc_to_adc_map_array(); // Probably uncessary: should add to database 
 Int_t Stack_Size(stack <Int_t> inputstack);
 Double_t offset_gaus(Double_t *x, Double_t *par);
 void Palette1();
+void set_color_env();
 
 
 
@@ -294,8 +314,10 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
     cin >> basename;
   }
   TString fullname = Form("%s_%d",basename.Data(),nrun);
-  // gStyle->SetPalette(kBlueRedYellow);
-  Palette1();
+  // gStyle->SetPalette(kDarkBodyRadiator);
+  //gStyle->SetPalette(1);
+   // Palette1();
+  set_color_env();
   gStyle->SetOptStat(1000011);
   gStyle->SetOptFit(11);
   gStyle->SetTitleOffset(1.,"Y");
@@ -323,54 +345,125 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   //  Int_t hcalNum;
   //fchain->SetBranchAddress("Ndata.sbs.hcal.tdcelemID",&hcalNum) ;
   
- 
-  fchain->SetBranchAddress("bb.ps.e",&ps_e) ; // preshower energy
-  fchain->SetBranchAddress("bb.sh.e",&sh_e) ;  // shower energy
-  fchain->SetBranchAddress("BB.gold.p",&pmom) ; //? 
-  fchain->SetBranchAddress("BB.gold.th",&xptar) ; //?
-  fchain->SetBranchAddress("BB.gold.ph",&yptar) ; //?
-  fchain->SetBranchAddress("BB.gold.y",&ytar) ; //?
+  fchain ->SetBranchStatus("*",0);
 
+
+  fchain ->SetBranchStatus("bb.ps.e",1);
+  fchain->SetBranchAddress("bb.ps.e",&ps_e) ; // preshower energy
+
+  fchain->SetBranchStatus("bb.sh.e",1);
+  fchain->SetBranchAddress("bb.sh.e",&sh_e) ;  // shower energy
+
+  fchain->SetBranchStatus("BB.gold.p",1);
+  fchain->SetBranchAddress("BB.gold.p",&pmom) ; //
+
+  fchain->SetBranchStatus("BB.gold.th",1) ; //
+  fchain->SetBranchAddress("BB.gold.th",&xptar) ; //
+
+  fchain->SetBranchStatus("BB.gold.ph",1) ; //
+  fchain->SetBranchAddress("BB.gold.ph",&yptar) ; //
+
+  fchain->SetBranchStatus("BB.gold.y",1) ; //
+  fchain->SetBranchAddress("BB.gold.y",&ytar) ; //
+
+  fchain ->SetBranchStatus("bb.tr.x",1);
   fchain ->SetBranchAddress("bb.tr.x",&tr_x);
+
+  fchain ->SetBranchStatus("bb.tr.y",1);
   fchain ->SetBranchAddress("bb.tr.y",&tr_y);
+
+  fchain ->SetBranchStatus("bb.tr.n", 1);
   fchain ->SetBranchAddress("bb.tr.n", &tr_n);
+
+  fchain ->SetBranchStatus("bb.tr.vz",1);
   fchain ->SetBranchAddress("bb.tr.vz", &tr_vz);
+
+  fchain ->SetBranchStatus("bb.tr.tg_th",1);
   fchain ->SetBranchAddress("bb.tr.tg_th",&tr_tg_th);
+
+  fchain ->SetBranchStatus("bb.tr.tg_ph",1);
   fchain ->SetBranchAddress("bb.tr.tg_ph",&tr_tg_ph);
+
+  fchain ->SetBranchStatus("bb.gem.track.nhits",1);
   fchain ->SetBranchAddress("bb.gem.track.nhits",&gem_track_nhits);
+
+  fchain ->SetBranchStatus("bb.tr.p",1);
   fchain ->SetBranchAddress("bb.tr.p",&tr_p);
+
+  fchain ->SetBranchStatus("sbs.hcal.e", 1);
   fchain ->SetBranchAddress("sbs.hcal.e", &hcal_e);
 
- 
+  fchain->SetBranchStatus("e.kine.W2", 1);
+  fchain->SetBranchAddress("e.kine.W2", &kine_W);
 
+  fchain ->SetBranchStatus("bb.hodotdc.clus.tmean",1); 
   fchain ->SetBranchAddress("bb.hodotdc.clus.tmean",&hodo_tmean); 
 
+  fchain->SetBranchStatus("Ndata.bb.grinch_tdc.tdcelemID",1) ;
+  fchain->SetBranchAddress("Ndata.bb.grinch_tdc.tdcelemID",&GrinchNum) ;//number of PMTs with a signal in an event (I think)  
+
+  fchain->SetBranchStatus("bb.grinch_tdc.tdcelemID",1) ;     
+  fchain->SetBranchAddress("bb.grinch_tdc.tdcelemID",&tdcGID) ; // The PMT number 
+
+  fchain->SetBranchStatus("bb.grinch_tdc.tdc",1) ; 
+  fchain->SetBranchAddress("bb.grinch_tdc.tdc",&tdcGLe) ; // leading edge
+
+
+  fchain -> SetBranchStatus("bb.grinch_tdc.tdc_te",1) ; // trailing edge
+  fchain -> SetBranchAddress("bb.grinch_tdc.tdc_te",&tdcGTe) ; // trailing edge
+
+  fchain->SetBranchStatus("bb.grinch_tdc.tdc_tot",1) ; 
+  fchain->SetBranchAddress("bb.grinch_tdc.tdc_tot",&tdcGTot) ; // tdc time over threshold (te-le)
   
-  // fchain->SetBranchAddress("Ndata.bb.grinch_tdc.tdcelemID",&GrinchNum) ;//number of PMTs with a signal in an event (I think)  
-  // fchain->SetBranchAddress("bb.grinch_tdc.tdcelemID",&tdcGID) ; // The PMT number 
-  // fchain->SetBranchAddress("bb.grinch_tdc.tdc",&tdcGLe) ; // leading edge
-  // fchain -> SetBranchAddress("bb.grinch_tdc.tdc_te",&tdcGTe) ; // trailing edge
-  // fchain->SetBranchAddress("bb.grinch_tdc.tdc_tot",&tdcGTot) ; // tdc time over threshold (te-le)
-  
+  fchain->SetBranchStatus("bb.grinch_tdc.tdc_mult",1) ;
   fchain->SetBranchAddress("bb.grinch_tdc.tdc_mult",&tdcGMult) ; //tdc multiplicity
   
   ////I need to go back to a-onl and see how I was looking at all the hits and get that set up in my ifarm   
   ////for when we are looking at all the TDC hits in the window.  grinch_tdc->SetStoreRawHits(kTRUE) in replay_GRINCH
-  fchain->SetBranchAddress("bb.grinch_tdc.hits.TDCelemID", &tdcGID); //pmt number
-  fchain->SetBranchAddress("Ndata.bb.grinch_tdc.hits.TDCelemID", &GrinchNum); 
-  fchain->SetBranchAddress("bb.grinch_tdc.hits.t",&tdcGLe); //leading edge for all hits in the window
-  fchain->SetBranchAddress("bb.grinch_tdc.hits.t_te",&tdcGTe);
-  fchain->SetBranchAddress("bb.grinch_tdc.hits.t_tot",&tdcGTot);
+  // fchain->SetBranchStatus("bb.grinch_tdc.hits.TDCelemID", 1); 
+  // fchain->SetBranchAddress("bb.grinch_tdc.hits.TDCelemID", &tdcGID); //pmt number
+  //
+  // fchain->SetBranchStatus("Ndata.bb.grinch_tdc.hits.TDCelemID", 1); 
+  // fchain->SetBranchAddress("Ndata.bb.grinch_tdc.hits.TDCelemID", &GrinchNum); 
+  //
+  // fchain->SetBranchStatus("bb.grinch_tdc.hits.t",1); 
+  // fchain->SetBranchAddress("bb.grinch_tdc.hits.t",&tdcGLe); //leading edge for all hits in the window
+  //
+  // fchain->SetBranchStatus("bb.grinch_tdc.hits.t_te",1);
+  // fchain->SetBranchAddress("bb.grinch_tdc.hits.t_te",&tdcGTe);
+  //
+  // fchain->SetBranchStatus("bb.grinch_tdc.hits.t_tot",1);
+  // fchain->SetBranchAddress("bb.grinch_tdc.hits.t_tot",&tdcGTot);
 
 
+  fchain->SetBranchStatus("Ndata.bb.grinch_adc.adcelemID",1) ;
   fchain->SetBranchAddress("Ndata.bb.grinch_adc.adcelemID",&GrinchADCNum) ; //number of PMTs with ADC channels with a signal in an event. 
-  fchain->SetBranchAddress("bb.grinch_adc.adcelemID",&adcGID) ; // The ADC channel 
-  fchain->SetBranchAddress("bb.grinch_adc.a_time",&adcGAtime) ; // the time the first(?)ADC signal went over threshold in the window  
-  fchain->SetBranchAddress("bb.grinch_adc.a_amp_p",&adcGAmp) ; // pedestal-subtracted amplitude
-  fchain->SetBranchAddress("bb.grinch_adc.a_mult",&adcGMult) ;// ADC multiplicity 
-  fchain->SetBranchAddress("bb.grinch_adc.a_p",&grinch_adc) ; // ADC Integral (I think)
 
+  fchain->SetBranchStatus("bb.grinch_adc.adcelemID",1) ; 
+  fchain->SetBranchAddress("bb.grinch_adc.adcelemID",&adcGID) ; // The ADC channel 
+
+  fchain->SetBranchStatus("bb.grinch_adc.a_time",1) ; 
+  fchain->SetBranchAddress("bb.grinch_adc.a_time",&adcGAtime) ; // the time the first(?)ADC signal went over threshold in the window  
+
+  fchain->SetBranchStatus("bb.grinch_adc.a_amp_p",1) ; 
+  fchain->SetBranchAddress("bb.grinch_adc.a_amp_p",&adcGAmp) ; // pedestal-subtracted amplitude
+
+  fchain->SetBranchStatus("bb.grinch_adc.a_mult",1) ;
+  fchain->SetBranchAddress("bb.grinch_adc.a_mult",&adcGMult) ;// ADC multiplicity 
+
+  fchain->SetBranchStatus("bb.grinch_adc.a_p",1) ;  
+  fchain->SetBranchAddress("bb.grinch_adc.a_p",&grinch_adc) ; // ADC Integral 
+
+  fchain->SetBranchStatus("g.trigbits",1); 
   fchain->SetBranchAddress("g.trigbits",&gTrigBits); // The type of trigger the event was. (1 is the bbcal trig, 16 is the grinch LED) (May not be working)
+
+  fchain->SetBranchStatus("fEvtHdr.fTrigBits",1);
+  fchain->SetBranchAddress("fEvtHdr.fTrigBits",&fTrigBits);
+
+  //fchain->SetBranchStatus("fEvtHdr.fRun",1);
+  //fchain->SetBranchAddress("fEvtHdr.fRun",&fRun);
+
+  
   
   
  
@@ -394,6 +487,16 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   make_row_col_array(); //sets up an array to quickly get the row/col from PMT number
   make_tdc_to_adc_map_array();//sets up arrays to quickly convert between TDC number and ADC number 
 
+  TH2F* h_color_test = new TH2F("h_color_test"," ",16,0,15,16,0,15);
+  Double_t color_cnt = 1;
+  Double_t normalized  =0;
+  for (Int_t i = 1; i<=16; i++){
+    for (Int_t j = 1; j<=16; j++){
+      normalized = color_cnt * (0.390625); //normalizing 256 to 100. 100/256 = 0.390625
+      h_color_test ->SetBinContent(j,i,normalized);
+      color_cnt = color_cnt +1;
+    }      
+  }
 
   
   Double_t value_x = 0;
@@ -404,14 +507,14 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
       value_x = min_trx + stepsize*stepcnt_x;
       if (value_x >-0.0001 && value_x <0.0001){value_x = 0;}//// it was saving zero as 1.22 E-16, so I hardcoded it to zero. 
       trx_steps_array[stepcnt_x] =value_x;
-      cout<<"trx_steps_array["<<stepcnt_x<<"] = "<<value_x<<endl;
+      //cout<<"trx_steps_array["<<stepcnt_x<<"] = "<<value_x<<endl;
     }
   
   for (Int_t stepcnt_y = 0; stepcnt_y <nsteps_try+1; stepcnt_y ++)
     {
       value_y = min_try + stepsize*stepcnt_y;
       try_steps_array[stepcnt_y] = value_y;
-      cout<< "try_steps_array["<<stepcnt_y <<"] = "<<value_y<<endl;
+      //cout<< "try_steps_array["<<stepcnt_y <<"] = "<<value_y<<endl;
     }
   
   
@@ -429,7 +532,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 
   //// adding histograms to the "HList" so that we can look at them later using macros
   HList.Add(h_ps_e);  
-  HList.Add(h_TBB_e); 
+  HList.Add(h_sh_tot_e); 
   HList.Add(h_ratio_e); 
  
   HList.Add(h_gTrigBits);
@@ -523,7 +626,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 
   Int_t zero_count = 0; 
   Int_t clustercnt = 0;
-  Int_t max = nentries; // make this lower if you don't want to analyze all of the entries
+  Int_t max = 10000; // make this lower if you don't want to analyze all of the entries
   if (max > nentries){ max = nentries;}
   cout<<"max = "<<max<<endl;
 
@@ -545,11 +648,17 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   for (int i = 0; i < max ; i++) {//nentries
     fchain->GetEntry(i);
     if (i%5000==0) cout << " Entry = " << i << endl;
+
+    if (i ==2){
+      //cout< "fRun "<<fRun <<endl;
+    }
     
     Double_t tot_e = ps_e+sh_e;
     Double_t rat = tot_e/pmom;
     h_ps_e->Fill(ps_e);
-    h_TBB_e->Fill(tot_e);
+    h_sh_e->Fill(sh_e);
+    h_sh_tot_e->Fill(tot_e);
+    h_ps_sh_e ->Fill(sh_e, ps_e);    
     h_ratio_e->Fill(rat);
 
     h_hodo_tmean ->Fill(hodo_tmean);
@@ -564,9 +673,10 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
     h_tr_p ->Fill(tr_p[0]);
     h_hcal_e ->Fill(hcal_e);
     h_gem_track_nhits ->Fill(gem_track_nhits);
-    
+    h_ps_e_tr_p ->Fill(tr_p[0],ps_e);
     
     h_gTrigBits ->Fill(gTrigBits);
+    h_fTrigBits ->Fill(fTrigBits);
 
     if(gTrigBits!=1)// gTrigBits == 1 is the bbcal trigger, == 16 is the grinch LED. 
       ///Only want to process bbcal trigger events.
@@ -583,10 +693,12 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 	adc_root_index_array[n]=0;
       }
 
+       h_kine_W ->Fill(kine_W);
     
     //if (ps_e > 0.2 && abs(rat - 1.15) < 0.1 && abs(tot_e -3.15) < 0.5)// shower cut. abs(tot_e - 3.25)< 0.5 && ps_e > 0.2 && abs(rat - 1.2) < 0.2
-    // if(tr_n ==1 && abs(tr_vz[0])<0.08 && abs(tr_tg_th[0])<0.15 && abs(tr_tg_ph[0])<0.3 && gem_track_nhits > 3 && tr_p[0] >3.0 && tr_p[0]<4 && hcal_e > 0.025 && ps_e >0.22) //SBS 8 cuts 
-        if(tr_n ==1 && abs(tr_vz[0])<0.08 && gem_track_nhits > 3 && tr_p[0] >1.4 && tr_p[0]<2.0 && hcal_e > 0.025 && ps_e >0.22) //SBS 9 cuts && abs(tr_tg_th[0])<0.15 && abs(tr_tg_ph[0])<0.3 &&
+    // if(tr_n ==1 && abs(tr_vz[0])<0.08 &&  abs(tr_tg_th[0])<0.15 && abs(tr_tg_ph[0])<0.3 && gem_track_nhits > 3 && tr_p[0] >3.0 && tr_p[0]<4 && hcal_e > 0.025 && ps_e >0.22) //SBS 8 cuts abs(tr_tg_th[0])<0.15 && abs(tr_tg_ph[0])<0.3 
+        if(tr_n ==1 && abs(tr_vz[0])<0.05 && gem_track_nhits > 3 && tr_p[0] >1.4 && tr_p[0]<2.0 && hcal_e > 0.025 && ps_e >0.22  && abs(tr_tg_th[0])<0.1 && abs(tr_tg_ph[0])<0.03 && abs( kine_W- 0.9) < 0.2 ) //SBS 9 cuts && abs(tr_tg_th[0])<0.15 && abs(tr_tg_ph[0])<0.3 && abs(tr_vz[0])<0.08 && abs( kine_W- 0.9) < 0.2 
+       //if(tr_n ==1 && abs(tr_vz[0])<0.05 && gem_track_nhits > 3 &&  ps_e < 0.1 &&  abs(tr_tg_th[0])<0.1 && abs(tr_tg_ph[0])<0.03 && sh_e < 1.1 && tr_p[0]<1.4 ) //SBS 9 PIONS could maybe make these tighter. 
        {
 	////
 	sh_flag = kTRUE; //throw up a flag that this is a good electron hit 
@@ -681,6 +793,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 	  h_grinch_pmt_good_hit ->Fill(gindex);
 	  ////////////////////////////
 	}
+	
      
       }         
      
@@ -710,7 +823,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 	    {
 	      //cout<<"sum_array [PMT] "<<pmtcntr<< " = "<<sum_array[pmtcntr]<<endl;
 	    }
-	  if (sum_array[pmtcntr] >= 2) // if the PMT has 2 or more neighboring PMTs with hits
+	  if (sum_array[pmtcntr] >= 2) // if the PMT has 2 or more neighboring PMTs with hits // was 2 //important to change back to 2
 	    {
 	      //cout<< "Possible cluster around PMT "<<  pmtcntr << ": sum = " <<sum_array[pmtcntr]<<endl;	      
 	      clusterstack.push(pmtcntr); // put that PMT in the stack to be analyzed to get cluster size
@@ -733,10 +846,10 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
       
       temp_cnt ++; 
 
-      
+       h_grinch_cluster_size ->Fill(ClusterSize);
 
       g_cluster_flag =kFALSE;
-      if(ClusterSize >= 3)
+      if(ClusterSize >= 3 ) // was 3. important to change back 
 	{
 	  //cout<<endl;
 	  // cout<<"EVENT "<<i<<endl;
@@ -747,9 +860,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 	  clustercnt++;
 	  g_cluster_flag = kTRUE;
 
-	  h_grinch_cluster_size ->Fill(ClusterSize);
-	
-	
+
 	  //cout<<"clustercnt = "<<clustercnt<<endl;
 	  
       	 	  
@@ -881,6 +992,9 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
       if(sh_flag && !g_cluster_flag)
 	{
 	  sh_hit_no_grinch_hit_cnt++;
+          h_good_electron_no_grinch_hit_track_xy ->Fill(tr_y[0], tr_x[0]);
+	  //cout<< "electron cuts passed but no grinch cluster "<<  sh_hit_no_grinch_hit_cnt<<endl;
+	  // cout<< "track for that event: tr_y = " <<tr_y[0] <<" tr_x = "<<tr_x[0]<<endl;
 	}
       if(!sh_flag && g_cluster_flag)
 	{
@@ -918,11 +1032,11 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   for (Int_t i =0;i<510;i++)
     {
       for (Int_t bin = 500; bin<=700 ;bin++)
-	{ 
-	  bincontent =  h_grinch_le[i]->GetBinContent(bin);
-	  background_sum[i]= background_sum[i] + bincontent;
-	  histo_entries = h_grinch_le[i]->GetEntries();
-	}
+  	{ 
+  	  bincontent =  h_grinch_le[i]->GetBinContent(bin);
+  	  background_sum[i]= background_sum[i] + bincontent;
+  	  histo_entries = h_grinch_le[i]->GetEntries();
+  	}
       background_fit[i] = new TF1(Form("background_fit_%d",i),"pol0",500,700);
       h_grinch_le[i] ->Fit(background_fit[i],"RQ0");
       background_from_fit[i] = background_fit[i] ->GetParameter(0);
@@ -975,19 +1089,19 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
       TFitResultPtr r = h_grinch_le[i] ->Fit(fit[i],"RQ0");
       Int_t fitStatus = r;
       if (fitStatus != 0)
-	{
-	  cout<<"fit error for PMT "<< i <<" ,"<< " Status = "<<r<<endl;
+  	{
+  	  //cout<<"fit error for PMT "<< i <<" ,"<< " Status = "<<r<<endl;
 
-	  mean[i] = -10;
+  	  mean[i] = -10;
       	  mean_error[i] = 0;
       	  sigma[i]= -10;
       	  sigma_error[i]= 0;
       	  offset[i]= -10;
       	  offset_error[i]=0;
-	  // sigma_squared[i] = -10;
-	  //sigma_squared_error[i] = 0;
-	  continue;	  
-	}
+  	  // sigma_squared[i] = -10;
+  	  //sigma_squared_error[i] = 0;
+  	  continue;	  
+  	}
 
       mean[i] = fit[i] ->GetParameter(1);
       mean_error[i] = fit[i] ->GetParError(1);      
@@ -1114,23 +1228,11 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   */
   
   
-  
-  
-  
+    
   
 
 
-  cout<< "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"<<endl;
-  cout<<" written to file "<<outputhist<<endl;
-  cout<<"cluster analysis on "<<max<<" events"<<endl;
-    cout<<clustercnt<<" clusters found"<<endl;
-  cout<<"hit_sum = "<< hit_sum << endl;
 
-  cout<<"good shower energy on "<< sh_ps_hit_cnt<<" events" <<endl;
-  cout<<"good shower energy and NO good grinch cluster on "<< sh_hit_no_grinch_hit_cnt<<" events" <<endl;
-  cout<<"good shower energy and good grinch cluster on "<< grinch_hit_sh_hit_cnt <<" events" <<endl;
-  //cout<<"NO good shower energy and good grinch cluster on "<< grinch_hit_no_sh_hit_cnt <<" events" <<endl;
-  //cout<<"NO good shower energy and NO grinch cluster on "<< no_sh_no_grinch_cnt <<" events" <<endl;
 
   //h_grinch_sh_hit_no_grinch_hit_cnt ->Fill(sh_hit_no_grinch_hit_cnt);
   //h_grinch_grinch_hit_sh_hit_cnt ->Fill(grinch_hit_sh_hit_cnt);
@@ -1140,22 +1242,20 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 
   Double_t grinch_hit_double = grinch_hit_sh_hit_cnt;
   Double_t sh_hit_double = sh_ps_hit_cnt;
-  Double_t percent = 100 * grinch_hit_double/sh_hit_double; 
+  Double_t percent_overall = 100 * grinch_hit_double/sh_hit_double; 
 
   Double_t cluster_in_tr_cut_cnt_double = cluster_in_tr_cut_cnt;
   Double_t tr_cut_cnt_double = tr_cut_cnt ; 
   Double_t tr_cut_percent = 100 * cluster_in_tr_cut_cnt_double/tr_cut_cnt_double;
 
 
-  h_grinch_efficiency_percent->Fill(percent);
+  h_grinch_efficiency_percent->Fill(percent_overall);
 
-  cout<<"Effiency on Good Hits: "<< grinch_hit_sh_hit_cnt<< "/" << sh_ps_hit_cnt <<" = " << percent <<" %"<<endl; 
+ 
 
-  cout<<"Effiency on the small track region we cut on for a test: " << cluster_in_tr_cut_cnt<<" / "<< tr_cut_cnt << " = "<< tr_cut_percent << " %"<<endl;
-
-  Double_t cluster_in_tr_cut_cnt_double_2D[100][50] = {0};
-  Double_t tr_cut_cnt_double_2D[100][50] = {0};
-  Double_t tr_cut_percent_2D[100][50] = {0};
+  Double_t cluster_in_tr_cut_cnt_double_2D[500][100] = {0};
+  Double_t tr_cut_cnt_double_2D[500][100] = {0};
+  Double_t tr_cut_percent_2D[500][100] = {0};
  
   for (Int_t stepcnt_x = 0; stepcnt_x < nsteps_trx; stepcnt_x ++)
     {
@@ -1166,23 +1266,25 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 	  tr_cut_cnt_double_2D[stepcnt_x][stepcnt_y] = tr_cut_cnt_2D[stepcnt_x][stepcnt_y];
 	  if(tr_cut_cnt_double_2D[stepcnt_x][stepcnt_y] == 0 && cluster_in_tr_cut_cnt_double_2D[stepcnt_x][stepcnt_y] == 0){
 	    percent = 0;
-	     h_grinch_eff_xy ->SetBinContent(stepcnt_y+1,stepcnt_x+1, 1);
+	     h_grinch_eff_xy ->SetBinContent(stepcnt_y+1,stepcnt_x+1, 0);
 	  }
 	  else  if( tr_cut_cnt_double_2D[stepcnt_x][stepcnt_y] != 0 && cluster_in_tr_cut_cnt_double_2D[stepcnt_x][stepcnt_y] ==0)
 	    {
 	     percent = 0;
-	      h_grinch_eff_xy ->SetBinContent(stepcnt_y+1,stepcnt_x+1, percent);
+	      h_grinch_eff_xy ->SetBinContent(stepcnt_y+1,stepcnt_x+1, 0);
 	    }
 	  else{
 	    percent = 100 * cluster_in_tr_cut_cnt_double_2D[stepcnt_x][stepcnt_y]/tr_cut_cnt_double_2D[stepcnt_x][stepcnt_y];
 	     h_grinch_eff_xy ->SetBinContent(stepcnt_y+1,stepcnt_x+1, percent);
 	  }	  
-	  tr_cut_percent_2D[stepcnt_x][stepcnt_y] = percent;	 
-	  cout<<"["<<trx_steps_array[stepcnt_x]<<"] ["<<try_steps_array[stepcnt_y]<<"]       "<< cluster_in_tr_cut_cnt_2D[stepcnt_x][stepcnt_y] <<" / "<< tr_cut_cnt_2D[stepcnt_x][stepcnt_y]  << " = "<< tr_cut_percent_2D[stepcnt_x][stepcnt_y]  << " %"<<endl;
+	  tr_cut_percent_2D[stepcnt_x][stepcnt_y] = percent;	
+	  if ( tr_cut_percent_2D[stepcnt_x][stepcnt_y]  !=0){
+	    cout<<"["<<trx_steps_array[stepcnt_x]<<"] ["<<try_steps_array[stepcnt_y]<<"]       "<< cluster_in_tr_cut_cnt_2D[stepcnt_x][stepcnt_y] <<" / "<< tr_cut_cnt_2D[stepcnt_x][stepcnt_y]  << " = "<< tr_cut_percent_2D[stepcnt_x][stepcnt_y]  << " %"<<endl;
+	  }
 	}		
     }
  
-  h_grinch_eff_xy ->SetContour(256);
+  h_grinch_eff_xy ->SetContour(255);
 
   TH2F* test2D = new TH2F("test2D",";horiz;vert;",  8,-0.2,0.2,28,-0.7,0.7);
   Int_t testvalue=1;
@@ -1197,6 +1299,23 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
     }
   
   test2D ->SetContour(256);
+
+  cout<< "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"<<endl;
+
+  cout<<"Effiency on Good Hits: "<< grinch_hit_sh_hit_cnt<< "/" << sh_ps_hit_cnt <<" = " << percent_overall <<" %"<<endl; 
+
+  cout<<"Effiency on the small track region we cut on for a test: " << cluster_in_tr_cut_cnt<<" / "<< tr_cut_cnt << " = "<< tr_cut_percent << " %"<<endl;
+
+  cout<<" written to file "<<outputhist<<endl;
+  cout<<"cluster analysis on "<<max<<" events"<<endl;
+  cout<<clustercnt<<" clusters found"<<endl;
+  cout<<"hit_sum = "<< hit_sum << endl;
+
+  cout<<"good shower energy on "<< sh_ps_hit_cnt<<" events" <<endl;
+  cout<<"good shower energy and NO good grinch cluster on "<< sh_hit_no_grinch_hit_cnt<<" events" <<endl;
+  cout<<"good shower energy and good grinch cluster on "<< grinch_hit_sh_hit_cnt <<" events" <<endl;
+  //cout<<"NO good shower energy and good grinch cluster on "<< grinch_hit_no_sh_hit_cnt <<" events" <<endl;
+  //cout<<"NO good shower energy and NO grinch cluster on "<< no_sh_no_grinch_cnt <<" events" <<endl;
 
   cout<<"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"<<endl;
   
@@ -1694,18 +1813,33 @@ void Palette1()
   static Int_t colors[256];
   static Bool_t initialized = kFALSE;
   
-  Double_t Red[5] =  {0.00, 0.00, 1.00, 1.00, 1.00};
-  Double_t Green[5] =  {0.00, 0.00, 0.00, 1.00, 1.00}; 
-  Double_t Blue[5] = {0.00,1.00, 0.00, 0.00, 1.00};
+  Double_t Red[5] =  {0.00, 0.00, 0.00, 1.00, 1.00};
+  Double_t Green[5] =  {0.00, 0.00, 1.00, 1.00, 1.00};
+  Double_t Blue[5] =  {0.00,1.00, 0.00, 0.00, 1.00};
   Double_t Length[5] = {0.00,0.8,0.9, 0.95, 1.00};
-
 
   if (!initialized)
     {
-      Int_t FI = TColor::CreateGradientColorTable(5,Length,Red,Green,Blue,n);
+      Int_t FI = TColor::CreateGradientColorTable(5,Length,Red,Green,Blue,256);
       for (int i = 0;i<n;i++) colors [i] = FI+i;
       initialized = kTRUE;
       return;
     }
   gStyle ->SetPalette(n,colors);
+}
+
+
+void set_color_env()
+{ 	
+  //Creates a nice color gradient.
+  const Int_t NRGBs = 5;
+  const Int_t NCont = 255;
+  
+  //Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
+  Double_t stops[NRGBs] = { 0.00, 0.45, 0.90, 0.95, 1.00 };
+  Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };
+  Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };
+  Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };
+  TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+  gStyle->SetNumberContours(NCont);   //Chooses custom gradient NCont.
 }

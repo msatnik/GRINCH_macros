@@ -137,8 +137,8 @@ TH2F *h_adc_vs_chan = new TH2F("h_adc_vs_chan"," ; chan # ; ADC counts", 64,0,63
 TH2F *GRINCH_mult_vs_pmt = new TH2F("GRINCH_mult_vs_pmt"," ; PMT # ; PMT hit multiplicity", 510,0,510,5,1,6);
 TH1F *h_GRINCH_mult = new TH1F("h_GRINCH_mult","; multiplicity ; counts",510,0,510);
 
-TH2F* h_grinch_cluster_le_elem = new TH2F("h_grinch_cluster_le_elem"," ; GRINCH TDC elemID ; GRINCH TDC LE (ns) ",510,0,510,600,600,1200);
-TH2F* h_grinch_cluster_te_elem = new TH2F("h_grinch_cluster_te_elem"," ; GRINCH TDC elemID ; GRINCH TDC TE (ns)",510,0,510,600,600,1200);
+TH2F* h_grinch_cluster_le_elem = new TH2F("h_grinch_cluster_le_elem"," ; GRINCH TDC elemID ; GRINCH TDC LE (ns) ",510,0,510,100,850,950);
+TH2F* h_grinch_cluster_te_elem = new TH2F("h_grinch_cluster_te_elem"," ; GRINCH TDC elemID ; GRINCH TDC TE (ns)",510,0,510,100,850,950);
 TH2F* h_grinch_cluster_tot_elem = new TH2F("h_grinch_cluster_tot_elem"," ; GRINCH TDC elemID ; GRINCH TDC TOT (ns) ",510,0,510,110,-10,100);
 TH2F* h_grinch_cluster_mult_elem = new TH2F("h_grinch_cluster_mult_elem"," ; GRINCH TDC elemID ; GRINCH TDC Mult ",510,0,510,15,0,15);
 TH2F* h_grinch_cluster_adcMult_elem = new TH2F("h_grinch_cluster_adcMult_elem"," ; GRINCH ADC elem id ; GRINCH ADC Mult. ",63,0,63,10,0,10);
@@ -227,7 +227,7 @@ void GRINCH_eventDisplay_m_simple()//main
   //inputroot="../rootfiles/grinch_13369_fev_0_nev_-1_fseg_0_lseg_0.root";
   // inputroot = "../rootfiles/grinch_13620_fev_0_nev_-1_fseg_0_lseg_0.root";
 
-  inputroot = "/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13720_stream0_seg0_0.root";
+  inputroot = "/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13719_stream0_seg0_0.root";
 
 
   file = new TFile(inputroot); 
@@ -388,84 +388,85 @@ void fill_event(Int_t Direction)
       if(tr_n ==1 && abs(tr_vz[0])<0.08 && gem_track_nhits > 3 && tr_p[0] >1.4 && tr_p[0]<2.0 && hcal_e > 0.025 && ps_e >0.22)//SBS9
 	{
 	  sh_energy_flag = kTRUE;
-	}
+	
+    
       
-      for (int n=0; n<64; n++)
-	{
-	  adc_root_index_array[n]=0;
-	}
+	  for (int n=0; n<64; n++)
+	    {
+	      adc_root_index_array[n]=0;
+	    }
 
 
-      for(int r=0; r<N_PMT; r++)  //Reset individual events tube hits counter for each event.
-	{
-	  EvtTubeHits[r] = 0;
-	  tdcTimeArray[r] = 0;
-	  hit_flag_array[r]=0;
-	  hit_row_array[r]= -1;
-	  hit_col_array[r] = -1;
-	  root_index_array[r]=0;
-	}
+	  for(int r=0; r<N_PMT; r++)  //Reset individual events tube hits counter for each event.
+	    {
+	      EvtTubeHits[r] = 0;
+	      tdcTimeArray[r] = 0;
+	      hit_flag_array[r]=0;
+	      hit_row_array[r]= -1;
+	      hit_col_array[r] = -1;
+	      root_index_array[r]=0;
+	    }
    
-      GRINCH_mult_vs_pmt -> Reset();
-      h_grinch_cluster_le_elem -> Reset();
-      h_grinch_cluster_te_elem -> Reset();
-      h_grinch_cluster_tot_elem -> Reset();
-      h_grinch_cluster_mult_elem -> Reset();
-      h_grinch_cluster_adcMult_elem -> Reset();
-      h_grinch_cluster_atime_elem -> Reset();
-      h_grinch_cluster_amp_elem -> Reset();
-      h_grinch_cluster_int_elem -> Reset();
-      h_grinch_cluster_adc_tdc ->Reset();
+	  GRINCH_mult_vs_pmt -> Reset();
+	  h_grinch_cluster_le_elem -> Reset();
+	  h_grinch_cluster_te_elem -> Reset();
+	  h_grinch_cluster_tot_elem -> Reset();
+	  h_grinch_cluster_mult_elem -> Reset();
+	  h_grinch_cluster_adcMult_elem -> Reset();
+	  h_grinch_cluster_atime_elem -> Reset();
+	  h_grinch_cluster_amp_elem -> Reset();
+	  h_grinch_cluster_int_elem -> Reset();
+	  h_grinch_cluster_adc_tdc ->Reset();
       
       
-      // I want to add ADC info to look at the clusters. 
-      for(Int_t ig=0; ig<GrinchADCNum; ig++)
-	{
-	  Int_t gindex_adc = adcGID[ig];
-	  adc_root_index_array[gindex_adc] = ig;
-	}
+	  // I want to add ADC info to look at the clusters. 
+	  for(Int_t ig=0; ig<GrinchADCNum; ig++)
+	    {
+	      Int_t gindex_adc = adcGID[ig];
+	      adc_root_index_array[gindex_adc] = ig;
+	    }
       
  
-      for(int j=0; j<nChanVETROC; j++)
-	{       
-	  Double_t temp_mult=0;
-	  Int_t temp_hit_flag=0;//was it hit or not
-	  Int_t temp_row = -1;
-	  Int_t temp_col = -1;
+	  for(int j=0; j<nChanVETROC; j++)
+	    {       
+	      Double_t temp_mult=0;
+	      Int_t temp_hit_flag=0;//was it hit or not
+	      Int_t temp_row = -1;
+	      Int_t temp_col = -1;
 	  
 	
-	  for (Int_t ig=0;ig<ntdc;ig++) {
-	    if (grinch_tdc_pmt[ig] == j && abs(grinch_tdc_le[ig]-900) < 20)
-	      {
-		temp_mult=grinch_tdc_mult[ig];
-		temp_hit_flag = 1;
-		temp_row = grinch_pmt_row[ig];
-		temp_col = grinch_pmt_col[ig];
-		root_index_array[j] = ig; // Map the "gindex" (which is the PMT number) to the "ig index" which is what the branch needs.
-		                          // I want to be able to go back after finding clusters to look at ADC and TDC and whatnot on those PMTs.
-		// cout<<"temp_row= "<<temp_row <<", temp_col= "<<temp_col<<" for PMT "<< j <<endl;
+	      for (Int_t ig=0;ig<ntdc;ig++) {
+		if (grinch_tdc_pmt[ig] == j && abs(grinch_tdc_le[ig]-900) < 20)
+		  {
+		    temp_mult=grinch_tdc_mult[ig];
+		    temp_hit_flag = 1;
+		    temp_row = grinch_pmt_row[ig];
+		    temp_col = grinch_pmt_col[ig];
+		    root_index_array[j] = ig; // Map the "gindex" (which is the PMT number) to the "ig index" which is what the branch needs.
+		    // I want to be able to go back after finding clusters to look at ADC and TDC and whatnot on those PMTs.
+		    // cout<<"temp_row= "<<temp_row <<", temp_col= "<<temp_col<<" for PMT "<< j <<endl;
 
+		  }
 	      }
-	  }
 	    
-	  h_GRINCH_mult->SetBinContent(j,temp_mult);
-	  GRINCH_mult_vs_pmt->Fill( j , temp_mult );
+	      h_GRINCH_mult->SetBinContent(j,temp_mult);
+	      GRINCH_mult_vs_pmt->Fill( j , temp_mult );
 	
-	  tdcTimeArray[j] = temp_mult;
-	  hit_flag_array[j] = temp_hit_flag;
-	  hit_row_array[j] = temp_row;
-	  hit_col_array[j] = temp_col;
+	      tdcTimeArray[j] = temp_mult;
+	      hit_flag_array[j] = temp_hit_flag;
+	      hit_row_array[j] = temp_row;
+	      hit_col_array[j] = temp_col;
 
-	  if(tdcTimeArray[j] > 0)
-	    {
-	      EvtTubeHits[j] = EvtTubeHits[j] + 1;
-	      if(tdcTimeArray[j] <=10)
+	      if(tdcTimeArray[j] > 0)
 		{
-		  eventflag = kTRUE;
-		}
-	    }	  	
+		  EvtTubeHits[j] = EvtTubeHits[j] + 1;
+		  if(tdcTimeArray[j] <=10)
+		    {
+		      eventflag = kTRUE;
+		    }
+		}	  	
+	    }
 	}
-
       if(!eventflag){ // check to see if we found a hit in the detector for this event
 	if(Direction == FORWARD && event_cnt < (eventEntries -1)){
 	  event_cnt ++;
