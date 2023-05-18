@@ -68,6 +68,8 @@ Int_t vertspread[32];
 Double_t cluster_mean_time[32];
 Double_t cluster_variance[32];
 
+Double_t LE_offset[510] = {0};
+
 Int_t ClusterSize_ordered[32];
 Double_t cluster_vert_ordered[32];
 Double_t cluster_horiz_ordered[32];
@@ -96,6 +98,7 @@ struct Cluster{
   Double_t ypos = 0;
   Double_t horizspread = 0;
   Double_t vertspread = 0;
+  Double_t ToT_sum = 0;
 };
 
 
@@ -146,6 +149,8 @@ Double_t tdcGMult[1000];
 Double_t kine_W; 
 
 Double_t hodo_tmean;
+
+Int_t testcnt = 0;
 
 
 
@@ -218,7 +223,11 @@ TH1F* h_grinch_cluster_dy_multi_best = new TH1F("h_grinch_cluster_dy_multi_best"
 TH1F* h_grinch_cluster_dx_multi_rejected = new TH1F("h_grinch_cluster_dx_multi_rejected","grinch cluster center x -  track x projection for rejected clusters", 50,-1,1);
 TH1F* h_grinch_cluster_dy_multi_rejected = new TH1F("h_grinch_cluster_dy_multi_rejected","grinch cluster center y -  track y projection for rejected clusters", 50,-1,1);
 
-
+TH1F* h_grinch_cluster_xdiff = new TH1F(" h_grinch_cluster_xdiff ", "x seperation between clusters",50,0,1 );
+TH1F* h_grinch_cluster_ydiff = new TH1F(" h_grinch_cluster_ydiff ", "y seperation between clusters", 50,0,1);
+TH2F* h_grinch_cluster_xdiff_ydiff = new TH2F("h_grinch_cluster_xdiff_ydiff", ";y seperation; x seperation", 50, 0, 1, 50, 0, 1);
+TH1F* h_grinch_cluster_rdiff = new TH1F(" h_grinch_cluster_rdiff ", "radial seperation between clusters",20,0,0.2 );
+TH1F* h_grinch_cluster_radius_ana = new TH1F(" h_grinch_cluster_radius_ana ", "r1+r2 - seperation",50,-0.1,0.1 );
 
 TH1F* h_grinch_clustercnt = new TH1F("h_grinch_clustercnt","number of clusters in event with more than 2 pmts",10,0,10);
 
@@ -235,10 +244,17 @@ TH1F* h_grinch_projy =  new TH1F("h_grinch_projy","track y projected to grinch w
 TH2F* h_grinch_cluster_tr_vert_proj_vs_cluster_vert =  new TH2F("h_grinch_cluster_tr_vert_proj_vs_cluster_vert",";track x projected to grinch window ; cluster vertical", 100,-1,1,59,0,60);
 TH2F* h_grinch_cluster_tr_horiz_proj_vs_cluster_horiz = new TH2F("h_grinch_cluster_tr_horiz_proj_vs_cluster_horiz",";track y projected to grinch window ; cluster horizontal",100,-1,1,17,0,9);
 
+TH2F* h_grinch_cluster_ToT_sum_vs_size = new TH2F("h_grinch_cluster_ToT_sum_vs_size", ";ToT sum ; cluster size", 200,0,200, 20,0,20);
+
+TH2F* h_grinch_mirror_2_projy_ypos = new TH2F ("h_grinch_mirror_2_projy_","mirror 2 ;track y projection; cluster y position;", 100,-0.25,0.25,100,-0.25,0.25);
+TH2F* h_grinch_mirror_1_projy_ypos = new TH2F ("h_grinch_mirror_1_projy_","mirror 1 ;track y projection; cluster y position;", 100,-0.25,0.25,100,-0.25,0.25);
+TH2F* h_grinch_mirror_3_projy_ypos = new TH2F ("h_grinch_mirror_3_projy_","mirror 3 ;track y projection; cluster y position;", 100,-0.25,0.25,100,-0.25,0.25);
+TH2F* h_grinch_mirror_4_projy_ypos = new TH2F ("h_grinch_mirror_4_projy_","mirror 4 ;track y projection; cluster y position;", 100,-0.25,0.25,100,-0.25,0.25);
+
 TH2F* h_grinch_cluster_projx_xpos_best = new TH2F("h_grinch_cluster_projx_xpos_best","; cluster x position best cluster ; projected x at grinch window from track",100,-1,1,100,-1,1);
-TH2F* h_grinch_cluster_projy_ypos_best = new TH2F("h_grinch_cluster_projy_ypos_best","; cluster y position best cluster ; projected y at grinch window from track",100,-1,1,100,-1,1);
-TH2F* h_grinch_cluster_projx_xpos = new TH2F("h_grinch_cluster_projx_xpos","; cluster x position ; projected x at grinch window from track",100,-1,1,100,-1,1);
-TH2F* h_grinch_cluster_projy_ypos = new TH2F("h_grinch_cluster_projy_ypos","; cluster y position ; projected y at grinch window from track",100,-1,1,100,-1,1);
+TH2F* h_grinch_cluster_projy_ypos_best = new TH2F("h_grinch_cluster_projy_ypos_best","; projected y at grinch from track; cluster y position best cluster ;",100,-0.2,0.2,100,-0.2,0.2);
+TH2F* h_grinch_cluster_projx_xpos = new TH2F("h_grinch_cluster_projx_xpos","; projected x at grinch window from track ;cluster x position",100,-1,1,100,-1,1);
+TH2F* h_grinch_cluster_projy_ypos = new TH2F("h_grinch_cluster_projy_ypos","; projected y at grinch window from track ;cluster y position",100,-0.2,0.2,100,-0.2,0.2);
 TH2F* h_grinch_cluster_projx_xpos_rejected = new TH2F("h_grinch_cluster_projx_xpos_rejected","; cluster x position rejected clusters ; projected x at grinch window from track",100,-1,1,100,-1,1);
 TH2F* h_grinch_cluster_projy_ypos_rejected = new TH2F("h_grinch_cluster_projy_ypos_rejected","; cluster y position rejected clusters ; projected y at grinch window from track",100,-1,1,100,-1,1);
 
@@ -274,13 +290,19 @@ TH2F* h_grinch_CUT_cluster_center_display = new TH2F("h_grinch_CUT_cluster_cente
 TH1F* h_grinch_cluster_size = new TH1F("h_grinch_cluster_size" ,"; Cluster Size ",18,2,20);
 TH2F* h_grinch_cluster_center = new TH2F("h_grinch_cluster_center", "; horizontal ; vertical ;",16,0,8,60,0,60);
 TH2F* h_grinch_cluster_center_display = new TH2F("h_grinch_cluster_center_display", "; horizontal ; vertical ;",16,0,8,60,-600);
+TH1F* h_grinch_cluster_size_best = new TH1F("h_grinch_cluster_size_best" ,"; Cluster Size ",18,2,20);
 
-TH1F* h_grinch_cluster_tmean= new TH1F("h_grinch_cluster_tmean",";Cluster Mean Time (LE)", 40,180,220);
+TH1F* h_grinch_cluster_size_cut = new TH1F("h_grinch_cluster_size_cut" ,"; Cluster Size, mirror 2",18,2,20);
+
+TH1F* h_grinch_cluster_tmean= new TH1F("h_grinch_cluster_tmean",";Cluster Mean Time (LE)", 240,-20,220);
+TH1F* h_grinch_cluster_ToT_sum = new TH1F(" h_grinch_cluster_ToT_sum","Cluster ToT sum", 200,0,200);
 TH1F* h_grinch_cluster_variance = new TH1F("h_grinch_cluster_variance","; Cluster Variance (LE)",40,0,20);
 TH2F* h_grinch_cluster_vert_tmean =new TH2F("h_grinch_cluster_vert_tmean", ";cluster vert; cluster mean time (LE)",60,0,60,40,180,220);
 TH2F* h_grinch_cluster_horiz_tmean = new TH2F("h_grinch_cluster_horiz_tmean", ";cluster horiz; cluster mean time (LE)",16,0,8,40,180,220);
 TH2F* h_grinch_cluster_vert_variance  =new TH2F("h_grinch_cluster_vert_variance", ";cluster vert; cluster variance (LE)",60,0,60,40,0,20);
 TH2F* h_grinch_cluster_horiz_variance = new TH2F("h_grinch_cluster_horiz_variance", ";cluster horiz; cluster variance (LE)",16,0,8,40,0,20);
+
+TH2F* h_grinch_cluster_tmean_size = new TH2F("h_grinch_cluster_size_tmean",";size; tmean", 20,0,20,240,-20,220);
 
 TH1F* h_grinch_cluster_tmean_ordered= new TH1F("h_grinch_cluster_tmean_ordered",";Cluster Mean Time (LE)", 40,180,220);
 TH1F* h_grinch_cluster_variance_ordered = new TH1F("h_grinch_cluster_variance_ordered","; Cluster Variance (LE)",40,0,20);
@@ -304,7 +326,9 @@ TH2F* h_grinch_cluster_spread = new TH2F("h_grinch_cluster_spread",";cluster wid
 
 
 TH1F* h_grinch_cluster_elem = new TH1F("h_grinch_cluster_elem",";GRINCH TDC elemID;", 510,0,510);
-TH2F* h_grinch_cluster_le_elem = new TH2F("h_grinch_cluster_le_elem","; GRINCH TDC elemID ; GRINCH TDC LE (ns) ",510,0,510,200,0,400);
+TH2F* h_grinch_cluster_le_elem = new TH2F("h_grinch_cluster_le_elem","; GRINCH TDC elemID ; GRINCH TDC LE (ns) ",510,0,510,420,-20,400);
+
+TH2F* h_grinch_cluster_le_elem_corr = new TH2F("h_grinch_cluster_le_elem_corr","; GRINCH TDC elemID ; GRINCH TDC LE (ns) ",510,0,510,200,0,400);
 
 TH2F* h_grinch_cluster_le_elem_hodo = new TH2F("h_grinch_cluster_le_elem_hodo","; GRINCH TDC elemID ; GRINCH TDC LE (ns) - hodo tmean ",510,0,510,200,800,1000);
 
@@ -336,7 +360,7 @@ TGraphErrors* sigma_led_graph = new TGraphErrors();
 TGraphErrors* mean_led_cluster_subtract_graph = new TGraphErrors();
 
 
-TH2F* h_grinch_le_elem = new TH2F("h_grinch_le_elem"," ; GRINCH TDC elemID ; GRINCH TDC LE (ns) ",510,0,510,2000,0,2000);
+TH2F* h_grinch_le_elem = new TH2F("h_grinch_le_elem"," ; GRINCH TDC elemID ; GRINCH TDC LE (ns) ",510,0,510,1220,-20,1200);
 TH2F* h_grinch_tot_elem = new TH2F("h_grinch_tot_elem"," ; GRINCH TDC elemID ; GRINCH TDC TOT (ns) ",510,0,510,101,0,100);
 
 TH2F* h_grinch_le_elem_hodo = new TH2F("h_grinch_le_elem_hodo"," ; GRINCH TDC elemID ; GRINCH TDC LE (ns) - hodo tmean ",510,0,510,2600,0,2600);
@@ -378,11 +402,13 @@ TH1F* h_grinch_tot_all =new TH1F("h_grinch_tot_all","; GRINCH TOT ALL ;", 101,0,
 TH2F* h_grinch_hit_le_elem = new TH2F("h_grinch_hit_le_elem"," ; GRINCH TDC elemID ; GRINCH TDC HIT LE (ns) ",510,0,510,2700,-100,2600);
 TH1F* h_grinch_hit_le_all = new TH1F("h_grinch_hit_le_all","; GRINCH LE HIT ALL ;", 2500,0,2500);
 
-TH1F* h_grinch_cluster_le_all = new TH1F("h_grinch_cluster_le_all","; GRINCH CLUSTER LE ALL ;", 2500,0,2500);
+TH1F* h_grinch_cluster_le_all = new TH1F("h_grinch_cluster_le_all","; GRINCH CLUSTER LE ALL ;", 1520,-20,1500);
+TH1F* h_grinch_cluster_le_all_corr = new TH1F("h_grinch_cluster_le_all_corr","; GRINCH CLUSTER LE ALL ;", 2500,0,2500);
 TH1F* h_grinch_cluster_tot_all = new TH1F("h_grinch_cluster_tot_all","; GRINCH CLUSTER TOT ALL ;", 101,0,100);
 
 TH1F* h_grinch_cluster_tot[511];
 TH1F* h_grinch_cluster_le[511];
+TH1F* h_grinch_cluster_le_corr[511];
 TH1F* h_grinch_cluster_amp[64];//maria 
 TH1F* h_grinch_amp[64];
 TH2F* h_grinch_cluster_le_tot[511];
@@ -476,9 +502,57 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   while( currentline.ReadLine( configfile ) && !currentline.BeginsWith("endlist") ) {
     if( !currentline.BeginsWith("#") ){
       cout << " add file : " << currentline << endl;
+      cout<< " may take a moment to load..." <<endl;
       fchain->Add(currentline);
     }   
   } 
+
+
+  // reading in LE offsets from a config file
+
+  Bool_t CORRECTING = kFALSE; 
+
+  if(CORRECTING)
+    {
+      ifstream configfile2("/w/halla-scshelf2102/sbs/msatnik/GRINCH_macros/textfiles/offsets_3038_corrections.txt");
+      TString currentline2;
+      Int_t tokencounter = 0;
+      Int_t pmtcounter = 0;
+      TString sval;
+      while( currentline2.ReadLine( configfile2 ) && !currentline.BeginsWith("#") )
+	{
+	  //cout<< "current line: "<< currentline2<< endl;
+	  TObjArray *tokens = currentline2.Tokenize(" ");
+	  Int_t ntokens = tokens ->GetEntries();
+	  //cout << "ntokens :" << ntokens <<endl;
+	  if (ntokens < 16)
+	    {
+	      cout<<"something wrong with the le offset file"<<endl;
+	    }
+	  else for (Int_t i = 0 ; i <16 ; i++)
+		 {
+		   sval = ( (TObjString*)(*tokens)[i] )->GetString();
+		   LE_offset[pmtcounter] = sval.Atof();
+		   pmtcounter ++;
+		 }
+	  delete tokens;
+	}
+
+    }
+
+ 
+  // for (Int_t i = 0; i< 510 ; i++)
+  //   {
+  //     if (i%16 == 0)
+  // 	{
+  // 	  cout<< endl;
+  // 	}
+  //      cout << LE_offset[i] << " ";
+  //   }
+  // cout<<endl;
+  // cout <<  "LE_offset[1] "<< LE_offset[1] <<endl;
+  
+
   //  Int_t hcalNum;
   //fchain->SetBranchAddress("Ndata.sbs.hcal.tdcelemID",&hcalNum) ;
   
@@ -491,17 +565,17 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   fchain->SetBranchStatus("bb.sh.e",1);
   fchain->SetBranchAddress("bb.sh.e",&sh_e) ;  // shower energy
 
-  fchain->SetBranchStatus("BB.gold.p",1);
-  fchain->SetBranchAddress("BB.gold.p",&pmom) ; //
+  // fchain->SetBranchStatus("BB.gold.p",1);
+  // fchain->SetBranchAddress("BB.gold.p",&pmom) ; //
 
-  fchain->SetBranchStatus("BB.gold.th",1) ; //
-  fchain->SetBranchAddress("BB.gold.th",&xptar) ; //
+  // fchain->SetBranchStatus("BB.gold.th",1) ; //
+  // fchain->SetBranchAddress("BB.gold.th",&xptar) ; //
 
-  fchain->SetBranchStatus("BB.gold.ph",1) ; //
-  fchain->SetBranchAddress("BB.gold.ph",&yptar) ; //
+  // fchain->SetBranchStatus("BB.gold.ph",1) ; //
+  // fchain->SetBranchAddress("BB.gold.ph",&yptar) ; //
 
-  fchain->SetBranchStatus("BB.gold.y",1) ; //
-  fchain->SetBranchAddress("BB.gold.y",&ytar) ; //
+  // fchain->SetBranchStatus("BB.gold.y",1) ; //
+  // fchain->SetBranchAddress("BB.gold.y",&ytar) ; //
 
   fchain ->SetBranchStatus("bb.tr.x",1);
   fchain ->SetBranchAddress("bb.tr.x",&tr_x);
@@ -548,7 +622,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 
 
   fchain->SetBranchStatus("Ndata.bb.grinch_tdc.hit.pmtnum",1) ;
-  fchain->SetBranchAddress("Ndata.bb.grinch_tdc.hit.pmtnum",&GrinchNum) ;//number of PMTs with a signal in an event (I think)  
+  fchain->SetBranchAddress("Ndata.bb.grinch_tdc.hit.pmtnum",&GrinchNum) ;// 
   //was Ndata.bb.grinch_tdc.tdcelemID
   fchain->SetBranchStatus("bb.grinch_tdc.hit.pmtnum",1) ;     
   fchain->SetBranchAddress("bb.grinch_tdc.hit.pmtnum",&tdcGID) ; // The PMT number 
@@ -566,6 +640,19 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   fchain -> SetBranchAddress("bb.grinch_tdc.hit.col",&tdcGHitCol);
   fchain -> SetBranchStatus("bb.grinch_tdc.hit.row",1);
   fchain -> SetBranchAddress("bb.grinch_tdc.hit.row",&tdcGHitRow);
+
+  // fchain -> SetBranchStatus("Ndata.bb.grinch_tdc.tdcelemID",1);
+  // fchain->SetBranchAddress("Ndata.bb.grinch_tdc.tdcelemID",&GrinchNum) ;
+  // fchain -> SetBranchStatus("bb.grinch_tdc.tdcelemID",1);
+  // fchain->SetBranchAddress("bb.grinch_tdc.tdcelemID",&tdcGID) ; // The PMT number 
+  // fchain -> SetBranchStatus("bb.grinch_tdc.tdc",1);
+  // fchain->SetBranchAddress("bb.grinch_tdc.tdc",&tdcGLe) ; // leading edge
+  // fchain -> SetBranchStatus("bb.grinch_tdc.tdc_te",1);
+  // fchain -> SetBranchAddress("bb.grinch_tdc.tdc_te",&tdcGTe) ; // trailing edge
+  // fchain -> SetBranchStatus("bb.grinch_tdc.tdc_mult",1);
+  // fchain->SetBranchAddress("bb.grinch_tdc.tdc_mult",&tdcGMult) ; //tdc multiplicity
+  // fchain -> SetBranchStatus("bb.grinch_tdc.tdc_tot",1);
+  // fchain->SetBranchAddress("bb.grinch_tdc.tdc_tot",&tdcGTot) ; // tdc time over threshold (te-le)
   
   
   //fchain->SetBranchStatus("bb.grinch_tdc.tdc_mult",1) ;
@@ -623,17 +710,18 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   //Making histos for the individual channels 
   for (Int_t ig=0;ig<511;ig++) {    
     h_grinch_cluster_tot[ig] = new TH1F(Form("h_grinch_cluster_tot_%d",ig),Form(" ; GRINCH TDC ToT CLUSTER PMT %d ; ",ig),50,0,50);
-    HList.Add(h_grinch_cluster_tot[ig]);
+    //HList.Add(h_grinch_cluster_tot[ig]);
       h_grinch_cluster_le[ig] = new TH1F(Form("h_grinch_cluster_le_%d",ig),Form(" ; GRINCH TDC LE CLUSTER PMT %d ; ",ig),2000,0,2000);
-    HList.Add(h_grinch_cluster_le[ig]);
+      h_grinch_cluster_le_corr[ig] = new TH1F(Form("h_grinch_cluster_le_corr_%d",ig),Form(" ; GRINCH TDC LE CLUSTER PMT %d ; ",ig),2000,0,2000);
+      // HList.Add(h_grinch_cluster_le[ig]);
     h_grinch_cluster_le_tot[ig] = new TH2F(Form("h_grinch_cluster_le_tot_%d",ig),Form("  GRINCH TDC LE vs ToT CLUSTER PMT %d; cluster LE ; cluster ToT; ",ig),40,180,220,50,0,50);
-    HList.Add(h_grinch_cluster_le_tot[ig]);
+    // HList.Add(h_grinch_cluster_le_tot[ig]);
   }
  
   for (Int_t i=0;i<64;i++){   
     h_grinch_cluster_amp[i] = new TH1F(Form("h_grinch_cluster_amp_%d",i),Form(" ; ADC Amp CLUSTER %d ; ",i), 501, -0.5, 500.5); 
     h_grinch_amp[i] = new TH1F(Form("h_grinch_amp_%d",i),Form(" ; ADC Amp %d ; ",i), 501, -0.5, 500.5);
-    HList.Add(h_grinch_cluster_amp[i]);
+    //HList.Add(h_grinch_cluster_amp[i]);
   }
     
  
@@ -686,6 +774,10 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   */
 
   //// adding histograms to the "HList" so that we can look at them later using macros
+  
+  HList.Add(h_grinch_cluster_variance); 
+  HList.Add(h_grinch_cluster_tmean);
+  
   HList.Add(h_ps_e);  
   HList.Add(h_sh_tot_e); 
   HList.Add(h_ratio_e); 
@@ -693,7 +785,9 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   HList.Add(h_gTrigBits);
 
   HList.Add(h_grinch_cluster_size);
- 
+  HList.Add(h_grinch_cluster_size_cut);
+  HList.Add(h_grinch_cluster_size_best);
+
   HList.Add(h_grinch_cluster_center);
   HList.Add(h_grinch_cluster_center_display);
   HList.Add(test_coord_histo); 
@@ -702,6 +796,8 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   HList.Add(h_grinch_cluster_center_spreadcut);
   
   HList.Add(h_grinch_cluster_adc_tdc_test);
+
+  HList.Add(h_grinch_cluster_ToT_sum);
 
 
   HList.Add(h_grinch_cluster_le_elem);
@@ -739,7 +835,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   for (Int_t ig=0;ig<511;ig++) {
     h_grinch_hit_le[ig] = new TH1F(Form("h_grinch_hit_le_%d",ig),Form(" ; GRINCH TDC HIT LE (ns) PMT %d  ; ",ig),2600,0,2600);
     h_grinch_hit_tot[ig] = new TH1F(Form("h_grinch_hit_tot_%d",ig),Form(" ; GRINCH TDC HIT TOT (ns) PMT %d  ; ",ig),50,0,50);
-    HList.Add(h_grinch_hit_le[ig]);  
+    //HList.Add(h_grinch_hit_le[ig]);  
   }
 
   TH1F* h_grinch_le[511];
@@ -750,7 +846,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
    for (Int_t ig=0;ig<511;ig++) {
     h_grinch_le[ig] = new TH1F(Form("h_grinch_le_%d",ig),Form(" ; GRINCH TDC LE (ns) PMT %d  ; ",ig),2600,0,2600);
     h_grinch_tot[ig] = new TH1F(Form("h_grinch_tot_%d",ig),Form(" ; GRINCH TDC ToT (ns) PMT %d  ; ",ig),50,0,50);
-    HList.Add(h_grinch_le[ig]);   
+    // HList.Add(h_grinch_le[ig]);   
     h_grinch_le_tot[ig] = new TH2F(Form("h_grinch_le_tot_%d",ig),Form("  GRINCH TDC LE vs ToT PMT %d; LE ; ToT; ",ig),200,100,300,50,0,50);
 
     
@@ -795,7 +891,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
   //// Loop over the number of entries /////////
   for (int entry = 0; entry < max ; entry++) {//nentries
     fchain->GetEntry(entry);
-    if (entry%5000==0) cout << " Entry = " << entry << endl;
+    if (entry%10000==0) cout << " Entry = " << entry << endl;
 
     if (entry ==2){
       //cout< "fRun "<<fRun <<endl;
@@ -857,8 +953,9 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
     // if(tr_n ==1 && abs(tr_vz[0])<0.08 &&  abs(tr_tg_th[0])<0.15 && abs(tr_tg_ph[0])<0.3 && gem_track_nhits > 3 && tr_p[0] >3.0 && tr_p[0]<4 && hcal_e > 0.025 && ps_e >0.22) //SBS 8 cuts abs(tr_tg_th[0])<0.15 && abs(tr_tg_ph[0])<0.3 
        // if(tr_n ==1 && abs(tr_vz[0])<0.05 && gem_track_nhits > 3 && tr_p[0] >1.4 && tr_p[0]<2.0 && hcal_e > 0.025 && ps_e >0.22  && abs(tr_tg_th[0])<0.1 && abs(tr_tg_ph[0])<0.03 && abs( kine_W- 0.9) < 0.2 ) //SBS 9 cuts && abs(tr_tg_th[0])<0.15 && abs(tr_tg_ph[0])<0.3 && abs(tr_vz[0])<0.08 && abs( kine_W- 0.9) < 0.2 
        //if(tr_n ==1 && abs(tr_vz[0])<0.05 && gem_track_nhits > 3 &&  ps_e < 0.1 &&  abs(tr_tg_th[0])<0.1 && abs(tr_tg_ph[0])<0.03 && sh_e < 1.1 && tr_p[0]<1.4 ) //SBS 9 PIONS could maybe make these tighter.  
-       if (tr_n ==1 && ps_e > 0.22 && gem_track_nhits > 3 && gTrigBits == 4 && abs(tr_vz[0])<0.05 && abs(tr_tg_th[0])<0.1 && abs(tr_tg_ph[0])<0.03)// gen test cut
-       {
+       //if (tr_n ==1 && ps_e > 0.22 && gem_track_nhits > 3 && gTrigBits == 4 && abs(tr_vz[0])<0.05 )// gen test cut
+       if(tr_n ==1 && ps_e < 0.2  &&  abs(tr_vz[0])<0.05)//
+    {
 	////
 	sh_flag = kTRUE; //throw up a flag that this is a good electron hit 
 	sh_ps_hit_cnt++;
@@ -936,7 +1033,8 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
       Int_t gindex=tdcGID[ig]; // we need to specifically ask which PMT this signal is for
       h_grinch_elem->Fill(gindex);
       if (gindex <511 && gindex >-1) {
-	//	h_grinch_le_elem->Fill(tdcGID[ig],tdcGLe[ig] - hodo_tmean);
+	//tdcGLe[ig] = tdcGLe[ig] - LE_offset[gindex];// rewriting 
+	tdcGLe[ig] = tdcGLe[ig] +200 ;// rewriting 
 	h_grinch_le[gindex]->Fill(tdcGLe[ig] - hodo_tmean); // 
 	h_grinch_hodo_le[gindex]->Fill(tdcGLe[ig] -hodo_tmean); //
 	
@@ -958,7 +1056,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 
 
 	// note for eric: I belive this cut is similar to the one in SBSGRINCH. So it would be like we are starting here. 
-	if (abs(tdcGLe[ig]-200)<20 && sh_flag && tdcGTot[ig]>0){ // if the event is within the good timing cut for the grinch // was 900 <25 for GMn
+	if (abs(tdcGLe[ig]-200)<15 && sh_flag && tdcGTot[ig]>0){ // if the event is within the good timing cut for the grinch // was 900 <25 for GMn // was -200
 	  goodhit++;
 	  ////////////////////////////
 	  hit_flag_array[gindex] = 1; // mark that this PMT has a good hit
@@ -1095,7 +1193,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
      Find_Cluster_Extrema(cluster_stack[i],horizspread[i],vertspread[i]); // function measures the height and width of the cluster
      Calculate_Cluster_Time(cluster_stack[i],cluster_mean_time[i],cluster_variance[i]);
 
-     if(ClusterSize[i] > 2) 
+     if(ClusterSize[i] > 1) 
        {
 	 g_cluster_flag = kTRUE; 
 	 clustercnt++;
@@ -1177,6 +1275,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 	  
 	  StackToArray(cluster_stack_ordered[i],cluster_array);
 
+	  Int_t sum = 0;
 	  for ( Int_t j = 0 ; j < ClusterSize_ordered[i] ; j++)
 	    {
 	      Int_t rootID = root_index_array[cluster_array[j]];
@@ -1184,11 +1283,67 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 	      cluster_struct_array[i].rootID[j] = rootID;
 	      cluster_struct_array[i].LE[j] =  tdcGLe[rootID];
 	      cluster_struct_array[i].ToT[j] = tdcGTot[rootID];
+	      sum = sum + tdcGTot[rootID];
 	    }
+	  cluster_struct_array[i].ToT_sum = sum;
 	}
 
 
       Fill_Cluster_Histos_struct(cluster_struct_array, cluster_stack_cnt);
+
+
+      for (Int_t i = 0 ; i< cluster_stack_cnt ; i++)
+	{
+	  if( cluster_struct_array[i].xpos > -0.4 && cluster_struct_array[i].xpos < - 0.05) // small slice to stay away from mirror boundaries for a test
+	    {
+	      h_grinch_cluster_size_cut -> Fill(cluster_struct_array[i].size);
+	    }
+	}
+
+      
+      Double_t x_diff = 0;
+      Double_t y_diff = 0;
+      Double_t r_diff =0;
+      Double_t ri = 0;
+      Double_t rj = 0;
+      if (cluster_stack_cnt >= 2)
+	{
+	  for (Int_t i = 0 ; i < cluster_stack_cnt -1 ; i++)
+	    {
+	      for (Int_t j = i+1 ; j< cluster_stack_cnt ; j++)
+		{
+		  if( cluster_struct_array[i].xpos > -0.4 && cluster_struct_array[i].xpos < - 0.05 && cluster_struct_array[j].xpos > -0.4 && cluster_struct_array[j].xpos < - 0.05) // small slice to stay away from mirror boundaries for now
+		    {
+
+		      ri =  0.5 * 0.0310 *sqrt( pow(cluster_struct_array[i].horizspread,2) + pow(cluster_struct_array[i].vertspread,2));
+		      rj =  0.5 * 0.0310 *sqrt( pow(cluster_struct_array[j].horizspread,2) + pow(cluster_struct_array[j].vertspread,2));
+		      x_diff = abs(cluster_struct_array[i].xpos - cluster_struct_array[j].xpos);
+		      y_diff = abs(cluster_struct_array[i].ypos - cluster_struct_array[j].ypos);
+		      r_diff = sqrt( x_diff *x_diff + y_diff*y_diff);
+		      h_grinch_cluster_radius_ana ->Fill( ri + rj - r_diff);
+		      // if (ri +rj -r_diff < -0.03)//should be only uncorrelated with <-0.03 cut. May have worked? need to think about it more 
+		      // 	{
+		      // 	  h_grinch_cluster_xdiff ->Fill(x_diff);
+		      // 	  h_grinch_cluster_ydiff ->Fill(y_diff);
+		      // 	  h_grinch_cluster_xdiff_ydiff ->Fill(y_diff,x_diff);
+		      // 	  h_grinch_cluster_rdiff ->Fill(r_diff);
+		      // 	}
+
+		      // ri = 0.5* cluster_struct_array[i].vertspread * 0.0310;
+		      //rj = 0.5* cluster_struct_array[j].vertspread * 0.0310;
+
+		      if(cluster_struct_array[i].size == 2 && cluster_struct_array[j].size ==2 )// what about only clusters sized 2 to keep things simple
+			{
+			  h_grinch_cluster_xdiff ->Fill(x_diff);
+			  h_grinch_cluster_ydiff ->Fill(y_diff);
+			  h_grinch_cluster_xdiff_ydiff ->Fill(y_diff,x_diff);
+			  h_grinch_cluster_rdiff ->Fill(r_diff);
+			}
+		    }
+		  
+		}
+	    }
+	}
       
 
       //for (Int_t i = 0 ; i < cluster_stack_cnt ; i++)
@@ -1234,6 +1389,30 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
      projx = tr_x[0] + tan(tr_th[0])*grinch_distance;
      projy = tr_y[0] + tan(tr_ph[0])*grinch_distance;
 
+
+      for (Int_t i = 0 ; i < cluster_stack_cnt  ; i++)
+	{
+	  if(cluster_struct_array[i].size >2)
+	    {
+	      if (projx <= -0.55)
+		{
+		  h_grinch_mirror_1_projy_ypos ->Fill(projy, cluster_struct_array[i].ypos);
+		}
+	      if (projx >= -0.4 && projx < -0.1)
+		{
+		  h_grinch_mirror_2_projy_ypos ->Fill(projy, cluster_struct_array[i].ypos);
+		}
+	      if (projx > 0.1 && projx < 0.4)
+		{
+		  h_grinch_mirror_3_projy_ypos ->Fill(projy, cluster_struct_array[i].ypos);
+		}
+	      if (projx > 0.6)
+		{
+		  h_grinch_mirror_4_projy_ypos ->Fill(projy, cluster_struct_array[i].ypos);
+		}  
+	    }
+	}
+
      h_grinch_projx -> Fill(projx);
      h_grinch_projy -> Fill(projy);
 
@@ -1246,13 +1425,15 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 	 grinch_dx[i] = cluster_xpos_ordered[i] - projx;
 	 grinch_dy[i] = cluster_ypos_ordered[i] - projy;
 
-	 if(ClusterSize_ordered[i] > 2)
+	 if(ClusterSize_ordered[i] >= 2)
 	   {
 	     h_grinch_cluster_dx ->Fill(grinch_dx[i]);
 	     h_grinch_cluster_dy ->Fill(grinch_dy[i]);
 
-	     h_grinch_cluster_projx_xpos ->Fill(cluster_xpos_ordered[i], projx);
+	    
+	     h_grinch_cluster_projx_xpos ->Fill(projx, cluster_xpos_ordered[i]);
 	     h_grinch_cluster_projy_ypos ->Fill(cluster_ypos_ordered[i], projy);
+	       
 	     
 	     cluster_of_three_or_more_pmts_cnt ++;
 	     
@@ -1324,7 +1505,8 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
      	 h_grinch_cluster_tr_vert_proj_vs_cluster_vert ->Fill(projx,cluster_vert_ordered[min_tracker]); 
      	 h_grinch_cluster_tr_horiz_proj_vs_cluster_horiz ->Fill(projy,cluster_horiz_ordered[min_tracker]);
 	 h_grinch_cluster_projx_xpos_best ->Fill(cluster_xpos_ordered[min_tracker], projx);
-	 h_grinch_cluster_projy_ypos_best ->Fill(cluster_ypos_ordered[min_tracker], projy);
+	 h_grinch_cluster_projy_ypos_best ->Fill(projy, cluster_ypos_ordered[min_tracker]);
+	 h_grinch_cluster_size_best ->Fill(ClusterSize_ordered[min_tracker]);
 
 	  if(cluster_of_three_or_more_pmts_cnt > 1)
 	    {
@@ -1675,7 +1857,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 
     
       // //writing to a file NEED TO UNCOMMENT 
-      ofstream fw(Form("/adaqfs/home/a-onl/sbs/Grinch_replay/grinch/macros/textfiles/offsets_%d_%d.txt",nrun,max), std::ofstream::out);
+      ofstream fw(Form("/w/halla-scshelf2102/sbs/msatnik/GRINCH_macros/textfiles/offsets_%d_%d.txt",nrun,max), std::ofstream::out);
       if (fw.is_open())
 	{
 	  fw<<"PMT number"<<"\n";
@@ -2288,10 +2470,14 @@ void Fill_Cluster_Histos_struct(struct Cluster cluster_struct_array[], Int_t ent
   Int_t pmt;
   Int_t LE;
   Int_t ToT;
+
+  Double_t projx = tr_x[0] + tan(tr_th[0])*grinch_distance;
+  Double_t projy = tr_y[0] + tan(tr_ph[0])*grinch_distance;
+  // && abs(cluster_struct_array[i].xpos - projx)<0.15
  
   for (Int_t i = 0; i < entries ; i++)
     {
-      if (cluster_struct_array[i].size > 2){
+      if (cluster_struct_array[i].size > 1 && abs(cluster_struct_array[i].xpos - projx)<0.15){
 	h_grinch_cluster_tmean -> Fill(cluster_struct_array[i].mean_time);
 	h_grinch_cluster_variance ->Fill(cluster_struct_array[i].sqrt_variance);
 	h_grinch_cluster_size -> Fill(cluster_struct_array[i].size);
@@ -2299,6 +2485,10 @@ void Fill_Cluster_Histos_struct(struct Cluster cluster_struct_array[], Int_t ent
 	h_grinch_cluster_center_ypos -> Fill(cluster_struct_array[i].ypos);
 	h_grinch_cluster_center ->Fill(cluster_struct_array[i].col,cluster_struct_array[i].col);
 	h_grinch_cluster_spread->Fill(cluster_struct_array[i].horizspread,cluster_struct_array[i].vertspread);
+	h_grinch_cluster_ToT_sum ->Fill(cluster_struct_array[i].ToT_sum);
+	h_grinch_cluster_ToT_sum_vs_size -> Fill(cluster_struct_array[i].ToT_sum, cluster_struct_array[i].size);
+	h_grinch_cluster_tmean_size ->Fill(cluster_struct_array[i].size, cluster_struct_array[i].mean_time);
+	//plot vs prshower energy?
 
 	for (Int_t j = 0 ; j < cluster_struct_array[i].size ; j++)
 	  {
@@ -2308,10 +2498,13 @@ void Fill_Cluster_Histos_struct(struct Cluster cluster_struct_array[], Int_t ent
 
 	    h_grinch_cluster_elem -> Fill(pmt);
 	    h_grinch_cluster_le_elem ->Fill(pmt, LE);
+	    h_grinch_cluster_le_elem_corr ->Fill(pmt, LE - LE_offset[pmt]);
 	    h_grinch_cluster_tot_elem ->Fill(pmt, ToT);
 	    h_grinch_cluster_le[pmt]->Fill(LE);
+	    h_grinch_cluster_le_corr[pmt]->Fill(LE - LE_offset[pmt]);
 	    h_grinch_cluster_tot[pmt]->Fill(ToT);
 	    h_grinch_cluster_le_all -> Fill(LE);
+	    h_grinch_cluster_le_all_corr -> Fill(LE -LE_offset[pmt]);
 	    h_grinch_cluster_tot_all ->Fill(ToT);
 	    h_grinch_cluster_le_tot[pmt] ->Fill(LE, ToT);
 	  }
@@ -2335,7 +2528,7 @@ void Fill_Cluster_Histos(stack <Int_t> inputstack, Int_t index)
       PMT = inputstack.top();
       inputstack.pop();
       root_id = root_index_array[PMT];//get the index that the branches need in order to look at the specific PMT for this event
-      h_grinch_cluster_le_elem -> Fill(PMT,tdcGLe[root_id] - hodo_tmean);
+      // h_grinch_cluster_le_elem -> Fill(PMT,tdcGLe[root_id] - hodo_tmean);
       // h_grinch_cluster_te_elem -> Fill(PMT,tdcGTe[root_id]);
       //h_grinch_cluster_tot_elem -> Fill(PMT,tdcGTot[root_id]);
       h_grinch_cluster_mult_elem -> Fill(PMT,tdcGMult[root_id]);

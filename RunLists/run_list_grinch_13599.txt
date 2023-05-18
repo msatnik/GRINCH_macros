@@ -1,0 +1,11 @@
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg1_1_1.root
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg12_12_1.root
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg48_48_1.root
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg14_14.root
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg21_21.root
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg49_49.root
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg104_104_1.root
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg94_94_1.root
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg65_65.root
+/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg71_71.root
+endlist

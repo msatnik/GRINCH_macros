@@ -1,0 +1,18 @@
+#####################################
+#sseeds 2.28.23 - Setup file for  SBS8. Modified by msatnik.
+#####################################
+#/volatile/halla/sbs/sbs-gmn/GMN_REPLAYS/pass2/rootfiles/e1209019_fullreplay_13487_stream0_seg70_70.root
+#/volatile/halla/sbs/sbs-gmn/GMN_REPLAYS/pass2/rootfiles/e1209019_fullreplay_13487*
+#/volatile/halla/sbs/sbs-gmn/GMN_REPLAYS/pass2/rootfiles/e1209019_fullreplay_13450_stream0_seg15_15.root
+#/volatile/halla/sbs/sbs-gmn/GMN_REPLAYS/pass2/rootfiles/e1209019_fullreplay_13656_stream0_seg9_9.root
+/volatile/halla/sbs/sbs-gmn/GMN_REPLAYS/pass2/rootfiles/e1209019_fullreplay_13656*
+endlist
+bb.tr.n==1&&bb.grinch_tdc.clus.trackindex!=-1&&bb.grinch_tdc.clus.size>=1&&bb.grinch_tdc.clus.adc>0
+endcut
+tFitMin 40
+t_trig 510
+E_e 5.9648
+HCal_d 11.0
+HCal_th 29.4
+W2_mean 0.755055
+W2_sig 0.152419

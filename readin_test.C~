@@ -1,0 +1,33 @@
+
+#include <ctime>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <TChain.h>
+#include <TSystem.h>
+#include <TStopwatch.h>
+#include "TChain.h"
+#include "TTree.h"
+#include "TFile.h"
+#include "TMatrixD.h"
+#include "TVectorD.h"
+#include "TObjString.h"
+#include "TObjArray.h"
+#include "TCut.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TMath.h"
+#include "TLegend.h"
+#include "TVector3.h"
+#include "TGraphErrors.h"
+#include "TLorentzVector.h"
+
+/// modified from sseeds program rf_study.C for example on reading in from a config file and writing out to a tree.  
+
+
+void readin_test(){ //main
+TChain *C = new TChain("T");
+Double_t tFitMin = 30; // Minimum number of entries per channel to calibrate ADC/TDC time
+
+}
+//end main

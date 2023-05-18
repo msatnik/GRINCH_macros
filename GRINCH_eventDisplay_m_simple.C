@@ -227,7 +227,7 @@ void GRINCH_eventDisplay_m_simple()//main
   //inputroot="../rootfiles/grinch_13369_fev_0_nev_-1_fseg_0_lseg_0.root";
   // inputroot = "../rootfiles/grinch_13620_fev_0_nev_-1_fseg_0_lseg_0.root";
 
-  inputroot = "/volatile/halla/sbs/msatnik/GMN_Replays_local/e1209019_fullreplay_13719_stream0_seg0_0.root";
+  inputroot = "/volatile/halla/sbs/seeds/rootfiles/hcal_gmn_fullreplay_13559_stream0_seg1_1_1.root";
 
 
   file = new TFile(inputroot); 
