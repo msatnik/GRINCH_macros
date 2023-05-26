@@ -10,7 +10,7 @@ void Plot_W2(){
 
     gStyle->SetOptStat(0);
     //Get pre-ecal energy dist
-    TFile *f1 = TFile::Open("../output/sbs9_13747.root");
+    TFile *f1 = TFile::Open("../output/sbs9_big.root");
     TH1D *h1= (TH1D*)f1->Get("h_W2_gr_anticut");
     //TH1D *h1_norm =  (TH1D*)(h1 ->Clone("h1_norm"));
     //h1_norm ->Scale(1./h1_norm->Integral(),"width");
@@ -19,7 +19,6 @@ void Plot_W2(){
     //h1_norm ->SetFillColor(30);
     //h1_norm ->SetFillStyle(3003);
     //h1_norm->SetLineColor(30);
-    //h1->GetXaxis()->SetRange(1,200);
     h1 ->SetLineWidth(3);
     h1 ->SetLineColor(30);
     // h1->SetFillColor(30);
@@ -54,7 +53,7 @@ void Plot_W2(){
     h3_scaled->SetLineColor(kViolet - 6);
     //h3_scaled ->SetFillColor(kViolet - 6);
     //h3_scaled ->SetFillStyle(3003);
-    h3_scaled ->Scale(2.95);
+    h3_scaled ->Scale(3.4);
 
 
 
@@ -92,7 +91,6 @@ void Plot_W2(){
     h4 ->Add(h3_scaled,-1);
     h4 ->SetLineWidth(3);
     h4 ->SetLineColor(30);
-
     h4 ->Draw("hist");
 
    
@@ -100,14 +98,14 @@ void Plot_W2(){
      legend2->SetTextSize(0.035);
      legend2->SetHeader("subtracted");
      legend2->AddEntry(h4,"gr cut - background","l");
-     legend2->Draw();
+     // legend2->Draw();
 
 
      TH1D *h5 = (TH1D*)f1->Get("h_W2");
       h5 ->SetLineWidth(2);
       h5 ->SetLineColor(kBlue - 6);
       TH1D *h3_scaled_big =  (TH1D*)(h3 ->Clone("h3_scaled_big"));
-      h3_scaled_big -> Scale(6);
+      h3_scaled_big -> Scale(14);
       h3_scaled_big ->SetLineWidth(2);
       h3_scaled_big ->SetLineColor(kViolet - 6);
 
@@ -122,7 +120,19 @@ void Plot_W2(){
       legend3->AddEntry(h3_scaled_big,"scaled background","l");
      legend3->Draw();
 
-      
+
+     c1 ->cd(4);      
+     TH1D *h6 =  (TH1D*)(h5 ->Clone("h6"));
+     h6 ->Add(h3_scaled_big,-1);
+     h6 ->SetLineWidth(3);
+     h6 ->SetLineColor(30);
+     h6 ->Draw("hist");
+     
+      auto legend4= new TLegend(0.43,0.7,0.89,0.89);
+     legend4->SetTextSize(0.035);
+     legend4->SetHeader("subtracted");
+     legend4->AddEntry(h4,"W2 - background","l");
+     // legend4->Draw();
 
 
     

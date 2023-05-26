@@ -40,6 +40,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   Double_t W2_mean = 0.93; // Mean of W at current kinematic
   Double_t W2_sig = 0.039; // Width of W at current kinematic
   Double_t GR_cut = 30; //GRINCH ToT sum cutoff 
+  Double_t PS_cut = 0.2; //PS energy cutoff
 
   cout<<"kine: "<<kine<<endl;
 
@@ -108,11 +109,16 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
         GR_cut = sval.Atof();
 	cout << "Loading Grinch ToT cut: " << GR_cut << endl;
       }
+      if( skey == "PS_cut" ){
+	TString sval = ( (TObjString*)(*tokens)[1] )->GetString();
+        PS_cut = sval.Atof();
+	cout << "Loading Preshower e cut: " << PS_cut << endl;
+      }
     }
     delete tokens;
   }
 
-  cout<<endl<<"Populating list with global cut. May take a few minutes...."<<endl;
+  cout<<endl<<"Populating list with global cut. May take a few minutes.... hold tight!"<<endl;
   TEventList *elist = new TEventList("elist","Elastic Event List");
   C->Draw(">>elist",globalcut);
 
@@ -215,6 +221,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   TH1D* h_W2_gr_anticut =  new TH1D("h_W2_gr_anticut",";W2 with anticut on grinch;",200,0,2);
   TH1D* h_W2_gr_ps_anticut= new TH1D("h_W2_gr_ps_anticut",";W2 with anticut on grinch and ps;",200,0,2);
   TH1D* h_W2_ps_anticut= new TH1D("h_W2_ps_anticut",";W2 with anticut on ps;",200,0,2);
+  TH1D* h_W2_ps_cut= new TH1D("h_W2_ps_cut",";W2 with cut on ps;",200,0,2);
   TH1D* h_W2_gr_cut =  new TH1D("h_W2_gr_cut",";W2 with cut on grinch;",200,0,2);
   TH1D* h_W2_elastic =  new TH1D("h_W2_elastic",";W2 with elastic cuts;",200,0,2);
   TH1D* h_W2_elastic_trcut =  new TH1D("h_W2_elastic_trcut",";W2 with elastic cuts and grinch track cut;",200,0,2);
@@ -225,7 +232,8 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   TH2D* h_BBsh_ps_e = new TH2D("h_BBsh_ps_e", "; sh_e  ; ps_e ", 100,0,3,100,0,3 );
   TH1D* h_BB_e_p =  new TH1D("h_BB_e_p",";tot_e / p;" ,200, 0, 2);
   TH1D* h_BBps_sh_e = new TH1D("h_BBps_sh_e",";sh_e + ps_e ;",200,0,6);
-  TH1D* h_BBps_grcut = new TH1D("h_BBps_grcut",";preshower e (cut on clus tot sum) ; ",200,0,3);
+  TH1D* h_BBps_grcut = new TH1D("h_BBps_grcut",";preshower e (cut on clus tot sum) ; ",200,0,2);
+  TH1D* h_BBps_granticut = new TH1D("h_BBps_granticut",";preshower e (anticut on clus tot sum) ; ",200,0,2);
 
   // GRINCH best cluster variables 
   TH1D* h_BBgr_clus_adc = new TH1D("h_BBgr_clus_adc", ";grinch clus ToT sum;",200,0,200);
@@ -334,25 +342,31 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
       h_BBgr_clus_adc_ps ->Fill( BBps_e, BBgr_clus_adc);
       h_BBgr_clus_size_adc ->Fill(BBgr_clus_adc,BBgr_clus_size);
 
-      if (BBps_e <0.2) 
+      if (BBps_e < PS_cut) 
 	{
 	  h_W2_ps_anticut ->Fill(kineW2);
 	}
-      if (BBgr_clus_adc <GR_cut || BBgr_clus_trackindex == -1)
+      if ((BBgr_clus_adc <GR_cut || BBgr_clus_trackindex == -1 ))
 	{
 	  h_W2_gr_anticut ->Fill(kineW2);
+	  h_BBps_granticut->Fill(BBps_e);
 	}
-      if (BBps_e <0.2 && (BBgr_clus_adc <GR_cut || BBgr_clus_trackindex == -1 ))
+      if (BBps_e <PS_cut && (BBgr_clus_adc <GR_cut || BBgr_clus_trackindex == -1 ))
 	{
 	  h_W2_gr_ps_anticut ->Fill(kineW2);
 	}
-      if(BBgr_clus_adc>GR_cut && BBgr_clus_trackindex !=-1)
+      if(BBgr_clus_adc>GR_cut && BBgr_clus_trackindex !=-1 && BBps_e >0)
 	{
 	  h_W2_gr_cut ->Fill(kineW2);
+	  h_BBps_grcut ->Fill(BBps_e);
+	}
+      if (BBps_e >PS_cut)
+	{
+	  h_W2_ps_cut ->Fill(kineW2);
 	}
 
 
-      if(BBps_e > 0.2 && BBps_e+BBsh_e >=1.3 && HCAL_e >0.1 && abs(e_over_p -1) <0.2 )
+      if(BBps_e > PS_cut && BBps_e+BBsh_e >=1.3 && HCAL_e >0.1 && abs(e_over_p -1) <0.2 )
 	{
 	  h_W2_elastic ->Fill(kineW2);
 
