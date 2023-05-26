@@ -1,0 +1,39 @@
+#include <TSystem.h>
+#include <TChain.h>
+#include <TString.h>
+#include "TFile.h"
+#include "TTree.h"
+#include <TNtuple.h>
+#include "TCanvas.h"
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include "TMath.h"
+#include "TH1F.h"
+#include <TH2.h>
+#include <TStyle.h>
+#include <TGraph.h>
+#include <TROOT.h>
+#include <TMath.h>
+#include <TLegend.h>
+#include <TPaveLabel.h>
+#include <TProfile.h>
+#include <TPolyLine.h>
+#include <TObjArray.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <math.h>
+
+void grW2fitter(){ //MAIN
+
+  TFile *f1 = TFile::Open("../output/sbs9_big.root");
+  TH1D *h_W2_gr_anticut= (TH1D*)f1->Get("h_W2_gr_anticut");
+  TH1D *h_W2_ps_anitcut = (TH1D*)f1->Get("h_W2_ps_anticut");
+  TH1D *h_W2_gr_ps_anticut = (TH1D*)f1->Get("h_W2_gr_ps_anticut");
+  TH1D *h_W2 = (TH1D*)f1->Get("h_W2");
+
+
+
+
+}// end MAIN

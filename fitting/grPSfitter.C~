@@ -1,0 +1,151 @@
+#include <TSystem.h>
+#include <TChain.h>
+#include <TString.h>
+#include "TFile.h"
+#include "TTree.h"
+#include <TNtuple.h>
+#include "TCanvas.h"
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include "TMath.h"
+#include "TH1F.h"
+#include <TH2.h>
+#include <TStyle.h>
+#include <TGraph.h>
+#include <TROOT.h>
+#include <TMath.h>
+#include <TLegend.h>
+#include <TPaveLabel.h>
+#include <TProfile.h>
+#include <TPolyLine.h>
+#include <TObjArray.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <math.h>
+
+Double_t poly(Double_t *x, Double_t *par);
+Double_t Gaus(Double_t *x, Double_t *par);
+Double_t poly_Gaus(Double_t *x, Double_t *par);
+Double_t skewed_gaus(Double_t *x, Double_t *par);
+Double_t poly_skewed_gaus(Double_t *x, Double_t *par);
+Double_t poly5_skewed_gaus(Double_t *x, Double_t *par);
+Double_t poly5(Double_t *x, Double_t *par);
+Double_t poly4(Double_t *x, Double_t *par);
+Double_t poly4_skewed_gaus(Double_t *x, Double_t *par);
+
+void grPSfitter(){// MAIN
+  TFile *f1 = TFile::Open("../output/sbs9_big.root"); // Load rootfile
+
+  // Set up Canvas
+  TCanvas *c1 = new TCanvas();
+  c1->Divide(2,2);
+
+  // Load Histograms
+  TH1D *h_BBps_e = (TH1D*)f1->Get("h_BBps_e");
+  TH1D *h_BBps_grcut = (TH1D*)f1->Get("h_BBps_grcut");
+  TH1D *h_BBps_granticut = (TH1D*)f1->Get("h_BBps_granticut");
+
+
+
+
+}// END MAIN
+
+
+
+// FIT FUNCTIONS
+Double_t poly(Double_t *x, Double_t *par)
+{
+  Double_t fit = par[0] + par[1] * x[0] + par[2] * pow(x[0],2) + par[3] * pow(x[0],3) + par[4] * pow(x[0],4) + par[5] * pow(x[0],5) +  par[6] * pow(x[0],6);
+  return fit;
+}
+
+Double_t Gaus(Double_t *x, Double_t *par)
+{
+  Double_t height = par[0];
+  Double_t mean = par[1];
+  Double_t sigma = par[2];
+
+  Double_t fit = height * exp(-0.5 * pow((x[0] - mean)/sigma,2));
+  return fit;
+}
+
+
+Double_t poly_Gaus(Double_t *x, Double_t *par)
+{
+   Double_t height = par[7];
+   Double_t mean = par[8];
+   Double_t sigma = par[9];
+
+   Double_t fit = par[0] + par[1] * x[0] + par[2] * pow(x[0],2) + par[3] * pow(x[0],3) + par[4] * pow(x[0],4) + par[5] * pow(x[0],5) +  par[6] * pow(x[0],6)+  height * exp(-0.5 * pow((x[0] - mean)/sigma,2));
+   return fit; 
+}
+
+Double_t poly_2Gaus(Double_t *x, Double_t *par)
+{
+   Double_t height = par[7];
+   Double_t mean = par[8];
+   Double_t sigma = par[9];
+
+   Double_t height2 = par[10];
+   Double_t mean2 = par[11];
+   Double_t sigma2 = par[12];
+
+   Double_t fit = par[0] + par[1] * x[0] + par[2] * pow(x[0],2) + par[3] * pow(x[0],3) + par[4] * pow(x[0],4) + par[5] * pow(x[0],5) +  par[6] * pow(x[0],6)+  height * exp(-0.5 * pow((x[0] - mean)/sigma,2) + height2 * exp(-0.5 * pow((x[0] - mean2)/sigma2,2) );
+   return fit; 
+}
+
+Double_t skewed_gaus(Double_t *x, Double_t *par)
+{
+  Double_t amp = par[0];
+  Double_t mean = par[1];
+  Double_t sigma = par[2];
+  Double_t alpha = par[3];
+  Double_t fit = amp * exp(-0.5 * pow((x[0] - mean)/sigma,2)) * (1 + TMath::Erf( 0.7071 * alpha * (x[0] - mean)/sigma) );
+  return fit;
+}
+
+Double_t poly_skewed_gaus(Double_t *x, Double_t *par)
+{
+  Double_t amp = par[7];
+  Double_t mean = par[8];
+  Double_t sigma = par[9];
+  Double_t alpha = par[10];
+  Double_t fit = par[0] + par[1] * x[0] + par[2] * pow(x[0],2) + par[3] * pow(x[0],3) + par[4] * pow(x[0],4) + par[5] * pow(x[0],5) +  par[6] * pow(x[0],6) +  amp * exp(-0.5 * pow((x[0] - mean)/sigma,2)) * (1 + TMath::Erf( 0.7071 * alpha * (x[0] - mean)/sigma) );
+  return fit;
+}
+
+
+Double_t poly5(Double_t *x, Double_t *par)
+{
+  Double_t fit = par[0] + par[1] * x[0] + par[2] * pow(x[0],2) + par[3] * pow(x[0],3) + par[4] * pow(x[0],4) + par[5] * pow(x[0],5);
+  return fit;
+}
+
+Double_t poly4(Double_t *x, Double_t *par)
+{
+  Double_t fit = par[0] + par[1] * x[0] + par[2] * pow(x[0],2) + par[3] * pow(x[0],3) + par[4] * pow(x[0],4) ;
+  return fit;
+}
+
+
+Double_t poly5_skewed_gaus(Double_t *x, Double_t *par)
+{
+  Double_t amp = par[6];
+  Double_t mean = par[7];
+  Double_t sigma = par[8];
+  Double_t alpha = par[9];
+  Double_t fit = par[0] + par[1] * x[0] + par[2] * pow(x[0],2) + par[3] * pow(x[0],3) + par[4] * pow(x[0],4) + par[5] * pow(x[0],5) +  amp * exp(-0.5 * pow((x[0] - mean)/sigma,2)) * (1 + TMath::Erf( 0.7071 * alpha * (x[0] - mean)/sigma) );
+  return fit;
+}
+
+Double_t poly4_skewed_gaus(Double_t *x, Double_t *par)
+{
+  Double_t amp = par[5];
+  Double_t mean = par[6];
+  Double_t sigma = par[7];
+  Double_t alpha = par[8];
+  Double_t fit = par[0] + par[1] * x[0] + par[2] * pow(x[0],2) + par[3] * pow(x[0],3) + par[4] * pow(x[0],4) +  amp * exp(-0.5 * pow((x[0] - mean)/sigma,2)) * (1 + TMath::Erf( 0.7071 * alpha * (x[0] - mean)/sigma) );
+  return fit;
+}
