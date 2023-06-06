@@ -140,7 +140,9 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   // GRINCH (only track matched I think)
   Double_t BBgr_allclus_tmean[1000], BBgr_allclus_adc[1000], BBgr_allclus_size[1000], BBgr_allclus_trms[1000], BBgr_allclus_tot_mean[1000], BBgr_allclus_trackindex[1000], BBgr_allclus_xmean[1000], BBgr_allclus_ymean[1000]; 
   Double_t BBgr_clus_tmean, BBgr_clus_adc, BBgr_clus_size, BBgr_clus_trms, BBgr_clus_tot_mean, BBgr_clus_trackindex, BBgr_clus_xmean, BBgr_clus_ymean; 
+  Double_t bb_tdctrig_tdc[1000], bb_tdctrig_tdcelemID[1000];
   Int_t Nclusters; 
+  Int_t Ndata_bb_tdctrig_tdcelemID;
 
   // Declare root tree variables and set values to memory locations in root file
   // Turn off all branches
@@ -156,6 +158,9 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   C->SetBranchStatus( "bb.ps.e", 1 );
   C->SetBranchStatus( "bb.sh.e", 1 );
   C->SetBranchStatus( "bb.hodotdc.clus.tmean", 1 );
+  C->SetBranchStatus("bb.tdctrig.tdc",1);
+  C->SetBranchStatus("bb.tdctrig.tdcelemID",1);
+  C->SetBranchStatus("Ndata.bb.tdctrig.tdcelemID",1);
   C->SetBranchStatus( "e.kine.W2", 1 );
   C->SetBranchStatus("Ndata.bb.grinch_tdc.allclus.adc",1);
   C->SetBranchStatus("bb.grinch_tdc.allclus.adc",1);
@@ -187,6 +192,9 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   C->SetBranchAddress( "bb.ps.e", &BBps_e );
   C->SetBranchAddress( "bb.sh.e", &BBsh_e );
   C->SetBranchAddress( "bb.hodotdc.clus.tmean", &HODOtmean );
+  C->SetBranchAddress("bb.tdctrig.tdc",&bb_tdctrig_tdc);
+  C->SetBranchAddress("bb.tdctrig.tdcelemID",&bb_tdctrig_tdcelemID);
+  C->SetBranchAddress("Ndata.bb.tdctrig.tdcelemID",&Ndata_bb_tdctrig_tdcelemID);
   C->SetBranchAddress( "e.kine.W2", &kineW2 );
 
   C->SetBranchAddress("Ndata.bb.grinch_tdc.allclus.adc",&Nclusters);
@@ -230,15 +238,26 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   TH1D* h_HCAL_e = new TH1D("h_HCAL_e",";HCAL e;",200,0,3);
   TH1D* h_BBsh_e =  new TH1D("h_BBsh_e",";BBsh_e;" ,200, 0, 3);
   TH2D* h_BBsh_ps_e = new TH2D("h_BBsh_ps_e", "; sh_e  ; ps_e ", 100,0,3,100,0,3 );
-  TH1D* h_BB_e_p =  new TH1D("h_BB_e_p",";tot_e / p;" ,200, 0, 2);
+  TH1D* h_BB_e_p =  new TH1D("h_BB_e_p",";total shower energy/ p;" ,200, 0, 2);
   TH1D* h_BBps_sh_e = new TH1D("h_BBps_sh_e",";sh_e + ps_e ;",200,0,6);
   TH1D* h_BBps_grcut = new TH1D("h_BBps_grcut",";preshower e (cut on clus tot sum) ; ",200,0,2);
   TH1D* h_BBps_granticut = new TH1D("h_BBps_granticut",";preshower e (anticut on clus tot sum) ; ",200,0,2);
+
+  // RF test
+  TH1D *h_bbtrigger =  new TH1D("h_bbtrigger", ";bb trigger;", 250, 335,385);
+  TH1D *h_rftime =  new TH1D("h_rftime", ";rftime;", 500, 0,250);
+  TH1D *h_bbtrigger_diff =  new TH1D("h_bbtrigger_diff", ";bb trigger - (gr clus tmean - hodo tmean);", 250, 335,385);
+  TH1D *h_rftime_diff =  new TH1D("h_rftime_diff", ";rftime - (gr clus tmean - hodo tmean);", 500, 0,250);
+  TH2D *h_rftime_BBgr_clus_tmean = new TH2D("h_rftime_BBgr_clus_tmean", "; rftime ; gr clus tmean",500,0,250,60,-30,30);
+  TH2D *h_rftime_BBgr_clus_tmean_hodosub = new TH2D("h_rftime_BBgr_clus_tmean_hodosub", "; rftime ; gr clus tmean - hodo tmean",500,0,250,60,-30,30);
+  TH2D *h_bbtrigger_BBgr_clus_tmean_hodosub = new TH2D("h_bbtrigger_BBgr_clus_tmean_hodosub", "; bb trigger ; gr clus tmean - hodo tmean",250,335,385,60,-30,30);
+  TH2D *h_bbtrigger_BBgr_clus_tmean = new TH2D("h_bbtrigger_BBgr_clus_tmean", "; bb trigger; gr clus tmean",250,335,385,60,-30,30);
 
   // GRINCH best cluster variables 
   TH1D* h_BBgr_clus_adc = new TH1D("h_BBgr_clus_adc", ";grinch clus ToT sum;",200,0,200);
   TH1D* h_BBgr_clus_size =  new TH1D("h_BBgr_clus_size", ";bb.grinch_tdc.clus.size;",20,0,20);
   TH1D* h_BBgr_clus_tmean =  new TH1D("h_BBgr_clus_tmean", ";bb.grinch_tdc.clus.t_mean - hodo_tmean;",60,-30,30);
+  TH1D* h_BBgr_clus_tmean_nohodo =  new TH1D("h_BBgr_clus_tmean_nohodo", ";bb.grinch_tdc.clus.t_mean;",60,-30,30);
   TH1D* h_BBgr_clus_trms =  new TH1D("h_BBgr_clus_trms", ";bb.grinch_tdc.clus.t_rms;",50,0,5);
   TH1D* h_BBgr_clus_tot_mean =  new TH1D("h_BBgr_clus_tot_mean", ";bb.grinch_tdc.clus.tot_mean;",100,0,50);
   TH2D* h_BBgr_clus_tot_mean_size =  new TH2D("h_BBgr_clus_tot_mean_size", ";cluster size;bb.grinch_tdc.clus.tot_mean; clus;",15,0,15,100,0,50);
@@ -314,6 +333,36 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 	  h_BBgr_clus_xmean_projx ->Fill(projx, BBgr_clus_xmean);
 	}
 
+
+
+      // Looking at RF time
+      Double_t rftime;
+      Double_t bbtrigger;
+      Double_t diff;
+      Double_t difftrig;
+      for (Int_t ihit = 0; ihit< Ndata_bb_tdctrig_tdcelemID ; ihit++)
+      	{
+      	  if (bb_tdctrig_tdcelemID[ihit] ==4 && BBgr_clus_size !=0 && BBgr_clus_trackindex != -1 && BBgr_clus_adc > GR_cut )
+      	    {
+      	      rftime = bb_tdctrig_tdc[ihit];// 
+      	      h_rftime ->Fill(rftime);
+      	      h_rftime_BBgr_clus_tmean ->Fill(rftime, BBgr_clus_tmean);
+      	      h_rftime_BBgr_clus_tmean_hodosub ->Fill(rftime, BBgr_clus_tmean - HODOtmean[0]);
+      	      diff =  rftime - (BBgr_clus_tmean - HODOtmean[0] ); 
+      	      h_rftime_diff ->Fill(diff);
+      	    }
+	  if (bb_tdctrig_tdcelemID[ihit] ==5 && BBgr_clus_size !=0 && BBgr_clus_trackindex != -1 && BBgr_clus_adc > GR_cut)
+      	    {
+      	      bbtrigger = bb_tdctrig_tdc[ihit];
+      	      h_bbtrigger ->Fill(bbtrigger);
+      	      h_bbtrigger_BBgr_clus_tmean ->Fill(bbtrigger, BBgr_clus_tmean);
+      	      h_bbtrigger_BBgr_clus_tmean_hodosub ->Fill(bbtrigger, BBgr_clus_tmean - HODOtmean[0]);
+      	      difftrig =  bbtrigger - (BBgr_clus_tmean - HODOtmean[0] ); 
+      	      h_bbtrigger_diff ->Fill(difftrig);
+      	    }
+      	} 
+
+
       // General Histos 
       h_W2 ->Fill(kineW2);
       h_HCAL_e ->Fill(HCAL_e);
@@ -331,7 +380,8 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
       h_BBgr_allclus_Nclusters ->Fill(Nclusters);
       h_BBgr_clus_adc ->Fill(BBgr_clus_adc);
       h_BBgr_clus_size ->Fill(BBgr_clus_size);  
-      h_BBgr_clus_tmean ->Fill(BBgr_clus_tmean - HODOtmean[0]);  
+      //h_BBgr_clus_tmean ->Fill(BBgr_clus_tmean - HODOtmean[0]);  
+      //h_BBgr_clus_tmean_nohodo ->Fill(BBgr_clus_tmean);  
       h_BBgr_clus_trms ->Fill(BBgr_clus_trms);  
       h_BBgr_clus_tot_mean ->Fill(BBgr_clus_tot_mean);  
       h_BBgr_clus_tot_mean_size ->Fill(BBgr_clus_size, BBgr_clus_tot_mean);  
@@ -355,15 +405,35 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 	{
 	  h_W2_gr_ps_anticut ->Fill(kineW2);
 	}
-      if(BBgr_clus_adc>GR_cut && BBgr_clus_trackindex !=-1 && BBps_e >0)
+      if(BBgr_clus_adc>GR_cut && BBgr_clus_trackindex !=-1&& BBps_e >0)
 	{
 	  h_W2_gr_cut ->Fill(kineW2);
+	  //h_BBgr_clus_tmean ->Fill(BBgr_clus_tmean - HODOtmean[0]);  
+	  //h_BBgr_clus_tmean_nohodo ->Fill(BBgr_clus_tmean);  
 	  h_BBps_grcut ->Fill(BBps_e);
 	}
       if (BBps_e >PS_cut)
 	{
 	  h_W2_ps_cut ->Fill(kineW2);
 	}
+      
+      if (BBgr_clus_size > 1)
+	{
+	  h_BBgr_clus_tmean ->Fill(BBgr_clus_tmean - HODOtmean[0]);  
+	  h_BBgr_clus_tmean_nohodo ->Fill(BBgr_clus_tmean);  
+	}
+      if (BBgr_clus_size == 1)
+	{
+	  //h_BBgr_clus_tmean ->Fill(BBgr_clus_tmean - HODOtmean[0]);  
+	  //h_BBgr_clus_tmean_nohodo ->Fill(BBgr_clus_tmean);  
+	}
+       if (BBgr_clus_size == 0)
+	{
+	  // h_BBgr_clus_adc ->Fill(BBgr_clus_adc);
+	  // h_BBgr_clus_tmean ->Fill(BBgr_clus_tmean - HODOtmean[0]);  
+	  //h_BBgr_clus_tmean_nohodo ->Fill(BBgr_clus_tmean);  
+	}
+
 
 
       if(BBps_e > PS_cut && BBps_e+BBsh_e >=1.3 && HCAL_e >0.1 && abs(e_over_p -1) <0.2 )
@@ -388,6 +458,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
       if (projx > -0.4 && projx < -0.1)
 	{
 	  h_BBgr_clus_mirror2 ->Fill(projy, BBgr_clus_ymean);
+
 	}
       if (projx < -0.55)
 	{
@@ -413,6 +484,8 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 	  h_BBgr_allclus_ymean ->Fill(BBgr_allclus_ymean[i]);
 	  h_BBgr_allclus_xmean ->Fill(BBgr_allclus_xmean[i]);
 	  h_BBgr_allclus_xmean_projx ->Fill(projx, BBgr_allclus_xmean[i]);
+
+
 
 	  // Mirror Cuts for every cluster
 	  if (projx > -0.4 && projx < -0.1)
