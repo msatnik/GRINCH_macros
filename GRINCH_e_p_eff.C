@@ -57,12 +57,16 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   //// fit parameters for grinch dx vs th. Second try with better mirror cuts based on the projection to the mirror
   const Double_t GR_dx_th_intercept_mirror1 = 0.170;
   const Double_t GR_dx_th_slope_mirror1=1.361;
+  const Double_t GR_dx_th_sigma_mirror1=0.013;
   const Double_t GR_dx_th_intercept_mirror2 = 0.005;
   const Double_t GR_dx_th_slope_mirror2 = 1.424;
+  const Double_t GR_dx_th_sigma_mirror2=0.012;
   const Double_t GR_dx_th_intercept_mirror3 = 0.0095;
   const Double_t GR_dx_th_slope_mirror3 = 1.339;
+  const Double_t GR_dx_th_sigma_mirror3=0.013;
   const Double_t GR_dx_th_intercept_mirror4 = -0.270;
   const Double_t GR_dx_th_slope_mirror4 = 1.466;
+  const Double_t GR_dx_th_sigma_mirror4=0.011;
   
 
   ///// fist try with less good mirror cuts
@@ -84,21 +88,26 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   const Double_t GR_dy_ph_par1_mirror1 = -1.5;
   const Double_t GR_dy_ph_par2_mirror1 = 10;
   const Double_t GR_dy_ph_par3_mirror1 = -150;
+  const Double_t GR_dy_ph_sigma_mirror1 = 0.023;
 
   const Double_t GR_dy_ph_par0_mirror2 = 0.041;
   const Double_t GR_dy_ph_par1_mirror2 = -1.4;
   const Double_t GR_dy_ph_par2_mirror2 = -5;
   const Double_t GR_dy_ph_par3_mirror2 = -185;
+  const Double_t GR_dy_ph_sigma_mirror2 = 0.020;
 
   const Double_t GR_dy_ph_par0_mirror3 = 0.051;
   const Double_t GR_dy_ph_par1_mirror3 = -1.9;
   const Double_t GR_dy_ph_par2_mirror3 = 0;
   const Double_t GR_dy_ph_par3_mirror3 = -120;
+  const Double_t GR_dy_ph_sigma_mirror3 = 0.025;
 
   const Double_t GR_dy_ph_par0_mirror4 = 0.081;
   const Double_t GR_dy_ph_par1_mirror4 = -1.8;
   const Double_t GR_dy_ph_par2_mirror4 = -25;
   const Double_t GR_dy_ph_par3_mirror4 = 10;
+  const Double_t GR_dy_ph_sigma_mirror4 = 0.020;
+
 
   ///// first try at dy ph pars 
   // const Double_t GR_dy_ph_par0_mirror1 = -0.004;
@@ -122,11 +131,11 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   // const Double_t GR_dy_ph_par3_mirror4 = 0;
 
   const Double_t mirror1_mirror2_boundary_location = -0.59;
-  const Double_t mirror1_mirror2_boundary_uncert = 0.05;
+  const Double_t mirror1_mirror2_boundary_uncert = 0.04;
   const Double_t mirror2_mirror3_boundary_location = 0.01;
-  const Double_t mirror2_mirror3_boundary_uncert = 0.05;
+  const Double_t mirror2_mirror3_boundary_uncert = 0.04;
   const Double_t mirror3_mirror4_boundary_location = 0.63;
-  const Double_t mirror3_mirror4_boundary_uncert = 0.05;
+  const Double_t mirror3_mirror4_boundary_uncert = 0.04;
 
  const Double_t mirror1_max  = mirror1_mirror2_boundary_location - mirror1_mirror2_boundary_uncert;
  const Double_t mirror2_min = mirror1_mirror2_boundary_location + mirror1_mirror2_boundary_uncert;
