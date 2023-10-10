@@ -10,7 +10,7 @@ void Plot_W2(){
 
     gStyle->SetOptStat(0);
     //Get pre-ecal energy dist
-    TFile *f1 = TFile::Open("../output/sbs9_big.root");
+    TFile *f1 = TFile::Open("../output/sbs9_mirror2.root");
     TH1D *h1= (TH1D*)f1->Get("h_W2_gr_anticut");
     //TH1D *h1_norm =  (TH1D*)(h1 ->Clone("h1_norm"));
     //h1_norm ->Scale(1./h1_norm->Integral(),"width");
@@ -73,7 +73,7 @@ void Plot_W2(){
     h1->Draw("hist");
     h2->Draw("hist same");
     h3->Draw("hist same");
-    h3_scaled ->Draw("hist same");
+    //h3_scaled ->Draw("hist same");
    
 
     //Add a legend

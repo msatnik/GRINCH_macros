@@ -37,7 +37,7 @@ Double_t poly4_skewed_gaus(Double_t *x, Double_t *par);
 
 void grW2fitter(){ //MAIN
 
-  TFile *f1 = TFile::Open("../output/sbs9_big.root"); // Load rootfile
+  TFile *f1 = TFile::Open("../output/sbs8_mirror2.root"); // Load rootfile
 
   // Set up Canvas
   TCanvas *c1 = new TCanvas();
@@ -47,11 +47,11 @@ void grW2fitter(){ //MAIN
   c2->Divide(2,1);
 
   // Load histograms
-  TH1D *h_W2_gr_anticut= (TH1D*)f1->Get("h_W2_ps_anticut"); //put back to gr
+  TH1D *h_W2_gr_anticut= (TH1D*)f1->Get("h_W2_gr_anticut"); //put back to gr
   TH1D *h_W2_ps_anitcut = (TH1D*)f1->Get("h_W2_ps_anticut");
   TH1D *h_W2_gr_ps_anticut = (TH1D*)f1->Get("h_W2_gr_ps_anticut");
   TH1D *h_W2 = (TH1D*)f1->Get("h_W2");
-  TH1D *h_W2_gr_cut = (TH1D*)f1->Get("h_W2_ps_cut");//put back to gr
+  TH1D *h_W2_gr_cut = (TH1D*)f1->Get("h_W2_gr_cut");//put back to gr
 
   // Initial values for the fits
   Double_t par0_init = 50;
@@ -229,19 +229,19 @@ void grW2fitter(){ //MAIN
      poly_result ->Draw("same");
      gaus_result ->Draw("same");
      fit_W2_gr_anticut_overall ->Draw("same");
-     fit_background_anticut ->Draw("same");
+     // fit_background_anticut ->Draw("same");
 
-     Double_t integral_gaus = gaus_result ->Integral(0,1.4); // need to account for bin width????
+     Double_t integral_gaus = gaus_result ->Integral(0.55,1.25); // need to account for bin width????
      //cout<<"integral of gaus: "<<integral_gaus <<endl; 
      Double_t counts_gaus =  integral_gaus/width;
      cout<< "counts gaus: "<< counts_gaus <<endl;
 
-     Double_t integral_poly =  poly_result ->Integral(0,1.4);
+     Double_t integral_poly =  poly_result ->Integral(0.55,1.25);
      Double_t counts_poly = integral_poly/width;
      cout<< "counts poly: " <<counts_poly <<endl;
      //cout<< "sum: "<< integral_gaus/width + integral_poly/width <<endl;
  
-     Double_t integral_overall = fit_W2_gr_anticut_overall ->Integral(0,1.4);
+     Double_t integral_overall = fit_W2_gr_anticut_overall ->Integral(0.55,1.25);
      //cout<< "integral of overall fit: "<< integral_overall<<endl;
      cout<<"counts overall: "<<integral_overall/width<<endl;
 
@@ -312,17 +312,17 @@ void grW2fitter(){ //MAIN
      skewed_poly_result ->Draw("same");
      skewed_gaus_result ->Draw("same");
      fit_W2_gr_anticut_overall_skew ->Draw("same");
-     fit_background_anticut ->Draw("same");
+     //fit_background_anticut ->Draw("same");
      
-      Double_t integral_gaus_skew = skewed_gaus_result ->Integral(0,1.4); 
+      Double_t integral_gaus_skew = skewed_gaus_result ->Integral(0.55,1.25); 
       Double_t counts_gaus_skew = integral_gaus_skew/width;
      cout<< "counts skewed gaus: "<< counts_gaus_skew <<endl;
 
-     Double_t integral_poly_skew =  skewed_poly_result ->Integral(0,1.4);
+     Double_t integral_poly_skew =  skewed_poly_result ->Integral(0.55,1.25);
      Double_t counts_poly_skew = integral_poly_skew/width;
      cout<< "counts poly skewed: " << counts_poly_skew<<endl;
     
-     Double_t integral_overall_skew = fit_W2_gr_anticut_overall_skew ->Integral(0,1.4);
+     Double_t integral_overall_skew = fit_W2_gr_anticut_overall_skew ->Integral(0.55,1.25);
      cout<<"counts overall skewed: "<<integral_overall_skew/width<<endl;
   
 
@@ -424,18 +424,18 @@ void grW2fitter(){ //MAIN
      poly_result_cut ->Draw("same");
      gaus_result_cut ->Draw("same");
      fit_W2_gr_cut_overall ->Draw("same");
-     fit_background_anticut_big ->Draw("same");
+     // fit_background_anticut_big ->Draw("same");
 
-     Double_t integral_gaus_cut = gaus_result_cut ->Integral(0,1.4); // need to account for bin width????
+     Double_t integral_gaus_cut = gaus_result_cut ->Integral(0.55,1.25);
      Double_t counts_gaus_cut = integral_gaus_cut/width;
      cout<< "counts gaus for cut: "<< counts_gaus_cut <<endl;
 
-     Double_t integral_poly_cut =  poly_result_cut ->Integral(0,1.4);
+     Double_t integral_poly_cut =  poly_result_cut ->Integral(0.55,1.25);
      Double_t counts_poly_cut = integral_poly_cut/width; 
      cout<< "counts poly: " << counts_poly_cut <<endl;
      //cout<< "sum: "<< integral_gaus/width + integral_poly/width <<endl;
  
-     Double_t integral_overall_cut = fit_W2_gr_cut_overall ->Integral(0,1.4);
+     Double_t integral_overall_cut = fit_W2_gr_cut_overall ->Integral(0.55,1.25);
      //cout<< "integral of overall fit: "<< integral_overall<<endl;
      cout<<"counts overall: "<<integral_overall_cut/width<<endl;
    
@@ -507,17 +507,17 @@ void grW2fitter(){ //MAIN
      skewed_poly_result_cut ->Draw("same");
      skewed_gaus_result_cut ->Draw("same");
      fit_W2_gr_cut_overall_skew ->Draw("same");
-     fit_background_anticut_big ->Draw("same");
+     // fit_background_anticut_big ->Draw("same");
      
-      Double_t integral_gaus_skew_cut = skewed_gaus_result_cut ->Integral(0,1.4); 
+      Double_t integral_gaus_skew_cut = skewed_gaus_result_cut ->Integral(0.55,1.25); 
       Double_t counts_gaus_skew_cut =  integral_gaus_skew_cut/width;
      cout<< "counts skewed gaus cut: "<< counts_gaus_skew_cut <<endl;
 
-     Double_t integral_poly_skew_cut =  skewed_poly_result_cut ->Integral(0,1.4);
+     Double_t integral_poly_skew_cut =  skewed_poly_result_cut ->Integral(0.55,1.25);
      Double_t counts_poly_skew_cut = integral_poly_skew_cut/width;
      cout<< "counts poly skewed: " <<  counts_poly_skew_cut <<endl;
     
-     Double_t integral_overall_skew_cut = fit_W2_gr_cut_overall_skew ->Integral(0,1.4);
+     Double_t integral_overall_skew_cut = fit_W2_gr_cut_overall_skew ->Integral(0.55,1.25);
      cout<<"counts overall skewed: "<<integral_overall_skew_cut/width<<endl;
   
    
@@ -526,6 +526,10 @@ void grW2fitter(){ //MAIN
      cout<<"Eff from normal gaus::  " << counts_gaus_cut <<" / ("<< counts_gaus_cut<< " + "<< counts_gaus<<") = " <<   gaus_eff<<endl;
      Double_t skew_eff = counts_gaus_skew_cut / (counts_gaus_skew_cut + counts_gaus_skew);
      cout<<"Eff from skewed gaus::  " << counts_gaus_skew_cut <<" / ("<< counts_gaus_skew_cut<< " + "<< counts_gaus_skew<<") = " <<  skew_eff<<endl;
+
+     cout<<endl;
+     Double_t gaus_iden_eff = (counts_gaus_cut + counts_poly) / (counts_gaus_cut + counts_poly +counts_poly_cut + counts_gaus);
+     cout<<"Identification Eff gaus:: "<< "("<<counts_gaus_cut <<" + " << counts_poly <<") / ("<< counts_gaus_cut <<" + " <<counts_poly << " + " <<counts_poly_cut <<" + " << counts_gaus<<")= "<< gaus_iden_eff<<endl;
 
      cout<<endl;
      Double_t gaus_ineff = counts_poly_cut/ (counts_poly_cut + counts_poly);

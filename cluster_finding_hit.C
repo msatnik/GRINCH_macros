@@ -1579,7 +1579,7 @@ void cluster_finding_hit(TString basename="",Int_t nrun=2043,TString configfilen
 
   }//end event loop
 
-  Bool_t FITTING = kFALSE;
+  Bool_t FITTING = kTRUE;
 
   if (FITTING)
     {

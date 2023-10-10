@@ -15,8 +15,6 @@
 #
 /volatile/halla/sbs/sbs-gmn/GMN_REPLAYS/pass2/rootfiles/e1209019_fullreplay_13487*
 /volatile/halla/sbs/sbs-gmn/GMN_REPLAYS/pass2/rootfiles/e1209019_fullreplay_13485*
-#
-#/volatile/halla/sbs/msatnik/e1209019_replayed_13485_stream0_seg0_0_firstevent0_nevent100000.root
 endlist
 bb.tr.n==1
 endcut
@@ -29,17 +27,3 @@ W2_mean 0.755055
 W2_sig 0.152419
 GR_cut 30
 PS_cut 0.2
-GR_tw_slope -0.317
-GR_tw_intercept 5.24
-GR_clusx_projx_slope_mirror2 1
-GR_clusx_projx_intercept_mirror2 0
-GR_clusx_projx_slope_mirror3 1
-GR_clusx_projx_intercept_mirror3 0
-GR_mirror1_min -0.57
-GR_mirror1_max -0.49
-GR_mirror2_min -0.35
-GR_mirror2_max -0.1
-GR_mirror3_min 0.15
-GR_mirror3_max 0.45
-GR_mirror4_min 0.6
-GR_mirror4_max 0.75

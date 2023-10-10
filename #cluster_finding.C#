@@ -27,7 +27,7 @@
 #include <stack>
 
 /////////////////////////////////////////////////////
-//// cluster_finding.C
+/// cluster_finding.C
 //// Maria Satik
 //// January 2022
 //// msatnik@email.wm.edu

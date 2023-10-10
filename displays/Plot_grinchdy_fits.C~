@@ -1,0 +1,164 @@
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include "TCut.h"
+#include "TLorentzVector.h"
+#include "TVector3.h"
+#include "TTreeFormula.h"
+#include "TChain.h"
+#include "TLatex.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TCanvas.h"
+#include "TStopwatch.h"
+#include <fstream>
+#include <string>
+#include "TProfile.h"
+#include "TGraphErrors.h"
+
+// Global params
+
+Double_t xmin_mirror1 = -0.1;
+Double_t xmax_mirror1 = 0.1;
+Double_t xmin_mirror2 = -0.1;
+Double_t xmax_mirror2 = 0.1;
+Double_t xmin_mirror3 = -0.1;
+Double_t xmax_mirror3 = 0.1;
+Double_t xmin_mirror4 = -0.1;
+Double_t xmax_mirror4 = 0.1;
+
+
+Double_t par0_mirror1 = -0.004;
+Double_t par1_mirror1 = -1.565;
+Double_t par2_mirror1 = 10.468;
+Double_t par3_mirror1 = -118.935;
+
+Double_t par0_mirror2 = 0.04;
+Double_t par1_mirror2 = -1.222;
+Double_t par2_mirror2 = -5.23;
+Double_t par3_mirror2 = -308.1;
+
+Double_t par0_mirror3 = 0.049;
+Double_t par1_mirror3 = -1.708;
+Double_t par2_mirror3 = 0.096;
+Double_t par3_mirror3 = -283.7;
+
+Double_t par0_mirror4 = 0.084;
+Double_t par1_mirror4 = -2.036;
+Double_t par2_mirror4 = -31.496;
+Double_t par3_mirror4 = 0;
+
+
+Double_t SIGMA = 0.016;
+Double_t nSIGMA = 3;
+
+// functions
+Double_t linear(Double_t *x, Double_t *par);
+Double_t poly3(Double_t *x, Double_t *par);
+
+// MAIN
+void Plot_grinchdy_fits(){ 
+
+  TFile *f1 = TFile::Open("../output/sbs9_oct4_allmirrors.root"); // Load rootfile
+  TFile *f2 = TFile::Open("../output/sbs8_oct4_allmirrors.root"); // Load rootfile
+
+  // Load Histograms
+  TH2D* hist1 = (TH2D*)f1->Get("h_BBgr_clusydiff_trph_allclus_mirror2");
+  TH2D* hist2 = (TH2D*)f2->Get("h_BBgr_clusydiff_trph_allclus_mirror2");
+
+  TH2D* hist3 = (TH2D*)f1->Get("h_BBgr_clusydiff_trph_allclus_mirror3");
+  TH2D* hist4 = (TH2D*)f2->Get("h_BBgr_clusydiff_trph_allclus_mirror3");
+  
+  TH2D* hist5 = (TH2D*)f1->Get("h_BBgr_clusydiff_trph_allclus_mirror1");
+  TH2D* hist6 = (TH2D*)f2->Get("h_BBgr_clusydiff_trph_allclus_mirror4");
+
+
+  //combine histograms
+  TH2D* combinedhist = (TH2D*)(hist1->Clone("combinedhist"));
+  combinedhist ->Add(hist2);
+  TH2D* combinedhist2 = (TH2D*)(hist3->Clone("combinedhist2"));
+  combinedhist2 ->Add(hist4);
+
+  // set up poly3 fits
+
+  TF1 *fit_mirror1 = new TF1("fit_mirror1", poly3, xmin_mirror1,xmax_mirror1,4);
+  fit_mirror1 ->SetParameters(par0_mirror1,par1_mirror1,par2_mirror1,par3_mirror1);
+  
+  TF1 *fit_mirror2 = new TF1("fit_mirror2", poly3, xmin_mirror2,xmax_mirror2,4);
+  fit_mirror2 ->SetParameters(par0_mirror2,par1_mirror2,par2_mirror2,par3_mirror2);
+
+  TF1 *fit_mirror3 = new TF1("fit_mirror3", poly3, xmin_mirror3,xmax_mirror3,4);
+  fit_mirror3 ->SetParameters(par0_mirror3,par1_mirror3,par2_mirror3,par3_mirror3);
+
+  TF1 *fit_mirror4 = new TF1("fit_mirror4", poly3, xmin_mirror4,xmax_mirror4,4);
+  fit_mirror4 ->SetParameters(par0_mirror4,par1_mirror4,par2_mirror4,par3_mirror4);
+
+
+
+
+  // set up TGraphErrors 
+  TH2D* hist = (TH2D*)(combinedhist->Clone("hist"));
+  const int nBinsX = hist ->GetNbinsX();
+  const int nBinsY = hist ->GetNbinsY();
+  const int nBins =  nBinsX;
+  const double xmin = hist ->GetXaxis()->GetXmin();
+  const double xmax = hist ->GetXaxis()->GetXmax();
+  const double ymin = hist ->GetYaxis()->GetXmin();
+  const double ymax = hist ->GetYaxis()->GetXmax();
+  // arrays to store fit results
+  std::vector<double> binCenters(nBins);
+  std::vector<double> means(nBins);
+  std::vector<double> errorbars(nBins);
+  std::vector<double> zeros(nBins);
+  // loop throught the bins
+  for (int i = 0; i<nBins; i++){
+    // get bin center
+    double binCenter = hist->GetXaxis()->GetBinCenter(i+1);
+    double mean=0; 
+    //mean = par0_mirror1 + par1_mirror1*binCenter + par2_mirror1*pow(binCenter,2) + par3_mirror1*pow(binCenter,3);
+    //mean = par0_mirror2 + par1_mirror2*binCenter + par2_mirror2*pow(binCenter,2) + par3_mirror2*pow(binCenter,3);
+    // mean = par0_mirror3 + par1_mirror3*binCenter + par2_mirror3*pow(binCenter,2) + par3_mirror3*pow(binCenter,3);
+    mean = par0_mirror4 + par1_mirror4*binCenter + par2_mirror4*pow(binCenter,2) + par3_mirror4*pow(binCenter,3);
+    //cout<<"mean "<<mean<<endl;
+      means[i]=mean;
+      errorbars[i] = nSIGMA*SIGMA;
+      zeros[i]=0;
+      binCenters[i] = binCenter;
+  }
+ // convert vectors to arrays suitable for TGraphErrors 
+  int nPoints = nBins;
+  double* xValues =  &binCenters[0];
+  double* yValues = &means[0];
+  double* yErrors = &errorbars[0];
+  double* xErrors = &zeros[0];
+  // make TGraphErrors
+  TGraphErrors* graph =  new TGraphErrors(nPoints, xValues, yValues, xErrors, yErrors);
+  graph ->SetMarkerStyle(6);
+  // done setting up TGraphErrors
+
+
+
+  TCanvas* canvas = new TCanvas("canvas","dy vs th");
+  hist6 ->Draw("colz");
+  //fit_mirror1 ->Draw("same");
+  //fit_mirror2 ->Draw("same");
+  // fit_mirror3->Draw("same");
+  fit_mirror4 ->Draw("same");
+  graph->Draw("same");
+
+  
+
+
+}//end MAIN
+
+Double_t linear(Double_t *x, Double_t *par)
+{
+  Double_t fit =  par[0] + par[1]*x[0];
+  return fit;
+}
+
+Double_t poly3(Double_t *x, Double_t *par)
+{
+  Double_t fit =  par[0] + par[1]*x[0] +par[2]*pow(x[0],2) + par[3]*pow(x[0],3);
+  return fit;
+}
