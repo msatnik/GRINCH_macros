@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo Iterating through GRINCH_LE_allign.C $1 times. 
+
+# Check if the number of arguments is valid
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <number_of_iterations>"
+    exit 1
+fi
+
+ root -l -q -b "Program.C(\"zeros\",\"try$next\")"
+
+# Loop through the given number of iterations
+for ((i = 0; i < $1; i++)); do
+    next=$((i + 1))
+    root -l -q -b "Program.C(\"try$i\",\"try$next\")"
+done

@@ -360,7 +360,7 @@ TH1D *h_BBgr_tdc_Nmultihits = new TH1D("h_BBgr_tdc_Nmultihits","Ndata.bb.grinch_
 	  h_BBgr_hit_time ->Fill(BBgr_hit_time[i]);
 	  h_BBgr_hit_amp ->Fill(BBgr_hit_amp[i]);
 	  h_BBgr_hit_time_amp ->Fill(BBgr_hit_amp[i],BBgr_hit_time[i]);
-	  // h_BBgr_hit_time_pmtnum ->Fill(BBgr_hit_pmtnum[i], BBgr_hit_time[i]);
+	  /// h_BBgr_hit_time_pmtnum ->Fill(BBgr_hit_pmtnum[i], BBgr_hit_time[i]);
 	  if (BBgr_hit_pmtnum[i] == 250)
 	    {
 	      h_BBgr_hit_time_amp_250 ->Fill(BBgr_hit_amp[i], BBgr_hit_time[i]);

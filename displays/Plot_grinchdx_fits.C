@@ -68,12 +68,12 @@ Double_t linear(Double_t *x, Double_t *par);
 // MAIN
 void Plot_grinchdx_fits(){ 
 
-  TFile *f1 = TFile::Open("../output/sbs9_oct10_nosizecut.root"); // Load rootfile
-  TFile *f2 = TFile::Open("../output/sbs8_oct10_nosizecut.root"); // Load rootfile
+  TFile *f1 = TFile::Open("../output/sbs14.root"); // Load rootfile
+  TFile *f2 = TFile::Open("../output/sbs14.root"); // Load rootfile
 
   // Load Histograms
-  TH2D* hist1 = (TH2D*)f1->Get("h_BBgr_clusxdiff_trth_allclus_mirror4");
-  TH2D* hist2 = (TH2D*)f2->Get("h_BBgr_clusxdiff_trth_allclus_mirror4");  
+  TH2D* hist1 = (TH2D*)f1->Get("h_BBgr_clusxdiff_trth_allclus_mirror2");
+  TH2D* hist2 = (TH2D*)f2->Get("h_BBgr_clusxdiff_trth_allclus_mirror2");  
   
   //combine histograms
   TH2D* combinedhist = (TH2D*)(hist1->Clone("combinedhist"));

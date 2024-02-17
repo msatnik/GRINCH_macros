@@ -74,8 +74,10 @@ Double_t poly3(Double_t *x, Double_t *par);
 // MAIN
 void Plot_grinchdy_fits(){ 
 
-  TFile *f1 = TFile::Open("../output/sbs9_oct10.root"); // Load rootfile
-  TFile *f2 = TFile::Open("../output/sbs8_oct10.root"); // Load rootfile
+  //TFile *f1 = TFile::Open("../output/sbs9_oct10.root"); // Load rootfile
+  //TFile *f2 = TFile::Open("../output/sbs8_oct10.root"); // Load rootfile
+  TFile *f1 = TFile::Open("../output/sbs14.root"); // Load rootfile
+  TFile *f2 = TFile::Open("../output/sbs14.root"); // Load rootfile
 
   // Load Histograms
   TH2D* hist1 = (TH2D*)f1->Get("h_BBgr_clusydiff_trph_allclus_mirror2");
@@ -138,8 +140,8 @@ void Plot_grinchdy_fits(){
     double mean=0; 
     // mean = par0_mirror1 + par1_mirror1*binCenter + par2_mirror1*pow(binCenter,2) + par3_mirror1*pow(binCenter,3);
     //mean = par0_mirror2 + par1_mirror2*binCenter + par2_mirror2*pow(binCenter,2) + par3_mirror2*pow(binCenter,3);
-    //mean = par0_mirror3 + par1_mirror3*binCenter + par2_mirror3*pow(binCenter,2) + par3_mirror3*pow(binCenter,3);
-    mean = par0_mirror4 + par1_mirror4*binCenter + par2_mirror4*pow(binCenter,2) + par3_mirror4*pow(binCenter,3);
+    mean = par0_mirror3 + par1_mirror3*binCenter + par2_mirror3*pow(binCenter,2) + par3_mirror3*pow(binCenter,3);
+    // mean = par0_mirror4 + par1_mirror4*binCenter + par2_mirror4*pow(binCenter,2) + par3_mirror4*pow(binCenter,3);
     //cout<<"mean "<<mean<<endl;
       means[i]=mean;
       errorbars[i] = nSIGMA*SIGMA;
@@ -160,12 +162,12 @@ void Plot_grinchdy_fits(){
 
 
   TCanvas* canvas = new TCanvas("canvas","dy vs th");
-  combinedhist4->SetContour(256);
-  combinedhist4->Draw("colz");
+  hist3->SetContour(256);
+  hist3->Draw("colz");
   //fit_mirror1 ->Draw("same");
   // fit_mirror2 ->Draw("same");
   //fit_mirror3->Draw("same");
-  fit_mirror4 ->Draw("same");
+  fit_mirror3 ->Draw("same");
   graph->Draw("same");
 
   

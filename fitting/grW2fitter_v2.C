@@ -38,27 +38,29 @@ Double_t poly5(Double_t *x, Double_t *par);
 Double_t poly4(Double_t *x, Double_t *par);
 Double_t poly4_skewed_gaus(Double_t *x, Double_t *par);
 
-void grW2fitter(){ //MAIN
+void grW2fitter_v2(){ //MAIN
 
-  TFile *f1 = TFile::Open("../output/sbs8_nov22.root"); // Load rootfile
+  TFile *f1 = TFile::Open("../output/sbs8_nov24_huge.root"); // Load rootfile
 
   // Set up Canvas
   TCanvas *c1 = new TCanvas();
   c1->Divide(2,1);
-
+  
   TCanvas *c2 = new TCanvas();
   c2->Divide(2,1);
+  
+  gPad->SetLogy();
 
   // Load histograms
-  TH1D *h_W2_gr_anticut= (TH1D*)f1->Get("h_W2_gr_anticut"); //put back to gr
+  TH1D *h_W2_gr_anticut= (TH1D*)f1->Get("h_W2_gr_ps_anticut"); //put back to gr
   TH1D *h_W2_ps_anitcut = (TH1D*)f1->Get("h_W2_ps_anticut");
   TH1D *h_W2_gr_ps_anticut = (TH1D*)f1->Get("h_W2_gr_ps_anticut");
   TH1D *h_W2 = (TH1D*)f1->Get("h_W2");
-  TH1D *h_W2_gr_cut = (TH1D*)f1->Get("h_W2_gr_cut");//put back to gr
+  TH1D *h_W2_gr_cut = (TH1D*)f1->Get("h_W2_gr_ps_cut");//put back to gr
 
 
-  h_W2_gr_anticut->GetXaxis()->SetRangeUser(0, 1.4);
-  h_W2_gr_cut->GetXaxis()->SetRangeUser(0, 1.4);
+  h_W2_gr_anticut->GetXaxis()->SetRangeUser(0.01, 1.4);
+  h_W2_gr_cut->GetXaxis()->SetRangeUser(0.01, 1.4);
 
    //// Get max bin
   double maxBinCut = h_W2_gr_cut -> GetMaximumBin();
@@ -76,8 +78,8 @@ void grW2fitter(){ //MAIN
   cout<<"maxBinValueAnticut: "<<maxBinValueAnticut<<endl;
   cout<<"maxBinXValueCut: "<<maxBinXValueAnticut<<endl;
 
-  h_W2_gr_cut->GetYaxis()->SetRangeUser(0, maxBinValueCut);
-  h_W2_gr_anticut->GetYaxis()->SetRangeUser(0, maxBinValueAnticut);
+  h_W2_gr_cut->GetYaxis()->SetRangeUser(0.01, maxBinValueCut);
+  h_W2_gr_anticut->GetYaxis()->SetRangeUser(0.01, maxBinValueAnticut);
 
 
   // Initial values for the fits
@@ -193,10 +195,175 @@ void grW2fitter(){ //MAIN
   else{
   }
 
+
+TF1 *fit_W2_gr_cut_overall =  new TF1("fit_W2_gr_cut_overall", poly_Gaus, 0, 1.4,10);
+   fit_W2_gr_cut_overall ->SetParameters(par0_cut_init, par1_cut_init, par2_cut_init, par3_cut_init, par4_cut_init, par5_cut_init, par6_cut_init, height_cut_init, mean_cut_init, sigma_cut_init);
+   fit_W2_gr_cut_overall ->SetParNames("p0", "p1", "p2", "p3", "p4", "p5", "p6","height","mean","sigma");
+   TFitResultPtr r3_2 = h_W2_gr_cut ->Fit(fit_W2_gr_cut_overall,"RQ0");
+   Int_t fitStatus3_2 = r3_2;
+   if (fitStatus3_2 !=0) { cout<<"fit error" <<endl; }
+   
+     Double_t par0_cut_overall = fit_W2_gr_cut_overall ->GetParameter(0);
+     Double_t par1_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(1);
+     Double_t par2_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(2);
+     Double_t par3_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(3);
+     Double_t par4_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(4);
+     Double_t par5_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(5);
+     Double_t par6_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(6);
+     Double_t par0_cut_overall_err = fit_W2_gr_cut_overall ->GetParError(0);
+     Double_t par1_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(1);
+     Double_t par2_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(2);
+     Double_t par3_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(3);
+     Double_t par4_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(4);
+     Double_t par5_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(5);
+     Double_t par6_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(6);
+     cout<<endl;
+     cout<<"overall fit for CUT"<<endl;
+     cout<< "par0: "<< par0_cut_overall <<" +/- "<<par0_cut_overall_err<<endl;
+     cout<< "par1: "<< par1_cut_overall <<" +/- "<<par1_cut_overall_err<<endl;
+     cout<< "par2: "<< par2_cut_overall <<" +/- "<<par2_cut_overall_err <<endl;
+     cout<< "par3: "<< par3_cut_overall <<" +/- "<<par3_cut_overall_err <<endl;
+     cout<< "par4: "<< par4_cut_overall <<" +/- "<<par4_cut_overall_err<<endl;
+     cout<< "par5: "<< par5_cut_overall <<" +/- "<<par5_cut_overall_err<<endl;
+     cout<< "par6: "<< par6_cut_overall <<" +/- "<<par6_cut_overall_err<<endl;
+     Double_t height_cut_overall = fit_W2_gr_cut_overall ->GetParameter(7);
+     Double_t mean_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(8);
+     Double_t sigma_cut_overall  =fit_W2_gr_cut_overall ->GetParameter(9);
+      Double_t height_cut_overall_err = fit_W2_gr_cut_overall ->GetParError(7);
+     Double_t mean_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(8);
+     Double_t sigma_cut_overall_err  =fit_W2_gr_cut_overall ->GetParError(9);
+     cout<<"height: "<<height_cut_overall <<" +/- "<<height_cut_overall_err<<endl;
+     cout<<"mean: "<<mean_cut_overall <<" +/- "<<mean_cut_overall_err<<endl;
+     cout<<"sigma: "<<sigma_cut_overall <<" +/- "<<sigma_cut_overall_err<<endl;   
+
+     TF1 *gaus_result_cut =  new TF1("gaus_result_cut", Gaus, 0,1.4,3);
+     gaus_result_cut ->SetParameters(height_cut_overall, mean_cut_overall, sigma_cut_overall);
+     gaus_result_cut ->SetParNames("height", "mean","sigma");
+
+     TF1 *poly_result_cut = new TF1("poly_result_cut",poly,0,1.4,7);
+     poly_result_cut ->SetParameters(par0_cut_overall, par1_cut_overall, par2_cut_overall, par3_cut_overall, par4_cut_overall, par5_cut_overall,par6_cut_overall);
+
+     c1->cd(1);
+     
+     h_W2_gr_cut ->Draw("hist");
+     gaus_result_cut ->SetLineColor(kGreen -6);
+     gaus_result_cut ->SetFillColor(kGreen - 6);
+     gaus_result_cut ->SetFillStyle(3003);
+     poly_result_cut ->SetLineColor(kMagenta-6);
+     poly_result_cut ->SetFillColor(kMagenta-6);
+     poly_result_cut ->SetFillStyle(3003);
+     fit_W2_gr_cut_overall ->SetLineColor(kRed);
+     // fit_background_anticut_big ->SetLineColor(kViolet -6);
+     //fit_background_anticut_big ->SetLineStyle(2);
+
+     poly_result_cut ->Draw("same");
+     gaus_result_cut ->Draw("same");
+     fit_W2_gr_cut_overall ->Draw("same");
+     // fit_background_anticut_big ->Draw("same");
+
+     Double_t integral_gaus_cut = gaus_result_cut ->Integral(0.55,1.25);
+     Double_t counts_gaus_cut = integral_gaus_cut/width;
+     cout<< "counts gaus for cut: "<< counts_gaus_cut <<endl;
+
+     Double_t integral_poly_cut =  poly_result_cut ->Integral(0.55,1.25);
+     Double_t counts_poly_cut = integral_poly_cut/width; 
+     cout<< "counts poly: " << counts_poly_cut <<endl;
+     //cout<< "sum: "<< integral_gaus/width + integral_poly/width <<endl;
+ 
+     Double_t integral_overall_cut = fit_W2_gr_cut_overall ->Integral(0.55,1.25);
+     //cout<< "integral of overall fit: "<< integral_overall<<endl;
+     cout<<"counts overall: "<<integral_overall_cut/width<<endl;
+   
+   
+
+   TF1 *fit_W2_gr_cut_overall_skew =  new TF1("fit_W2_gr_cut_overall_skew", poly_skewed_gaus, 0, 1.4,11);
+   fit_W2_gr_cut_overall_skew ->SetParameters(par0_cut_init, par1_cut_init, par2_cut_init, par3_cut_init, par4_cut_init, par5_cut_init, par6_cut_init, amp_sk_cut_init, mean_sk_cut_init, sigma_sk_cut_init,alpha_cut_init);
+    TH1D *h_W2_gr_cut_copy =  (TH1D*)(h_W2_gr_cut->Clone("h_W2_gr_cut_copy"));
+    TFitResultPtr r3_3 = h_W2_gr_cut_copy ->Fit(fit_W2_gr_cut_overall_skew,"RQ0");
+  Int_t fitStatus3_3 = r3_3;
+   if (fitStatus3_3 !=0) { cout<<"fit error" <<endl; }
+   
+     Double_t par0_sk_cut_overall = fit_W2_gr_cut_overall_skew ->GetParameter(0);
+     Double_t par1_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(1);
+     Double_t par2_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(2);
+     Double_t par3_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(3);
+     Double_t par4_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(4);
+     Double_t par5_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(5);
+     Double_t par6_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(6);
+     Double_t par0_sk_cut_overall_err = fit_W2_gr_cut_overall_skew ->GetParError(0);
+     Double_t par1_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew ->GetParError(1);
+     Double_t par2_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew->GetParError(2);
+     Double_t par3_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew ->GetParError(3);
+     Double_t par4_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew ->GetParError(4);
+     Double_t par5_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew ->GetParError(5);
+     Double_t par6_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew->GetParError(6);
+     cout<<endl;
+     cout<<"overall fit with skewed gaus for CUT"<<endl;
+     cout<< "par0: "<< par0_sk_cut_overall <<" +/- "<<par0_sk_cut_overall_err<<endl;
+     cout<< "par1: "<< par1_sk_cut_overall <<" +/- "<<par1_sk_cut_overall_err<<endl;
+     cout<< "par2: "<< par2_sk_cut_overall <<" +/- "<<par2_sk_cut_overall_err <<endl;
+     cout<< "par3: "<< par3_sk_cut_overall <<" +/- "<<par3_sk_cut_overall_err <<endl;
+     cout<< "par4: "<< par4_sk_cut_overall <<" +/- "<<par4_sk_cut_overall_err<<endl;
+     cout<< "par5: "<< par5_sk_cut_overall <<" +/- "<<par5_sk_cut_overall_err<<endl;
+     cout<< "par6: "<< par6_sk_cut_overall <<" +/- "<<par6_sk_cut_overall_err<<endl;
+     Double_t amp_sk_cut_overall = fit_W2_gr_cut_overall_skew ->GetParameter(7);
+     Double_t mean_sk_cut_overall  = fit_W2_gr_cut_overall_skew  ->GetParameter(8);
+     Double_t sigma_sk_cut_overall  =fit_W2_gr_cut_overall_skew  ->GetParameter(9);
+     Double_t alpha_cut_overall  =fit_W2_gr_cut_overall_skew  ->GetParameter(10);
+     Double_t amp_sk_cut_overall_err = fit_W2_gr_cut_overall_skew  ->GetParError(7);
+     Double_t mean_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew  ->GetParError(8);
+     Double_t sigma_sk_cut_overall_err  =fit_W2_gr_cut_overall_skew  ->GetParError(9);
+     Double_t alpha_cut_overall_err  =fit_W2_gr_cut_overall_skew  ->GetParError(10);
+     cout<<"amp skew cut: "<<amp_sk_cut_overall <<" +/- "<<amp_sk_cut_overall_err<<endl;
+     cout<<"mean skew: "<<mean_sk_cut_overall <<" +/- "<<mean_sk_cut_overall_err<<endl;
+     cout<<"sigma skew: "<<sigma_sk_cut_overall <<" +/- "<<sigma_sk_cut_overall_err<<endl;  
+     cout<<"alpha: "<<alpha_cut_overall <<" +/- "<<alpha_cut_overall_err<<endl;  
+
+     TF1 *skewed_gaus_result_cut =  new TF1("skewed_gaus_result_cut", skewed_gaus, 0,1.4,4);
+     skewed_gaus_result_cut ->SetParameters(amp_sk_cut_overall, mean_sk_cut_overall, sigma_sk_cut_overall,alpha_cut_overall);
+     //gaus_result ->SetParNames("height", "mean","sigma");
+
+     TF1 *skewed_poly_result_cut = new TF1("skewed_poly_result_cut",poly,0,1.4,7);
+     skewed_poly_result_cut ->SetParameters(par0_sk_cut_overall, par1_sk_cut_overall, par2_sk_cut_overall, par3_sk_cut_overall, par4_sk_cut_overall, par5_sk_cut_overall,par6_sk_cut_overall);
+
+     c2->cd(1);
+
+     skewed_gaus_result_cut ->SetLineColor(kGreen -6);
+     skewed_gaus_result_cut ->SetFillColor(kGreen - 6);
+     skewed_gaus_result_cut ->SetFillStyle(3003);
+     skewed_poly_result_cut ->SetLineColor(kMagenta-6);
+     skewed_poly_result_cut ->SetFillColor(kMagenta-6);
+     skewed_poly_result_cut ->SetFillStyle(3003);
+     fit_W2_gr_cut_overall_skew ->SetLineColor(kRed);
+     // fit_background_anticut_big ->SetLineColor(kViolet -6);
+     //fit_background_anticut_big ->SetLineStyle(2);
+
+     h_W2_gr_cut_copy ->Draw("hist");
+     skewed_poly_result_cut ->Draw("same");
+     skewed_gaus_result_cut ->Draw("same");
+     fit_W2_gr_cut_overall_skew ->Draw("same");
+     // fit_background_anticut_big ->Draw("same");
+     
+      Double_t integral_gaus_skew_cut = skewed_gaus_result_cut ->Integral(0.55,1.25); 
+      Double_t counts_gaus_skew_cut =  integral_gaus_skew_cut/width;
+     cout<< "counts skewed gaus cut: "<< counts_gaus_skew_cut <<endl;
+
+     Double_t integral_poly_skew_cut =  skewed_poly_result_cut ->Integral(0.55,1.25);
+     Double_t counts_poly_skew_cut = integral_poly_skew_cut/width;
+     cout<< "counts poly skewed: " <<  counts_poly_skew_cut <<endl;
+    
+     Double_t integral_overall_skew_cut = fit_W2_gr_cut_overall_skew ->Integral(0.55,1.25);
+     cout<<"counts overall skewed: "<<integral_overall_skew_cut/width<<endl;
+
+
+
   TF1 *fit_W2_gr_anticut_overall =  new TF1("fit_W2_gr_anticut_overall", poly_Gaus, 0, 1.4,10);
   fit_W2_gr_anticut_overall ->SetParameters(par0_init, par1_init, par2_init, par3_init, par4_init, par5_init, par6_init, height_init, mean_init, sigma_init);
   fit_W2_gr_anticut_overall ->SetParNames("p0", "p1", "p2", "p3", "p4", "p5", "p6","height","mean","sigma");
   //fit_W2_gr_anticut_overall ->SetParameters(par0, par1, par2, par3, par4, height, mean, sigma);
+  fit_W2_gr_anticut_overall ->FixParameter(8, mean_cut_overall);
+  fit_W2_gr_anticut_overall ->FixParameter(9, sigma_cut_overall);
+  
   TFitResultPtr r3 = h_W2_gr_anticut ->Fit(fit_W2_gr_anticut_overall,"RQ0");
   Int_t fitStatus3 = r3;
    if (fitStatus3 !=0) { cout<<"fit error" <<endl; }
@@ -277,6 +444,9 @@ void grW2fitter(){ //MAIN
 
    TF1 *fit_W2_gr_anticut_overall_skew =  new TF1("fit_W2_gr_anticut_overall_skew", poly_skewed_gaus, 0, 1.4,11);
    fit_W2_gr_anticut_overall_skew ->SetParameters(par0_init, par1_init, par2_init, par3_init, par4_init, par5_init, par6_init, amp_sk_init, mean_sk_init, sigma_sk_init,alpha_init);
+   fit_W2_gr_anticut_overall_skew ->FixParameter( 8, mean_sk_cut_overall);
+   fit_W2_gr_anticut_overall_skew ->FixParameter( 9, sigma_sk_cut_overall);
+   fit_W2_gr_anticut_overall_skew ->FixParameter( 10, alpha_cut_overall);
     TH1D *h_W2_gr_anticut_copy =  (TH1D*)(h_W2_gr_anticut->Clone("h_W2_gr_anticut_copy"));
     TFitResultPtr r3_1 = h_W2_gr_anticut_copy ->Fit(fit_W2_gr_anticut_overall_skew,"RQ0");
   Int_t fitStatus3_1 = r3_1;
@@ -379,176 +549,20 @@ void grW2fitter(){ //MAIN
    Int_t fitStatus_1 = r_1;
    if (fitStatus_1 !=0) {cout<<"fit error" <<endl;}
 
-   TH1D *h_W2_gr_cut_subtracted = (TH1D*)(h_W2_gr_cut->Clone("h_W2_gr_cut_subtracted"));
-   h_W2_gr_cut_subtracted ->Add(h_W2_gr_ps_cut_scaled, -1);
+   // TH1D *h_W2_gr_cut_subtracted = (TH1D*)(h_W2_gr_cut->Clone("h_W2_gr_cut_subtracted"));
+   // h_W2_gr_cut_subtracted ->Add(h_W2_gr_ps_cut_scaled, -1);
 
-   TF1 *fit_W2_gr_cut_subtracted =  new TF1("fit_W2_gr_cut_subtracted", Gaus, 0.6,1.1,3);
-   fit_W2_gr_cut_subtracted->SetParameters(600,0.9,1);
-   TFitResultPtr r2_2 = h_W2_gr_cut_subtracted ->Fit(fit_W2_gr_cut_subtracted,"RQ0");
-   Int_t fitStatus2_2 = r2_2;
-   if (fitStatus2_2 !=0) { cout<<"fit error" <<endl; }
+   // TF1 *fit_W2_gr_cut_subtracted =  new TF1("fit_W2_gr_cut_subtracted", Gaus, 0.6,1.1,3);
+   // fit_W2_gr_cut_subtracted->SetParameters(600,0.9,1);
+   // TFitResultPtr r2_2 = h_W2_gr_cut_subtracted ->Fit(fit_W2_gr_cut_subtracted,"RQ0");
+   // Int_t fitStatus2_2 = r2_2;
+   // if (fitStatus2_2 !=0) { cout<<"fit error" <<endl; }
 
 
-   TF1 *fit_W2_gr_cut_overall =  new TF1("fit_W2_gr_cut_overall", poly_Gaus, 0, 1.4,10);
-   fit_W2_gr_cut_overall ->SetParameters(par0_cut_init, par1_cut_init, par2_cut_init, par3_cut_init, par4_cut_init, par5_cut_init, par6_cut_init, height_cut_init, mean_cut_init, sigma_cut_init);
-   fit_W2_gr_cut_overall ->SetParNames("p0", "p1", "p2", "p3", "p4", "p5", "p6","height","mean","sigma");
-   TFitResultPtr r3_2 = h_W2_gr_cut ->Fit(fit_W2_gr_cut_overall,"RQ0");
-   Int_t fitStatus3_2 = r3_2;
-   if (fitStatus3_2 !=0) { cout<<"fit error" <<endl; }
-   
-     Double_t par0_cut_overall = fit_W2_gr_cut_overall ->GetParameter(0);
-     Double_t par1_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(1);
-     Double_t par2_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(2);
-     Double_t par3_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(3);
-     Double_t par4_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(4);
-     Double_t par5_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(5);
-     Double_t par6_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(6);
-     Double_t par0_cut_overall_err = fit_W2_gr_cut_overall ->GetParError(0);
-     Double_t par1_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(1);
-     Double_t par2_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(2);
-     Double_t par3_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(3);
-     Double_t par4_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(4);
-     Double_t par5_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(5);
-     Double_t par6_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(6);
-     cout<<endl;
-     cout<<"overall fit for CUT"<<endl;
-     cout<< "par0: "<< par0_cut_overall <<" +/- "<<par0_cut_overall_err<<endl;
-     cout<< "par1: "<< par1_cut_overall <<" +/- "<<par1_cut_overall_err<<endl;
-     cout<< "par2: "<< par2_cut_overall <<" +/- "<<par2_cut_overall_err <<endl;
-     cout<< "par3: "<< par3_cut_overall <<" +/- "<<par3_cut_overall_err <<endl;
-     cout<< "par4: "<< par4_cut_overall <<" +/- "<<par4_cut_overall_err<<endl;
-     cout<< "par5: "<< par5_cut_overall <<" +/- "<<par5_cut_overall_err<<endl;
-     cout<< "par6: "<< par6_cut_overall <<" +/- "<<par6_cut_overall_err<<endl;
-     Double_t height_cut_overall = fit_W2_gr_cut_overall ->GetParameter(7);
-     Double_t mean_cut_overall  = fit_W2_gr_cut_overall ->GetParameter(8);
-     Double_t sigma_cut_overall  =fit_W2_gr_cut_overall ->GetParameter(9);
-      Double_t height_cut_overall_err = fit_W2_gr_cut_overall ->GetParError(7);
-     Double_t mean_cut_overall_err  = fit_W2_gr_cut_overall ->GetParError(8);
-     Double_t sigma_cut_overall_err  =fit_W2_gr_cut_overall ->GetParError(9);
-     cout<<"height: "<<height_cut_overall <<" +/- "<<height_cut_overall_err<<endl;
-     cout<<"mean: "<<mean_cut_overall <<" +/- "<<mean_cut_overall_err<<endl;
-     cout<<"sigma: "<<sigma_cut_overall <<" +/- "<<sigma_cut_overall_err<<endl;   
 
-     TF1 *gaus_result_cut =  new TF1("gaus_result_cut", Gaus, 0,1.4,3);
-     gaus_result_cut ->SetParameters(height_cut_overall, mean_cut_overall, sigma_cut_overall);
-     gaus_result_cut ->SetParNames("height", "mean","sigma");
-
-     TF1 *poly_result_cut = new TF1("poly_result_cut",poly,0,1.4,7);
-     poly_result_cut ->SetParameters(par0_cut_overall, par1_cut_overall, par2_cut_overall, par3_cut_overall, par4_cut_overall, par5_cut_overall,par6_cut_overall);
-
-     c1->cd(1);
-     
-     h_W2_gr_cut ->Draw("hist");
-     gaus_result_cut ->SetLineColor(kGreen -6);
-     gaus_result_cut ->SetFillColor(kGreen - 6);
-     gaus_result_cut ->SetFillStyle(3003);
-     poly_result_cut ->SetLineColor(kMagenta-6);
-     poly_result_cut ->SetFillColor(kMagenta-6);
-     poly_result_cut ->SetFillStyle(3003);
-     fit_W2_gr_cut_overall ->SetLineColor(kRed);
-     fit_background_anticut_big ->SetLineColor(kViolet -6);
-     fit_background_anticut_big ->SetLineStyle(2);
-
-     poly_result_cut ->Draw("same");
-     gaus_result_cut ->Draw("same");
-     fit_W2_gr_cut_overall ->Draw("same");
-     // fit_background_anticut_big ->Draw("same");
-
-     Double_t integral_gaus_cut = gaus_result_cut ->Integral(0.55,1.25);
-     Double_t counts_gaus_cut = integral_gaus_cut/width;
-     cout<< "counts gaus for cut: "<< counts_gaus_cut <<endl;
-
-     Double_t integral_poly_cut =  poly_result_cut ->Integral(0.55,1.25);
-     Double_t counts_poly_cut = integral_poly_cut/width; 
-     cout<< "counts poly: " << counts_poly_cut <<endl;
-     //cout<< "sum: "<< integral_gaus/width + integral_poly/width <<endl;
- 
-     Double_t integral_overall_cut = fit_W2_gr_cut_overall ->Integral(0.55,1.25);
-     //cout<< "integral of overall fit: "<< integral_overall<<endl;
-     cout<<"counts overall: "<<integral_overall_cut/width<<endl;
-   
    
 
-   TF1 *fit_W2_gr_cut_overall_skew =  new TF1("fit_W2_gr_cut_overall_skew", poly_skewed_gaus, 0, 1.4,11);
-   fit_W2_gr_cut_overall_skew ->SetParameters(par0_cut_init, par1_cut_init, par2_cut_init, par3_cut_init, par4_cut_init, par5_cut_init, par6_cut_init, amp_sk_cut_init, mean_sk_cut_init, sigma_sk_cut_init,alpha_cut_init);
-    TH1D *h_W2_gr_cut_copy =  (TH1D*)(h_W2_gr_cut->Clone("h_W2_gr_cut_copy"));
-    TFitResultPtr r3_3 = h_W2_gr_cut_copy ->Fit(fit_W2_gr_cut_overall_skew,"RQ0");
-  Int_t fitStatus3_3 = r3_3;
-   if (fitStatus3_3 !=0) { cout<<"fit error" <<endl; }
-   
-     Double_t par0_sk_cut_overall = fit_W2_gr_cut_overall_skew ->GetParameter(0);
-     Double_t par1_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(1);
-     Double_t par2_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(2);
-     Double_t par3_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(3);
-     Double_t par4_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(4);
-     Double_t par5_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(5);
-     Double_t par6_sk_cut_overall  = fit_W2_gr_cut_overall_skew ->GetParameter(6);
-     Double_t par0_sk_cut_overall_err = fit_W2_gr_cut_overall_skew ->GetParError(0);
-     Double_t par1_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew ->GetParError(1);
-     Double_t par2_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew->GetParError(2);
-     Double_t par3_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew ->GetParError(3);
-     Double_t par4_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew ->GetParError(4);
-     Double_t par5_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew ->GetParError(5);
-     Double_t par6_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew->GetParError(6);
-     cout<<endl;
-     cout<<"overall fit with skewed gaus for CUT"<<endl;
-     cout<< "par0: "<< par0_sk_cut_overall <<" +/- "<<par0_sk_cut_overall_err<<endl;
-     cout<< "par1: "<< par1_sk_cut_overall <<" +/- "<<par1_sk_cut_overall_err<<endl;
-     cout<< "par2: "<< par2_sk_cut_overall <<" +/- "<<par2_sk_cut_overall_err <<endl;
-     cout<< "par3: "<< par3_sk_cut_overall <<" +/- "<<par3_sk_cut_overall_err <<endl;
-     cout<< "par4: "<< par4_sk_cut_overall <<" +/- "<<par4_sk_cut_overall_err<<endl;
-     cout<< "par5: "<< par5_sk_cut_overall <<" +/- "<<par5_sk_cut_overall_err<<endl;
-     cout<< "par6: "<< par6_sk_cut_overall <<" +/- "<<par6_sk_cut_overall_err<<endl;
-     Double_t amp_sk_cut_overall = fit_W2_gr_cut_overall_skew ->GetParameter(7);
-     Double_t mean_sk_cut_overall  = fit_W2_gr_cut_overall_skew  ->GetParameter(8);
-     Double_t sigma_sk_cut_overall  =fit_W2_gr_cut_overall_skew  ->GetParameter(9);
-     Double_t alpha_cut_overall  =fit_W2_gr_cut_overall_skew  ->GetParameter(10);
-     Double_t amp_sk_cut_overall_err = fit_W2_gr_cut_overall_skew  ->GetParError(7);
-     Double_t mean_sk_cut_overall_err  = fit_W2_gr_cut_overall_skew  ->GetParError(8);
-     Double_t sigma_sk_cut_overall_err  =fit_W2_gr_cut_overall_skew  ->GetParError(9);
-     Double_t alpha_cut_overall_err  =fit_W2_gr_cut_overall_skew  ->GetParError(10);
-     cout<<"amp skew cut: "<<amp_sk_cut_overall <<" +/- "<<amp_sk_cut_overall_err<<endl;
-     cout<<"mean skew: "<<mean_sk_cut_overall <<" +/- "<<mean_sk_cut_overall_err<<endl;
-     cout<<"sigma skew: "<<sigma_sk_cut_overall <<" +/- "<<sigma_sk_cut_overall_err<<endl;  
-     cout<<"alpha: "<<alpha_cut_overall <<" +/- "<<alpha_cut_overall_err<<endl;  
-
-     TF1 *skewed_gaus_result_cut =  new TF1("skewed_gaus_result_cut", skewed_gaus, 0,1.4,4);
-     skewed_gaus_result_cut ->SetParameters(amp_sk_cut_overall, mean_sk_cut_overall, sigma_sk_cut_overall,alpha_cut_overall);
-     //gaus_result ->SetParNames("height", "mean","sigma");
-
-     TF1 *skewed_poly_result_cut = new TF1("skewed_poly_result_cut",poly,0,1.4,7);
-     skewed_poly_result_cut ->SetParameters(par0_sk_cut_overall, par1_sk_cut_overall, par2_sk_cut_overall, par3_sk_cut_overall, par4_sk_cut_overall, par5_sk_cut_overall,par6_sk_cut_overall);
-
-     c2->cd(1);
-
-     skewed_gaus_result_cut ->SetLineColor(kGreen -6);
-     skewed_gaus_result_cut ->SetFillColor(kGreen - 6);
-     skewed_gaus_result_cut ->SetFillStyle(3003);
-     skewed_poly_result_cut ->SetLineColor(kMagenta-6);
-     skewed_poly_result_cut ->SetFillColor(kMagenta-6);
-     skewed_poly_result_cut ->SetFillStyle(3003);
-     fit_W2_gr_cut_overall_skew ->SetLineColor(kRed);
-     fit_background_anticut_big ->SetLineColor(kViolet -6);
-     fit_background_anticut_big ->SetLineStyle(2);
-
-     h_W2_gr_cut_copy ->Draw("hist");
-     skewed_poly_result_cut ->Draw("same");
-     skewed_gaus_result_cut ->Draw("same");
-     fit_W2_gr_cut_overall_skew ->Draw("same");
-     // fit_background_anticut_big ->Draw("same");
-     
-      Double_t integral_gaus_skew_cut = skewed_gaus_result_cut ->Integral(0.55,1.25); 
-      Double_t counts_gaus_skew_cut =  integral_gaus_skew_cut/width;
-     cout<< "counts skewed gaus cut: "<< counts_gaus_skew_cut <<endl;
-
-     Double_t integral_poly_skew_cut =  skewed_poly_result_cut ->Integral(0.55,1.25);
-     Double_t counts_poly_skew_cut = integral_poly_skew_cut/width;
-     cout<< "counts poly skewed: " <<  counts_poly_skew_cut <<endl;
-    
-     Double_t integral_overall_skew_cut = fit_W2_gr_cut_overall_skew ->Integral(0.55,1.25);
-     cout<<"counts overall skewed: "<<integral_overall_skew_cut/width<<endl;
-  
-   
+     ////
      cout<<endl;
      Double_t gaus_eff = counts_gaus_cut / (counts_gaus_cut + counts_gaus);
      cout<<"Eff from normal gaus::  " << counts_gaus_cut <<" / ("<< counts_gaus_cut<< " + "<< counts_gaus<<") = " <<   gaus_eff<<endl;
@@ -567,49 +581,52 @@ void grW2fitter(){ //MAIN
     
 
 
-     c1->cd(1);
-     TLegend *legend = new TLegend(); // Adjust the legend coordinates as needed
-     // Add entries to the legend for the fit parameters
-     legend->SetHeader("W2, Cut on GRINCH, Gaus fits");
-     legend->AddEntry(h_W2_gr_cut, "W2 with cut on GRINCH", "l");
-     legend->AddEntry(fit_W2_gr_cut_overall,"Overall fit", "l");
-     legend->AddEntry(gaus_result_cut,"Gaus Component", "l");
-     legend->AddEntry(poly_result_cut,"6th Order Poly Component", "l");
-     legend->AddEntry((TObject *)0, Form("Counts Under Gaussian: %.2f",counts_gaus_cut  ), "");
-     legend->Draw();
+     // c1->cd(1);
+     // TLegend *legend = new TLegend(); // Adjust the legend coordinates as needed
 
-     c1->cd(2);
-     TLegend *legend2 = new TLegend(); // Adjust the legend coordinates as needed
-     // Add entries to the legend for the fit parameters
-     legend2->SetHeader("W2, anticut on GRINCH, Gaus fits");
-     legend2->AddEntry(h_W2_gr_anticut, "W2 with anticut on GRINCH", "l");
-     legend2->AddEntry(fit_W2_gr_anticut_overall,"Overall fit", "l");
-     legend2->AddEntry(gaus_result,"Gaus Component", "l");
-     legend2->AddEntry(poly_result,"6th Order Poly Component", "l");
-     legend2->AddEntry((TObject *)0, Form("Counts Under Gaussian: %.2f",counts_gaus ), "");
-     legend2->Draw();
+     // // Add entries to the legend for the fit parameters
+     // legend->SetHeader("W2, Cut on GRINCH, Gaus fits");
+     // legend->AddEntry(h_W2_gr_cut, "W2 with cut on GRINCH", "l");
+     // legend->AddEntry(fit_W2_gr_cut_overall,"Overall fit", "l");
+     // legend->AddEntry(gaus_result_cut,"Gaus Component", "l");
+     // legend->AddEntry(poly_result_cut,"6th Order Poly Component", "l");
+     // legend->AddEntry((TObject *)0, Form("Counts: %.2f",counts_gaus_cut  ), "");
+     // legend->Draw();
 
-     c2->cd(1);
-     TLegend *legend3 = new TLegend(); // Adjust the legend coordinates as needed
-     // Add entries to the legend for the fit parameters
-     legend3->SetHeader("W2, cut on GRINCH, Skewed Gaus fits");
-     legend3->AddEntry(h_W2_gr_cut_copy, "W2 with cut on GRINCH", "l");
-     legend3->AddEntry(fit_W2_gr_cut_overall_skew ,"Overall fit", "l");
-     legend3->AddEntry(skewed_gaus_result_cut,"Skewed Gaus Component", "l");
-     legend3->AddEntry(skewed_poly_result_cut,"6th Order Poly Component", "l");
-     legend3->AddEntry((TObject *)0, Form("Counts Under Gaussian: %.2f",counts_gaus_skew_cut  ), "");
-     legend3->Draw();
+     // c1->cd(2);
+     // TLegend *legend2 = new TLegend(); // Adjust the legend coordinates as needed
+     // // Add entries to the legend for the fit parameters
+     // legend2->SetHeader("W2, anticut on GRINCH, Gaus fits");
+     // legend2->AddEntry(h_W2_gr_anticut, "W2 with anticut on GRINCH", "l");
+     // legend2->AddEntry(fit_W2_gr_anticut_overall,"Overall fit", "l");
+     // legend2->AddEntry(gaus_result,"Gaus Component", "l");
+     // legend2->AddEntry(poly_result,"6th Order Poly Component", "l");
+     // legend2->AddEntry((TObject *)0, Form("Counts: %.2f",counts_gaus ), "");
+     // legend2->Draw();
 
-     c2->cd(2);
-     TLegend *legend4 = new TLegend(); // Adjust the legend coordinates as needed
-     // Add entries to the legend for the fit parameters
-     legend4->SetHeader("W2, anticut on GRINCH, Skewed Gaus fits");
-     legend4->AddEntry(h_W2_gr_anticut_copy, "W2 with anticut on GRINCH", "l");
-     legend4->AddEntry(fit_W2_gr_anticut_overall_skew,"Overall fit", "l");
-     legend4->AddEntry(skewed_gaus_result,"Skewed Gaus Component", "l");
-     legend4->AddEntry(skewed_poly_result,"6th Order Poly Component", "l");
-     legend4->AddEntry((TObject *)0, Form("Counts Under Skewed Gaus: %.2f",counts_gaus_skew ), "");
-     legend4->Draw();
+     // c2->cd(1);
+     // //TLegend *legend3 = new TLegend(); // Adjust the legend coordinates as needed
+     // TLegend *legend3 = new TLegend(0.1, 0.6, 0.5, 0.9); 
+     // // Add entries to the legend for the fit parameters
+     // //legend3->SetHeader("W2, cut on GRINCH, Skewed Gaus fits");
+     // legend3->AddEntry(h_W2_gr_cut_copy, "W2 with cut on GRINCH", "l");
+     // legend3->AddEntry(fit_W2_gr_cut_overall_skew ,"Overall fit", "l");
+     // legend3->AddEntry(skewed_gaus_result_cut,"Skewed Gaus Component", "l");
+     // legend3->AddEntry(skewed_poly_result_cut,"6th Order Poly Component", "l");
+     // //legend3->AddEntry((TObject *)0, Form("Counts: %.2f",counts_gaus_skew_cut  ), "");
+     // legend3->Draw();
+
+     //  c2->cd(2);
+     // //TLegend *legend4 = new TLegend(); // Adjust the legend coordinates as needed
+     // TLegend *legend4 = new TLegend(0.1, 0.6, 0.5, 0.9); 
+     // // Add entries to the legend for the fit parameters
+     // //legend4->SetHeader("W2, anticut on GRINCH, Skewed Gaus fits");
+     // legend4->AddEntry(h_W2_gr_anticut_copy, "W2 with anticut on GRINCH", "l");
+     // legend4->AddEntry(fit_W2_gr_anticut_overall_skew,"Overall fit", "l");
+     // legend4->AddEntry(skewed_gaus_result,"Skewed Gaus Component", "l");
+     // legend4->AddEntry(skewed_poly_result,"6th Order Poly Component", "l");
+     // //legend4->AddEntry((TObject *)0, Form("Counts: %.2f",counts_gaus_skew ), "");
+     // legend4->Draw();
 
      c1->Update();
      c2->Update();

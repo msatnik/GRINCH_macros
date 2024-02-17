@@ -217,15 +217,16 @@ TGraphErrors* FitBinsGausTH2D(TH2D* hist, TH1D* sigmahist)
       // get bin center
       double binCenter = hist->GetXaxis()->GetBinCenter(i+1);
       // define fit and gaussian fcn
-      TF1* gaussian =  new TF1("gaussian",gausFit,ymin,ymax,3); // this uses the default "gaus" from root. Could potentially be worth it to make your own gaus function as sometimes the default can be weird
+      TF1* gaussian =  new TF1("gaussian",gausFit,ymin,ymax,3); //
       //cout<<"ymin "<<ymin<<" ymax: "<<ymax <<endl;
+      // give initial guesses and limits on parameters. 
       double mean_prediction = 1.35*binCenter;
       gaussian ->SetParameters(1000,mean_prediction,0.2);
       gaussian->SetParLimits(1,mean_prediction - 0.1, mean_prediction +0.1);
       gaussian ->SetParLimits(2,0.01,0.1);
 
       binHist->Fit(gaussian, "Q");// "quiet" option
-      cout<<"bincenter: " <<binCenter<< " mean pred: "<<mean_prediction<<endl;
+      // cout<<"bincenter: " <<binCenter<< " mean pred: "<<mean_prediction<<endl;
       //get fit results
       double mean = gaussian -> GetParameter(1);
       double sigma = gaussian ->GetParameter(2);

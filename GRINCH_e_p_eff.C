@@ -169,7 +169,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 
   string configfilename = Form("config/sbs%d.cfg",kine);
 
-  cout<<"testing reading in from a config file"<<endl;
+  // cout<<"testing reading in from a config file"<<endl;
 
   ifstream configfile(configfilename);
   TString currentline;
@@ -333,7 +333,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   // Physics
   Double_t kineW2;
   // GRINCH (only track matched I think)
-  Double_t BBgr_allclus_tmean[1000], BBgr_allclus_adc[1000], BBgr_allclus_size[1000], BBgr_allclus_trms[1000], BBgr_allclus_tot_mean[1000], BBgr_allclus_trackindex[1000], BBgr_allclus_xmean[1000], BBgr_allclus_ymean[1000]; 
+  Double_t BBgr_allclus_tmean[1000], BBgr_allclus_adc[1000], BBgr_allclus_size[1000], BBgr_allclus_trms[1000], BBgr_allclus_tot_mean[1000], BBgr_allclus_trackindex[1000], BBgr_allclus_xmean[1000], BBgr_allclus_ymean[1000], BBgr_allclus_dx[1000], BBgr_allclus_dy[1000]; ; 
   Double_t BBgr_clus_tmean, BBgr_clus_adc, BBgr_clus_size, BBgr_clus_trms, BBgr_clus_tot_mean, BBgr_clus_trackindex, BBgr_clus_xmean, BBgr_clus_ymean; 
   Double_t BBgr_hit_amp[1000], BBgr_hit_clustindex[1000], BBgr_hit_col[1000], BBgr_hit_row[1000], BBgr_hit_pmtnum[1000], BBgr_hit_trackindex[1000], BBgr_hit_xhit[1000], BBgr_hit_yhit[1000], BBgr_hit_time[1000];
   Int_t hitsGR; 
@@ -342,11 +342,14 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   Double_t  BBgr_tdc_tdcelemID[1000], BBgr_tdc_tdc[1000],BBgr_tdc_te[1000], BBgr_tdc_mult[1000], BBgr_tdc_tot[1000];
 
 
-
+ Double_t BBgr_clus_mirrorindex;
+ Double_t BBgr_allclus_mirrorindex[1000];
 
   Double_t bb_tdctrig_tdc[1000], bb_tdctrig_tdcelemID[1000];
   Int_t Nclusters; 
   Int_t Ndata_bb_tdctrig_tdcelemID;
+
+  Double_t BBgr_bestcluster,  BBgr_ngoodhits, BBgr_ntrackmatch;
 
   // Declare root tree variables and set values to memory locations in root file
   // Turn off all branches
@@ -375,15 +378,20 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   C->SetBranchStatus("bb.grinch_tdc.allclus.trackindex",1);
   C->SetBranchStatus("bb.grinch_tdc.allclus.x_mean",1);
   C->SetBranchStatus("bb.grinch_tdc.allclus.y_mean",1);
+  C->SetBranchStatus("bb.grinch_tdc.allclus.mirrorindex",1);
+  C->SetBranchStatus("bb.grinch_tdc.allclus.dx",1);//
+  C->SetBranchStatus("bb.grinch_tdc.allclus.dy",1);//
 
-  C->SetBranchStatus("bb.grinch_tdc.clus.adc",1);
-  C->SetBranchStatus("bb.grinch_tdc.clus.size",1);
-  C->SetBranchStatus("bb.grinch_tdc.clus.t_mean",1);
-  C->SetBranchStatus("bb.grinch_tdc.clus.t_rms",1);
-  C->SetBranchStatus("bb.grinch_tdc.clus.tot_mean",1);
-  C->SetBranchStatus("bb.grinch_tdc.clus.trackindex",1);
-  C->SetBranchStatus("bb.grinch_tdc.clus.x_mean",1);
-  C->SetBranchStatus("bb.grinch_tdc.clus.y_mean",1);
+  // track-matched cluster variables
+  C->SetBranchStatus("bb.grinch_tdc.clus.adc",1); // TDC LE sum 
+  C->SetBranchStatus("bb.grinch_tdc.clus.size",1); // number of PMTs in the cluster
+  C->SetBranchStatus("bb.grinch_tdc.clus.t_mean",1); // average LE time pf the PMTs
+  C->SetBranchStatus("bb.grinch_tdc.clus.t_rms",1); // RMS of the average LE time. 
+  C->SetBranchStatus("bb.grinch_tdc.clus.tot_mean",1); // mean of the time-over-threshold
+  C->SetBranchStatus("bb.grinch_tdc.clus.trackindex",1);// which track the cluster matches (-1 if none)
+  C->SetBranchStatus("bb.grinch_tdc.clus.x_mean",1); // the mean x position of the PMTs in the cluster
+  C->SetBranchStatus("bb.grinch_tdc.clus.y_mean",1); //  the mean y position of the PMTs in the cluster
+  C->SetBranchStatus("bb.grinch_tdc.clus.mirrorindex",1); // which mirror it was matched to  
 
   C->SetBranchStatus("bb.grinch_tdc.hit.amp",1);
   C->SetBranchStatus("bb.grinch_tdc.hit.clustindex",1);
@@ -395,6 +403,10 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   C->SetBranchStatus("bb.grinch_tdc.hit.xhit",1);
   C->SetBranchStatus("bb.grinch_tdc.hit.yhit",1);
   C->SetBranchStatus("Ndata.bb.grinch_tdc.hit.pmtnum",1);
+
+  C->SetBranchStatus("bb.grinch_tdc.bestcluster",1);//
+  C->SetBranchStatus("bb.grinch_tdc.ngoodhits",1);
+  C->SetBranchStatus("bb.grinch_tdc.ntrackmatch",1);
 
   // Map branches to the variables 
   C->SetBranchAddress( "sbs.hcal.e", &HCAL_e );
@@ -421,6 +433,10 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   C->SetBranchAddress("bb.grinch_tdc.allclus.trackindex",&BBgr_allclus_trackindex);
   C->SetBranchAddress("bb.grinch_tdc.allclus.x_mean",&BBgr_allclus_xmean);
   C->SetBranchAddress("bb.grinch_tdc.allclus.y_mean",&BBgr_allclus_ymean);
+  C->SetBranchAddress("bb.grinch_tdc.allclus.mirrorindex",&BBgr_allclus_mirrorindex);
+  C->SetBranchAddress("bb.grinch_tdc.allclus.dx",&BBgr_allclus_dx);//
+  C->SetBranchAddress("bb.grinch_tdc.allclus.dy",&BBgr_allclus_dy);//
+
 
   C->SetBranchAddress("bb.grinch_tdc.clus.adc",&BBgr_clus_adc);
   C->SetBranchAddress("bb.grinch_tdc.clus.size",&BBgr_clus_size);
@@ -430,6 +446,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   C->SetBranchAddress("bb.grinch_tdc.clus.trackindex",&BBgr_clus_trackindex);
   C->SetBranchAddress("bb.grinch_tdc.clus.x_mean",&BBgr_clus_xmean);
   C->SetBranchAddress("bb.grinch_tdc.clus.y_mean",&BBgr_clus_ymean);
+  C->SetBranchAddress("bb.grinch_tdc.clus.mirrorindex",&BBgr_clus_mirrorindex);
 
   C->SetBranchAddress("bb.grinch_tdc.hit.amp",&BBgr_hit_amp);
   C->SetBranchAddress("bb.grinch_tdc.hit.clustindex",&BBgr_hit_clustindex);
@@ -442,6 +459,9 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   C->SetBranchAddress("bb.grinch_tdc.hit.yhit",&BBgr_hit_yhit);
   C->SetBranchAddress("Ndata.bb.grinch_tdc.hit.pmtnum",&hitsGR);
 
+  C->SetBranchAddress("bb.grinch_tdc.bestcluster",&BBgr_bestcluster);//
+  C->SetBranchAddress("bb.grinch_tdc.ngoodhits",&BBgr_ngoodhits);
+  C->SetBranchAddress("bb.grinch_tdc.ntrackmatch",&BBgr_ntrackmatch);
 
  // // the hit closest to the good time cut
  //  C->SetBranchStatus("Ndata.bb.grinch_tdc.tdcelemID",1) ;
@@ -461,21 +481,27 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   Bool_t gr_zeros_cut = BBgr_clus_size>=1&&BBgr_clus_adc>0&&BBgr_clus_trackindex!=-1;
   
  // Declare outfile
-  TFile *fout = new TFile( Form("output/sbs%d.root",kine), "RECREATE" );
+  TFile *fout = new TFile( Form("output/sbs%d.root",kine), "RECREATE" ); //need to chage back
   //TFile *fout = new TFile("output/sbstest.root", "RECREATE" );
 
   // Histograms
 
   // physics 
   TH1D* h_W2 =  new TH1D("h_W2",";W2;" ,200, 0, 2);
-  TH1D* h_W2_gr_anticut =  new TH1D("h_W2_gr_anticut",";W2 with anticut on grinch;",200,0,2);
-  TH1D* h_W2_gr_ps_anticut= new TH1D("h_W2_gr_ps_anticut",";W2 with anticut on grinch and ps;",200,0,2);
+  TH1D* h_W2_gr_anticut =  new TH1D("h_W2_gr_anticut",";W2 with anticut on grinch;",100,0,2);
+  TH1D* h_W2_gr_ps_anticut= new TH1D("h_W2_gr_ps_anticut",";W2 with anticut on grinch and ps;",100,0,2);
   TH1D* h_W2_gr_ps_cut= new TH1D("h_W2_gr_ps_cut",";W2 with cut on grinch and ps;",200,0,2);
-  TH1D* h_W2_ps_anticut= new TH1D("h_W2_ps_anticut",";W2 with anticut on ps;",200,0,2);
+  TH1D* h_W2_ps_anticut= new TH1D("h_W2_ps_anticut",";W2 with anticut on ps;",100,0,2);
   TH1D* h_W2_ps_cut= new TH1D("h_W2_ps_cut",";W2 with cut on ps;",200,0,2);
   TH1D* h_W2_gr_cut =  new TH1D("h_W2_gr_cut",";W2 with cut on grinch;",200,0,2);
   TH1D* h_W2_elastic =  new TH1D("h_W2_elastic",";W2 with elastic cuts;",200,0,2);
   TH1D* h_W2_elastic_trcut =  new TH1D("h_W2_elastic_trcut",";W2 with elastic cuts and grinch track cut;",200,0,2);
+  TH1D* h_W2_allclus_cut =  new TH1D("h_W2_allclus_cut",";W2 with cut on allclus branch;",200,0,2);
+  TH1D* h_W2_allclus_anticut =  new TH1D("h_W2_allclus_anticut",";W2 with anticut on allclus branch;",100,0,2);
+  TH1D* h_W2_allclus_ps_cut =  new TH1D("h_W2_allclus_ps_cut",";W2 with cut on allclus branch and ps;",200,0,2);
+  TH1D* h_W2_allclus_ps_anticut =  new TH1D("h_W2_allclus_ps_anticut",";W2 with anticut on allclus branch and ps;",100,0,2);
+
+
   // BBCAL
   TH1D* h_BBps_e =  new TH1D("h_BBps_e",";BBps_e;" ,300, 0, 3);
   TH1D* h_HCAL_e = new TH1D("h_HCAL_e",";HCAL e;",300,0,3);
@@ -538,11 +564,17 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   TH2D* h_BBtr_p_th = new TH2D("h_BBtr_p_th",";bb.tr.th[0];bb.tr.p[0]",600,-0.3,0.3,500,0,5);
   TH2D* h_BBtr_p_th_cut_mirror2 = new TH2D("h_BBtr_p_th_cut_mirror2",";bb.tr.p[0];bb.tr.th[0]",250,0,5,300,-0.3,0.3);
   TH2D* h_BBtr_p_th_cut_mirror3 = new TH2D("h_BBtr_p_th_cut_mirror3",";bb.tr.p[0];bb.tr.th[0]",250,0,5,300,-0.3,0.3);
+
+  TH1D* h_BBgr_projx_clusx_diff_clus =new TH1D("h_BBgr_projx_clusx_diff_clus",";projx - 0.71*clus_xmean;",400,-0.4,0.4);
  
- TH2D* h_BBgr_clusxdiff_trth_allclus = new TH2D("h_BBgr_clusxdiff_trth_allclus","; bb.tr.th[0] ; GRINCH dx", 600,-0.3,0.3,400,-0.4, 0.4);
- TH2D* h_BBgr_clusxdiff_trp = new TH2D("h_BBgr_clusxdiff_trp","; bb.tr.p[0] ; projx - 0.71*clus_xmean", 500,0,5,400,-0.4, 0.4);
+  TH2D* h_BBgr_clusxdiff_trth_allclus = new TH2D("h_BBgr_clusxdiff_trth_allclus","; bb.tr.th[0] ; GRINCH dx", 600,-0.3,0.3,400,-0.4, 0.4);
+  TH2D* h_BBgr_clusxdiff_trp = new TH2D("h_BBgr_clusxdiff_trp","; bb.tr.p[0] ; projx - 0.71*clus_xmean", 500,0,5,400,-0.4, 0.4);
   TH2D* h_BBgr_clusxdiff_trp_allclus = new TH2D("h_BBgr_clusxdiff_trp_allclus","; bb.tr.p[0] ; grinch dx", 500,0,5,400,-0.4, 0.4);
   TH2D* h_BBgr_clusxdiff_trph_allclus = new TH2D("h_BBgr_clusxdiff_trph_allclus","; bb.tr.ph[0] ; grinch dx", 400,-0.2,0.2,1000,-0.4, 0.4);
+
+  TH2D* h_BBgr_clusxdiff_trth_clus = new TH2D("h_BBgr_clusxdiff_trth_clus","; bb.tr.th[0] ; GRINCH dx", 600,-0.3,0.3,400,-0.4, 0.4);
+  TH2D* h_BBgr_clusxdiff_trp_clus = new TH2D("h_BBgr_clusxdiff_trp_clus","; bb.tr.p[0] ; grinch dx", 500,0,5,400,-0.4, 0.4);
+  TH2D* h_BBgr_clusxdiff_trph_clus = new TH2D("h_BBgr_clusxdiff_trph_clus","; bb.tr.ph[0] ; grinch dx", 400,-0.2,0.2,1000,-0.4, 0.4);
 
 
   TH1D* h_BBgr_projx_clusx_diff_allclus_mirror1 =new TH1D("h_BBgr_projx_clusx_diff_allclus_mirror1","mirror 1 ;GRINCH 'dx' ;",200,-0.4,0.4);
@@ -566,6 +598,8 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   TH2D* h_BBgr_clusxdiff_trp_allclus_mirror4 = new TH2D("h_BBgr_clusxdiff_trp_allclus_mirror4","mirror4; bb.tr.p[0] ; GRINCH 'dx' ", 500,0,5,400,-0.4, 0.4);
   TH2D* h_BBgr_clusxdiff_trph_allclus_mirror4 = new TH2D("h_BBgr_clusxdiff_trph_allclus_mirror4","mirror4; bb.tr.ph[0] ; GRINCH 'dx' ", 400,-0.2,0.2,1000,-0.4, 0.4);
 
+  TH2D* h_BBgr_clusxdiff_mirrornum_clus = new TH2D("h_BBgr_clusxdiff_mirrornum_clus",";mirror number ; GRINCH dx",6,-1,5,200,-0.4,0.4);
+  TH2D* h_BBgr_clusxdiff_mirrornum_allclus = new TH2D("h_BBgr_clusxdiff_mirrornum_allclus",";mirror number ; GRINCH dx",6,-1,5,200,-0.4,0.4);
 
   TH1D* h_track_cut_dx = new TH1D("h_track_cut_dx","all mirrors ;clusx - (projx at window + expected dx);",50,-0.1,0.1);
   TH1D* h_track_cut_dx_mirror1 = new TH1D("h_track_cut_dx_mirror1","mirror1;clusx - (projx at window + expected dx);",50,-0.1,0.1);
@@ -581,9 +615,12 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   TH2D* h_mirror_projection = new TH2D("h_mirror_projection",";projx + 0.66*BBtr_th[0] ;GRINCH dx",200,-1,1,90,-0.3,0.3);
 
   TH2D* h_BBgr_projx_dx = new TH2D("h_BBgr_projx_dx", "; projected x from track; actual dx", 100,-1,1, 400,-0.4,0.4);
+  TH2D* h_BBgr_projx_dx_clus = new TH2D("h_BBgr_projx_dx_clus", "; projected x from track; actual dx", 100,-1,1, 400,-0.4,0.4);
 
   TH1D* h_BBgr_projy_clusy_diff_allclus = new TH1D("h_BBgr_projy_clusy_diff_allclus",";cluster y - projected y from track ",90,-0.3,0.3);
+  TH1D* h_BBgr_projy_clusy_diff_clus = new TH1D("h_BBgr_projy_clusy_diff_clus",";cluster y - projected y from track ",90,-0.3,0.3);
   TH2D* h_BBgr_clusydiff_trph_allclus = new TH2D("h_BBgr_clusydiff_trph_allclus","; bb.tr.ph[0] ; GRINCH 'dy' ", 90,-0.15,0.15,90,-0.3, 0.3);
+  TH2D* h_BBgr_clusydiff_trph_clus = new TH2D("h_BBgr_clusydiff_trph_clus","; bb.tr.ph[0] ; GRINCH 'dy' ", 90,-0.15,0.15,90,-0.3, 0.3);
   TH1D* h_BBgr_projy_clusy_diff_allclus_mirror2 = new TH1D("h_BBgr_projy_clusy_diff_allclus_mirror2","mirror2;cluster y - projected y from track ",90,-0.3,0.3);
   TH2D* h_BBgr_clusydiff_trph_allclus_mirror2 = new TH2D("h_BBgr_clusydiff_trph_allclus_mirror2"," mirror2; bb.tr.ph[0] ; GRINCH 'dy' ", 90,-0.15,0.15,90,-0.3, 0.3);
   TH1D* h_BBgr_projy_clusy_diff_allclus_mirror3 = new TH1D("h_BBgr_projy_clusy_diff_allclus_mirror3","mirror3;cluster y - projected y from track ",90,-0.3,0.3);
@@ -602,11 +639,13 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   TH1D* h_BBgr_allclus_tot_mean =  new TH1D("h_BBgr_allclus_tot_mean", ";bb.grinch_tdc.allclus.tot_mean;",50,0,5);
 
   TH1D* h_BBgr_allclus_trackindex =  new TH1D("h_BBgr_allclus_trackindex", ";bb.grinch_tdc.allclus.trackindex;",5,-1,4);
+  TH2D* h_BBgr_allclus_size_clusindex =  new TH2D("h_BBgr_allclus_size_clusindex",";cluster index; cluster size", 20,0,20,20,0,20);
   TH1D* h_BBgr_allclus_xmean =  new TH1D("h_BBgr_allclus_xmean", ";bb.grinch_tdc.allclus.xmean;",200,-1,1);
   TH1D* h_BBgr_allclus_ymean =  new TH1D("h_BBgr_allclus_ymean", ";bb.grinch_tdc.allclus.ymean;",100,-0.25,0.25);
   TH1D* h_BBgr_allclus_Nclusters = new TH1D("h_BBgr_allclus_Nclusters", ";Number of clusters in event;", 20,0,20);
   TH2D* h_BBgr_allclus_xmean_projx = new TH2D("h_BBgr_allclus_xmean_projx", "; projected x at grinch window from track ;cluster x position",200,-1,1,200,-1,1);
   TH2D* h_BBgr_allclus_xmean_tmean =  new TH2D("h_BBgr_allclus_xmean_tmean", ";xmean;tmean",200,-1,1,60,-30,30);
+  TH2D* h_BBgr_clus_xmean_tmean =  new TH2D("h_BBgr_clus_xmean_tmean", ";xmean;tmean",200,-1,1,60,-30,30);
   TH2D* h_BBgr_allclus_mirror2 = new TH2D("h_BBgr_allclus_mirror2", "Mirror 2; projected y at grinch window from track ;cluster y position",100,-0.25,0.25,100,-0.25,0.25);
   TH2D* h_BBgr_allclus_mirror1 = new TH2D("h_BBgr_allclus_mirror1", "Mirror 1; projected y at grinch window from track ;cluster y position",100,-0.25,0.25,100,-0.25,0.25);
   TH2D* h_BBgr_allclus_mirror3 = new TH2D("h_BBgr_allclus_mirror3", "Mirror 3; projected y at grinch window from track ;cluster y position",100,-0.25,0.25,100,-0.25,0.25);
@@ -615,6 +654,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   TH2D* h_BBgr_clus_size_ps = new TH2D("h_BBgr_clus_size_ps",";preshower e ; cluster size", 200,0,3 ,15,0,15);
   TH2D* h_BBgr_clus_adc_ps = new TH2D("h_BBgr_clus_adc_ps","; preshower e ; cluster ToT sum", 200,0,3, 200,0,200);
   TH2D* h_BBgr_clus_size_adc =  new TH2D("h_BBgr_clus_size_adc",";clus ToT sum; clus size;",200,0,200,15,0,15);
+  TH2D* h_BBgr_allclus_adc_ps = new TH2D("h_BBgr_allclus_adc_ps","; preshower e ; cluster ToT sum", 200,0,3, 200,0,200);
 
 
   TH1D* h_BBgr_hit_time =  new TH1D("h_BBgr_hit_time", ";bb.grinch_tdc.hit.time -bb.hodotdc.clus.tmean[0] ;",60,-30,30);
@@ -624,6 +664,8 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   
   TH1D* h_BBgr_hit_numhits = new TH1D("h_BBgr_hit_numhits", ";bb.grinch_tdc.hit.time;",100,0,100);
   TH1D* h_BBgr_hit_amp =  new TH1D("h_BBgr_hit_amp", ";bb.grinch_tdc.hit.amp;",50,0,50);
+  TH1D* h_BBgr_hit_clusindex =  new TH1D("h_BBgr_hit_clusindex"," ;bb.grinch_tdc.hit.clusindex;", 21,-1,20);
+  TH2D* h_BBgr_hit_clusindex_time =  new TH2D("h_BBgr_hit_clusindex_time"," ;bb.grinch_tdc.hit.clusindex; bb.grinch_tdc.hit.time ", 21,-1,20, 60,-30,30);
   TH2D* h_BBgr_hit_time_amp =  new TH2D("h_BBgr_hit_time_amp","all PMTs with hits;hit branch tot; hit branch time -hodo_tmean ;",50,0,50,60,-30,30);
  TH2D* h_BBgr_hit_time_amp_tw_poly =  new TH2D("h_BBgr_hit_time_amp_tw_poly","all PMTs with hits;hit branch tot; hit branch time -hodo_tmean with poly tw correction;",50,0,50,60,-30,30);
  TH2D* h_BBgr_hit_time_amp_tw_trad=  new TH2D("h_BBgr_hit_time_amp_tw_trad","all PMTs with hits;hit branch tot; hit branch time -hodo_tmean with trad tw correction;",50,0,50,60,-30,30);
@@ -633,13 +675,14 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   TH2D  *h_BBgr_hit_time_elemID = new TH2D("h_BBgr_hit_time_elemID", "LE vs PMT for each PMT; PMT number; LE - hodo_tmean", 510,0,510, 60,-30,30 );
   TH2D  *h_BBgr_hit_time_elemID_nohodo = new TH2D("h_BBgr_hit_time_elemID_nohodo", "LE vs PMT for each PMT; PMT number; LE", 510,0,510, 60,-30,30 );
 
+  TH2D  *h_BBgr_hit_time_elemID_bestcluster = new TH2D("h_BBgr_hit_time_elemID_bestcluster", " Best Cluster Only ; PMT number; LE - hodo_tmean", 510,0,510, 60,-30,30 );
+
   TH1D* h_BBgr_tdc_tdc =  new TH1D("h_BBgr_tdc_tdc","tdc_tdc",60,-30,30);
  
    // Set long int to keep track of total entries
   cout<<"Loading branches. Hold tight! "<<endl;
   Long64_t Nevents = C->GetEntries();
   UInt_t run_number = 0;
-
  
   cout<<"Entries: "<<Nevents<<endl;
  
@@ -647,6 +690,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   Double_t projy;
   Double_t projx_clusx_diff;
   Double_t projx_clusx_diff_allclus;
+  Double_t projx_clusx_diff_clus;
   Double_t projx_clusx_diff_allclus_mirror1;
   Double_t projx_clusx_diff_allclus_mirror2;
   Double_t projx_clusx_diff_allclus_mirror3;
@@ -657,6 +701,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
   Double_t track_cut_dx;
   Double_t track_cut_dy;
   Double_t projy_clusy_diff_allclus;
+  Double_t projy_clusy_diff_clus;
   Double_t projy_clusy_diff_allclus_mirror2;
   Double_t projy_clusy_diff_allclus_mirror3;
   Double_t projy_clusy_diff_allclus_mirror1;
@@ -678,13 +723,16 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
     Int_t cout_cnt = 0;
     Int_t cout_cnt2 =0;
 
+    Bool_t in_order = true;
+    Double_t tempsize = 100;
+
   // Loop over events
     for(Long64_t nevent = 0; nevent<max; nevent++){
    
       C->GetEntry(nevent); 
       if (nevent%50000==0) cout << " Entry = " << nevent << endl;
       if ( BBtr_n !=1) continue; // doing a global cut here for now instead of the elist so things load faster
-
+      if(kineW2>1.4) continue; 
 
       projx = BBtr_x[0] +BBtr_th[0]*0.48;//0.48
       projy = BBtr_y[0]+BBtr_ph[0]*0.48;
@@ -726,7 +774,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 
       if ( BBgr_clus_size>=1 && BBgr_clus_adc>0)
 	{
-	  h_BBgr_clus_xmean_projx ->Fill(projx, BBgr_clus_xmean);
+	  // h_BBgr_clus_xmean_projx ->Fill(projx, BBgr_clus_xmean);
 	  if (BBgr_clus_trackindex != -1)
 	    {
 	      h_BBgr_clus_xmean_projx_trackmatch ->Fill(projx, BBgr_clus_xmean);
@@ -793,23 +841,43 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
       h_BB_e_p -> Fill(e_over_p);
 
       // GRINCH histos 
-   
-      h_BBgr_clus_trackindex ->Fill(BBgr_clus_trackindex);  
       h_BBgr_allclus_Nclusters ->Fill(Nclusters);
-      h_BBgr_clus_adc ->Fill(BBgr_clus_adc);
-      h_BBgr_clus_size ->Fill(BBgr_clus_size);  
-      //h_BBgr_clus_tmean ->Fill(BBgr_clus_tmean - HODOtmean[0]);  
-      //h_BBgr_clus_tmean_nohodo ->Fill(BBgr_clus_tmean);  
-      h_BBgr_clus_trms ->Fill(BBgr_clus_trms);  
-      h_BBgr_clus_tot_mean ->Fill(BBgr_clus_tot_mean);  
-      h_BBgr_clus_tot_mean_size ->Fill(BBgr_clus_size, BBgr_clus_tot_mean);  
-      h_BBgr_clus_ymean ->Fill(BBgr_clus_ymean);
-      h_BBgr_clus_xmean ->Fill(BBgr_clus_xmean);
-      h_BBgr_clus_tmean_tot ->Fill(BBgr_clus_tot_mean, BBgr_clus_tmean);
 
-      h_BBgr_clus_size_ps ->Fill( BBps_e, BBgr_clus_size);
-      h_BBgr_clus_adc_ps ->Fill( BBps_e, BBgr_clus_adc);
-      h_BBgr_clus_size_adc ->Fill(BBgr_clus_adc,BBgr_clus_size);
+      h_BBgr_clus_trackindex ->Fill(BBgr_clus_trackindex);  
+      if(BBgr_clus_trackindex !=-1 && BBgr_clus_size>0)
+	{
+	  projx_clusx_diff_clus = BBgr_clus_xmean - projx;
+	  h_BBgr_clus_xmean_projx ->Fill(projx, BBgr_clus_xmean);
+	  h_BBgr_projx_clusx_diff_clus -> Fill(projx_clusx_diff_clus);
+	  h_BBgr_clusxdiff_trp_clus->Fill(BBtr_p[0],projx_clusx_diff_clus);
+	  h_BBgr_clusxdiff_trth_clus->Fill(BBtr_th[0],projx_clusx_diff_clus);
+	  h_BBgr_clusxdiff_trph_clus->Fill(BBtr_ph[0],projx_clusx_diff_clus);
+	  h_BBgr_clus_xmean_tmean ->Fill(BBgr_clus_xmean,BBgr_clus_tmean);
+	  h_BBgr_projx_dx_clus ->Fill(projx,projx_clusx_diff_clus);
+	  h_BBgr_clusxdiff_mirrornum_clus ->Fill(BBgr_clus_mirrorindex, projx_clusx_diff_clus);
+
+
+
+	  projy_clusy_diff_clus = (BBgr_clus_ymean - projy);
+	  h_BBgr_projy_clusy_diff_clus ->Fill(projy_clusy_diff_clus);
+	  h_BBgr_clusydiff_trph_clus->Fill(BBtr_ph[0],projy_clusy_diff_clus);
+
+	  h_BBgr_clus_adc ->Fill(BBgr_clus_adc); 
+	  h_BBgr_clus_size ->Fill(BBgr_clus_size);  
+	  
+	  //h_BBgr_clus_tmean ->Fill(BBgr_clus_tmean - HODOtmean[0]);  
+	  //h_BBgr_clus_tmean_nohodo ->Fill(BBgr_clus_tmean);  
+	  h_BBgr_clus_trms ->Fill(BBgr_clus_trms);  
+	  h_BBgr_clus_tot_mean ->Fill(BBgr_clus_tot_mean);  
+	  h_BBgr_clus_tot_mean_size ->Fill(BBgr_clus_size, BBgr_clus_tot_mean);  
+	  h_BBgr_clus_ymean ->Fill(BBgr_clus_ymean);
+	  h_BBgr_clus_xmean ->Fill(BBgr_clus_xmean);
+	  h_BBgr_clus_tmean_tot ->Fill(BBgr_clus_tot_mean, BBgr_clus_tmean);
+
+	  h_BBgr_clus_size_ps ->Fill( BBps_e, BBgr_clus_size);
+	  h_BBgr_clus_adc_ps ->Fill( BBps_e, BBgr_clus_adc);
+	  h_BBgr_clus_size_adc ->Fill(BBgr_clus_adc,BBgr_clus_size);
+	}
 
       if (BBps_e < PS_cut) 
 	{
@@ -895,17 +963,27 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 	{
 	  h_BBgr_clus_mirror4 ->Fill(projy, BBgr_clus_ymean);
 	}
+      
+      Int_t maxadc= 0;
+      Int_t maxadcindex = 0;
+
+      tempsize = 100;
 
       for (Int_t i = 0; i < Nclusters; i ++) //loop over multiple clusters
 	{
 	  h_BBgr_allclus_trackindex ->Fill(BBgr_allclus_trackindex[i]);  
 	  h_BBgr_allclus_adc ->Fill(BBgr_allclus_adc[i]);
-	  h_BBgr_allclus_size ->Fill(BBgr_allclus_size[i]);  
+	  h_BBgr_allclus_size ->Fill(BBgr_allclus_size[i]);
 	  h_BBgr_allclus_tmean ->Fill(BBgr_allclus_tmean[i] - HODOtmean[0]);  
 	  h_BBgr_allclus_trms ->Fill(BBgr_allclus_trms[i]);  
 	  h_BBgr_allclus_tot_mean ->Fill(BBgr_allclus_tot_mean[i]);  
 	  h_BBgr_allclus_ymean ->Fill(BBgr_allclus_ymean[i]);
-	  if( BBgr_allclus_size[i]>1 && BBgr_allclus_tot_mean[i]>0) // BBgr_allclus_size[i]>2
+	  h_BBgr_allclus_size_clusindex ->Fill(i, BBgr_allclus_size[i]);
+
+	  
+
+	  //  h_BBgr_allclus_adc_ps ->Fill( BBps_e, BBgr_allclus_adc[i]);
+	  if( BBgr_allclus_size[i]>0 && BBgr_allclus_tot_mean[i]>0) // BBgr_allclus_size[i]>2
 	    {
 	      projx_clusx_diff_allclus = BBgr_allclus_xmean[i] - projx;
 	      h_BBgr_allclus_xmean_projx ->Fill(projx, BBgr_allclus_xmean[i]);
@@ -917,10 +995,13 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 	      h_BBgr_allclus_xmean_tmean ->Fill(BBgr_allclus_xmean[i],BBgr_allclus_tmean[i]);
 	      h_BBgr_projx_dx ->Fill(projx,projx_clusx_diff_allclus);
 
+	      h_BBgr_allclus_adc_ps ->Fill( BBps_e, BBgr_allclus_adc[i]);
 
 	      projy_clusy_diff_allclus = (BBgr_allclus_ymean[i] - projy);
 	      h_BBgr_projy_clusy_diff_allclus ->Fill(projy_clusy_diff_allclus);
 	      h_BBgr_clusydiff_trph_allclus->Fill(BBtr_ph[0],projy_clusy_diff_allclus);
+	      
+	      h_BBgr_clusxdiff_mirrornum_allclus ->Fill(BBgr_allclus_mirrorindex[i], projx_clusx_diff_allclus);
 
 	      // // trying to find mirror projections 
 	      // if(projy > -0.025 && projy < 0.025 && BBtr_ph[0]> -0.01 && BBtr_ph[0]< 0.01){// look at a small slice in y
@@ -1045,8 +1126,43 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 
 
 	    }
+	  
+	  if(BBgr_allclus_adc[i] > maxadc)
+	    {
+	      maxadc = BBgr_allclus_adc[i];
+	      maxadcindex = i;
+	    }
 
-	}
+	}// end loop over Nclusters
+
+  if (BBgr_allclus_adc[maxadcindex] > GR_cut)
+    {
+      h_W2_allclus_cut ->Fill(kineW2);
+    }
+  else
+    {
+       h_W2_allclus_anticut ->Fill(kineW2);
+    }
+
+  if(Nclusters ==0)
+    {
+      h_W2_allclus_anticut ->Fill(kineW2);
+    }
+
+ 
+  if (BBgr_allclus_adc[maxadcindex] > GR_cut && BBps_e > PS_cut)
+    {
+      h_W2_allclus_ps_cut ->Fill(kineW2);
+    }
+  else if (BBgr_allclus_adc[maxadcindex]< GR_cut && BBps_e < PS_cut)
+    {
+      h_W2_allclus_ps_anticut ->Fill(kineW2);
+    }
+  else if(Nclusters ==0 && BBps_e < PS_cut)
+    {
+      h_W2_allclus_ps_anticut ->Fill(kineW2);
+    }
+    
 
  
       //SBS 9
@@ -1079,7 +1195,18 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 	  h_BBgr_hit_time_amp_tw_trad ->Fill(BBgr_hit_amp[i],time_trad) ;
 	  h_BBgr_hit_time_amp_nohodo ->Fill(BBgr_hit_amp[i],BBgr_hit_time[i] );
 	  h_BBgr_hit_time_elemID ->Fill(BBgr_hit_pmtnum[i],BBgr_hit_time[i] - HODOtmean[0] );
-	  h_BBgr_hit_time_elemID_nohodo ->Fill(BBgr_hit_pmtnum[i],BBgr_hit_time[i] );
+	  h_BBgr_hit_time_elemID_nohodo ->Fill(BBgr_hit_pmtnum[i],BBgr_hit_time[i] );	  
+	  h_BBgr_hit_clusindex ->Fill(BBgr_hit_clustindex[i]);
+	  h_BBgr_hit_clusindex_time ->Fill(BBgr_hit_clustindex[i], BBgr_hit_time[i]);
+	  // h_BBgr_hit_clusindex_size ->Fill(BBgr_hit_clustindex[i], BBgr_hit_time[i]);
+
+       
+	  if(BBgr_hit_clustindex[i] == BBgr_bestcluster)
+	    {
+	      h_BBgr_hit_time_elemID_bestcluster -> Fill(BBgr_hit_pmtnum[i],BBgr_hit_time[i] - HODOtmean[0] );
+	    }
+
+
 	  if (BBgr_hit_pmtnum[i] == 250)
 	    {
 	      h_BBgr_hit_time_amp_250 ->Fill(BBgr_hit_amp[i], BBgr_hit_time[i]);
@@ -1089,7 +1216,7 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
 	      // cout<< "grinch hit time: "<<BBgr_hit_time[i]<<" hodo time: "<< HODOtmean[0]<<endl;
 	      cout_cnt++;
 	    }
-	}
+	}//end loop over hits
       
       
 
@@ -1112,6 +1239,8 @@ void GRINCH_e_p_eff(Int_t entries_input = -1, Int_t kine = 8){
     }//end for loop over Nevents
   
   cout<< "Looped over " << max<< " entries." <<endl;
+
+
   fout -> Write();
 }
 //end main

@@ -13,7 +13,7 @@ void Plot_Size(){
 
     gStyle->SetOptStat(0);
     //Get pre-ecal energy dist
-    TFile *f1 = TFile::Open("../output/sbs8_13487_ele.root");
+    TFile *f1 = TFile::Open("../output/sbs8_nov24_electron.root");
     TH1D *h1= (TH1D*)f1->Get("h_BBgr_clus_size");
     TH1D *h1_norm =  (TH1D*)(h1 ->Clone("h1_norm"));
     h1_norm ->Scale(1./h1_norm->Integral(),"width");
@@ -30,7 +30,7 @@ void Plot_Size(){
     
     
    
-    TFile *f2 = TFile::Open("../output/sbs8_13487_pions.root");
+    TFile *f2 = TFile::Open("../output/sbs8_nov24_pion.root");
     TH1D *h2 = (TH1D*)f2->Get("h_BBgr_clus_size");
     TH1D *h2_norm =  (TH1D*)(h2 ->Clone("h2_norm"));
     h2_norm ->Scale(1./h2_norm->Integral(),"width");

@@ -44,13 +44,13 @@ void readin_test_jack(Int_t entries_input = -1,Int_t kine = 8){// MAIN
       cout << "Loaded file at: " << currentline << endl;
     }    
   }
-  TCut globalcut = "";
-  while( currentline.ReadLine( configfile ) && !currentline.BeginsWith("endcut") ){
-    if( !currentline.BeginsWith("#") ){
-      globalcut += currentline;
-    }    
-    cout<< "Global Cut: "<<globalcut<<endl;
-  }
+  // TCut globalcut = "";
+  // while( currentline.ReadLine( configfile ) && !currentline.BeginsWith("endcut") ){
+  //   if( !currentline.BeginsWith("#") ){
+  //     globalcut += currentline;
+  //   }    
+  //   cout<< "Global Cut: "<<globalcut<<endl;
+  // }
   while( currentline.ReadLine( configfile ) && !currentline.BeginsWith("#") ){
     TObjArray *tokens = currentline.Tokenize(" ");
     Int_t ntokens = tokens->GetEntries();
@@ -70,18 +70,16 @@ void readin_test_jack(Int_t entries_input = -1,Int_t kine = 8){// MAIN
     delete tokens;
   }
 
-  //Apply Global Cut
-  cout<<endl<<"Populating list with global cut. May take a few minutes...."<<endl;
-  TEventList *elist = new TEventList("elist","Elastic Event List");
-  C->Draw(">>elist",globalcut);
-  cout << endl << "Event list populated with cut: "<<globalcut << endl;
+  // //Apply Global Cut
+  // cout<<endl<<"Populating list with global cut. May take a few minutes...."<<endl;
+  // TEventList *elist = new TEventList("elist","Elastic Event List");
+  // C->Draw(">>elist",globalcut);
+  // cout << endl << "Event list populated with cut: "<<globalcut << endl;
 
-   // Set long int to keep track of total entries
-  Long64_t Nevents = elist->GetN();
-  UInt_t run_number = 0;
+ 
 
-  cout<<endl << "Opened up TChain with nentries: " << C->GetEntries() << ". After globalcut: " << Nevents << "." << endl << endl;
-  cout<<"Entries: "<<Nevents<<endl;
+  // cout<<endl << "Opened up TChain with nentries: " << C->GetEntries() << ". After globalcut: " << Nevents << "." << endl << endl;
+  // cout<<"Entries: "<<Nevents<<endl;
 
 
   // DECLARE PARAMETERS
@@ -108,6 +106,8 @@ void readin_test_jack(Int_t entries_input = -1,Int_t kine = 8){// MAIN
   C->SetBranchStatus( "bb.tr.ph", 1 );
   C->SetBranchStatus( "bb.ps.e", 1 );
   C->SetBranchStatus( "bb.sh.e", 1 );
+
+
  // Map branches to the variables 
   C->SetBranchAddress( "sbs.hcal.e", &HCAL_e );
   C->SetBranchAddress( "bb.tr.n", &BBtr_n );
@@ -132,6 +132,14 @@ void readin_test_jack(Int_t entries_input = -1,Int_t kine = 8){// MAIN
   TH2D* h_BBsh_ps_e = new TH2D("h_BBsh_ps_e", "; sh_e  ; ps_e ", 100,0,3,100,0,3 );
   TH1D* h_BB_e_p =  new TH1D("h_BB_e_p",";total shower energy/ p;" ,200, 0, 2);
 
+  //Bool_t globalcut = "BBtr_n==1&&BBps_e>0.2";
+
+   // Set long int to keep track of total entries
+  cout<<"Loading branches. Hold tight! "<<endl;
+  Long64_t Nevents = C->GetEntries();
+  UInt_t run_number = 0;
+  cout<<"Entries: "<<Nevents<<endl;
+
   //check if input for the number of events is valid
   Int_t max = 0;
   if (entries_input == -1){
@@ -146,8 +154,12 @@ void readin_test_jack(Int_t entries_input = -1,Int_t kine = 8){// MAIN
   // Loop over events
   for(Long64_t nevent = 0; nevent<max; nevent++){
    
-    C->GetEntry( elist->GetEntry( nevent ) ); 
-    if (nevent%100000==0) cout << " Entry = " << nevent << endl;
+    C->GetEntry(nevent); 
+    if (nevent%50000==0) cout << " Entry = " << nevent << endl;
+
+    // Apply global cut 
+    if ( BBtr_n!=1) continue; // doing a global cut here for now instead of the elist so things load faster
+    
 
     // General Histos
     h_W2 ->Fill(kineW2);
