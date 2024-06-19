@@ -147,7 +147,7 @@ Double_t hcal_e;
   Double_t kineW2;
   // GRINCH (only track matched I think)
 Double_t BBgr_allclus_tmean[1000], BBgr_allclus_adc[1000], BBgr_allclus_size[1000], BBgr_allclus_trms[1000], BBgr_allclus_tot_mean[1000], BBgr_allclus_trackindex[1000], BBgr_allclus_xmean[1000], BBgr_allclus_ymean[1000], BBgr_allclus_dx[1000], BBgr_allclus_dy[1000]; 
-  Double_t BBgr_clus_tmean, BBgr_clus_adc, BBgr_clus_size, BBgr_clus_trms, BBgr_clus_tot_mean, BBgr_clus_trackindex, BBgr_clus_xmean, BBgr_clus_ymean; 
+Double_t BBgr_clus_tmean, BBgr_clus_adc, BBgr_clus_size, BBgr_clus_trms, BBgr_clus_tot_mean, BBgr_clus_trackindex, BBgr_clus_xmean, BBgr_clus_ymean, BBgr_clus_dx, BBgr_clus_dy; 
   Double_t BBgr_hit_amp[1000], BBgr_hit_clustindex[1000], BBgr_hit_col[1000], BBgr_hit_row[1000], BBgr_hit_pmtnum[1000], BBgr_hit_trackindex[1000], BBgr_hit_xhit[1000], BBgr_hit_yhit[1000], BBgr_hit_time[1000];
   Int_t hitsGR; 
 
@@ -399,6 +399,8 @@ void GRINCH_eventDisplay_clusters(Int_t entries_input = -1, Int_t kine = 8)//mai
   C->SetBranchStatus("bb.grinch_tdc.clus.x_mean",1); // the mean x position of the PMTs in the cluster
   C->SetBranchStatus("bb.grinch_tdc.clus.y_mean",1); //  the mean y position of the PMTs in the cluster
   C->SetBranchStatus("bb.grinch_tdc.clus.mirrorindex",1); // which mirror it was matched to  
+  C->SetBranchStatus("bb.grinch_tdc.clus.dx",1);//
+  C->SetBranchStatus("bb.grinch_tdc.clus.dy",1);//
 
   C->SetBranchStatus("bb.grinch_tdc.hit.amp",1);
   C->SetBranchStatus("bb.grinch_tdc.hit.clustindex",1);
@@ -455,6 +457,8 @@ void GRINCH_eventDisplay_clusters(Int_t entries_input = -1, Int_t kine = 8)//mai
   C->SetBranchAddress("bb.grinch_tdc.clus.x_mean",&BBgr_clus_xmean);
   C->SetBranchAddress("bb.grinch_tdc.clus.y_mean",&BBgr_clus_ymean);
   C->SetBranchAddress("bb.grinch_tdc.clus.mirrorindex",&BBgr_clus_mirrorindex);
+  C->SetBranchAddress("bb.grinch_tdc.clus.dx",&BBgr_clus_dx);//
+  C->SetBranchAddress("bb.grinch_tdc.clus.dy",&BBgr_clus_dy);//
 
   C->SetBranchAddress("bb.grinch_tdc.hit.amp",&BBgr_hit_amp);
   C->SetBranchAddress("bb.grinch_tdc.hit.clustindex",&BBgr_hit_clustindex);
@@ -470,7 +474,7 @@ void GRINCH_eventDisplay_clusters(Int_t entries_input = -1, Int_t kine = 8)//mai
   
   C->SetBranchAddress("bb.grinch_tdc.bestcluster",&BBgr_bestcluster);//
   C->SetBranchAddress("bb.grinch_tdc.ngoodhits",&BBgr_ngoodhits);
-  C->SetBranchAddress("bb.grinch_tdc.ntrackmatch",&BBgr_ntrackmatch);
+  C->SetBranchAddress("bb.grinch_tdc.ntrackmatch",&BBgr_ntrackmatch); 
 
   // Set long int to keep track of total entries
   cout<<"Loading branches. Hold tight! "<<endl;
@@ -671,6 +675,9 @@ void fill_event(Int_t Direction)
 
     Double_t mirror_projection_x =  BBtr_x[0] + 1.14*BBtr_th[0];
     cout<<"mirror projection x from track: "<<mirror_projection_x <<endl;
+
+    Double_t window_projection_x = BBtr_x[0] + BBtr_th[0]*0.4824; 
+    cout<<"window projection x from track: "<<window_projection_x <<endl;
     
     h_BBgr_clus_trackindex->Fill(BBgr_clus_trackindex);  
     h_BBgr_clus_adc ->Fill(BBgr_clus_adc);
@@ -680,12 +687,16 @@ void fill_event(Int_t Direction)
     h_BBgr_clus_xmean ->Fill(BBgr_clus_xmean);
     h_BBgr_clus_mirrorindex ->Fill(BBgr_clus_mirrorindex);
 
-    cout<< " xmean - projx = "<< BBgr_clus_xmean <<"  -  "<< mirror_projection_x << " = " << BBgr_clus_xmean - mirror_projection_x<<endl;
+    cout<< " xmean - mirror_projx = "<< BBgr_clus_xmean <<"  -  "<< mirror_projection_x << " = " << BBgr_clus_xmean - mirror_projection_x<<endl;
+    cout<< " xmean - window_projx = "<< BBgr_clus_xmean <<"  -  "<< window_projection_x << " = " << BBgr_clus_xmean - window_projection_x<<endl;
+
     cout<<"dx from branch = "<< BBgr_allclus_dx[bestcluster]<<endl;
 
+    cout<<"bb.tr.th[0]: "<< BBtr_th[0]<<endl;
     cout<<"bestcluster: "<<BBgr_bestcluster <<endl;
     cout<<"ngoodhits: " <<BBgr_ngoodhits <<endl;
     cout<<"ntrackmatch: " <<BBgr_ntrackmatch<<endl;
+    cout<<"mirror index: " <<BBgr_allclus_mirrorindex[bestcluster]<<endl;
    
 
 

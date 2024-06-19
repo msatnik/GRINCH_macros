@@ -57,12 +57,14 @@ void GRINCH_LE_align(string inputstring = "zeros", string outputstring = "try0")
   gStyle->SetPalette(kCool);
 
   // Load rootfiles for histograms
-  //TFile *f1 = TFile::Open("../output/sbs8.root"); // Load rootfile
+   TFile *f1 = TFile::Open("../output/sbs8.root"); // Load rootfile
+  //TFile *f1 = TFile::Open("../output/sbs9_mar14_size.root"); // Load rootfile
  
-  TFile *f1 = TFile::Open("/w/halla-scshelf2102/sbs/cmjackso/GEn/out_files/GRINCH_GEn2_He3.root"); // this need to be manually set to the rootfile that you are reading the TH2D from. 
+ 
+  //TFile *f1 = TFile::Open("/w/halla-scshelf2102/sbs/cmjackso/GEn/out_files/GRINCH_GEn2_He3.root"); // this need to be manually set to the rootfile that you are reading the TH2D from. 
 
   // Load Histograms
-  TH2D *hist1 = (TH2D*)f1->Get("h_BBgr_hit_time_pmtnum_bestcluster"); // Jack's parsing script has it named "pmtnum" and Maria's has it "elemID"
+  TH2D *hist1 = (TH2D*)f1->Get("h_BBgr_hit_time_elemID_bestcluster"); // Jack's parsing script has it named "pmtnum" and Maria's has it "elemID"
 
   //// make a clone
   TH2D *clonedHist = (TH2D*)(hist1->Clone("clonedHist"));
@@ -143,8 +145,8 @@ void GRINCH_LE_align(string inputstring = "zeros", string outputstring = "try0")
     int nPoints = 510;
     double* xValues =  &binCenters[0];
     double* yValues = &mean[0];
-    double* yErrors = &sigma[0];
-    // double* yErrors = &zeros[0];
+    //double* yErrors = &sigma[0];
+    double* yErrors = &zeros[0];
     double* xErrors = &zeros[0];
     
     // make TGraphErrors

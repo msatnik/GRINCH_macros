@@ -40,7 +40,9 @@ Double_t poly4_skewed_gaus(Double_t *x, Double_t *par);
 
 void grW2fitter_v2(){ //MAIN
 
-  TFile *f1 = TFile::Open("../output/sbs8_nov24_huge.root"); // Load rootfile
+  //TFile *f1 = TFile::Open("../output/sbs8_nov24_huge.root"); // Load rootfile
+  // TFile *f1 = TFile::Open("../output/sbs8.root"); // Load rootfile
+  TFile *f1 = TFile::Open("../output/sbs9_1368_.root"); // Load rootfile
 
   // Set up Canvas
   TCanvas *c1 = new TCanvas();
@@ -52,11 +54,11 @@ void grW2fitter_v2(){ //MAIN
   gPad->SetLogy();
 
   // Load histograms
-  TH1D *h_W2_gr_anticut= (TH1D*)f1->Get("h_W2_gr_ps_anticut"); //put back to gr
+  TH1D *h_W2_gr_anticut= (TH1D*)f1->Get("h_W2_gr_anticut"); //put back to gr
   TH1D *h_W2_ps_anitcut = (TH1D*)f1->Get("h_W2_ps_anticut");
   TH1D *h_W2_gr_ps_anticut = (TH1D*)f1->Get("h_W2_gr_ps_anticut");
   TH1D *h_W2 = (TH1D*)f1->Get("h_W2");
-  TH1D *h_W2_gr_cut = (TH1D*)f1->Get("h_W2_gr_ps_cut");//put back to gr
+  TH1D *h_W2_gr_cut = (TH1D*)f1->Get("h_W2_gr_cut");//put back to gr
 
 
   h_W2_gr_anticut->GetXaxis()->SetRangeUser(0.01, 1.4);
