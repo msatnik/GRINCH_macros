@@ -32,14 +32,17 @@ const Double_t par0_mirror1 = -0.002;
 const Double_t par1_mirror1 = -1.5;
 const Double_t par2_mirror1 = 10;
 const Double_t par3_mirror1 = -150;
+
 const Double_t par0_mirror2 = 0.041;
 const Double_t par1_mirror2 = -1.4;
 const Double_t par2_mirror2 = -5;
 const Double_t par3_mirror2 = -185;
+
 const Double_t par0_mirror3 = 0.051;
 const Double_t par1_mirror3 = -1.9;
 const Double_t par2_mirror3 = 0;
 const Double_t par3_mirror3 = -120;
+
 const Double_t par0_mirror4 = 0.081;
 const Double_t par1_mirror4 = -1.8;
 const Double_t par2_mirror4 = -25;
@@ -68,8 +71,6 @@ Double_t SIGMA = 0.02;
 Double_t nSIGMA = 3;
 
 // functions
-Double_t linear(Double_t *x, Double_t *par);
-Double_t poly3(Double_t *x, Double_t *par);
 
 // MAIN
 void Plot_grinchdy_fits(){ 
@@ -102,18 +103,18 @@ void Plot_grinchdy_fits(){
   TH2D* combinedhist4 = (TH2D*)(hist7->Clone("combinedhist4"));
   combinedhist4 ->Add(hist8);
 
-  // set up poly3 fits
+  // set up pol3 fits
 
-  TF1 *fit_mirror1 = new TF1("fit_mirror1", poly3, xmin_mirror1,xmax_mirror1,4);
+  TF1 *fit_mirror1 = new TF1("fit_mirror1", "pol3", xmin_mirror1,xmax_mirror1);
   fit_mirror1 ->SetParameters(par0_mirror1,par1_mirror1,par2_mirror1,par3_mirror1);
   
-  TF1 *fit_mirror2 = new TF1("fit_mirror2", poly3, xmin_mirror2,xmax_mirror2,4);
+  TF1 *fit_mirror2 = new TF1("fit_mirror2", "pol3", xmin_mirror2,xmax_mirror2);
   fit_mirror2 ->SetParameters(par0_mirror2,par1_mirror2,par2_mirror2,par3_mirror2);
 
-  TF1 *fit_mirror3 = new TF1("fit_mirror3", poly3, xmin_mirror3,xmax_mirror3,4);
+  TF1 *fit_mirror3 = new TF1("fit_mirror3", "pol3", xmin_mirror3,xmax_mirror3);
   fit_mirror3 ->SetParameters(par0_mirror3,par1_mirror3,par2_mirror3,par3_mirror3);
 
-  TF1 *fit_mirror4 = new TF1("fit_mirror4", poly3, xmin_mirror4,xmax_mirror4,4);
+  TF1 *fit_mirror4 = new TF1("fit_mirror4", "pol3", xmin_mirror4,xmax_mirror4);
   fit_mirror4 ->SetParameters(par0_mirror4,par1_mirror4,par2_mirror4,par3_mirror4);
 
 
@@ -174,15 +175,3 @@ void Plot_grinchdy_fits(){
 
 
 }//end MAIN
-
-Double_t linear(Double_t *x, Double_t *par)
-{
-  Double_t fit =  par[0] + par[1]*x[0];
-  return fit;
-}
-
-Double_t poly3(Double_t *x, Double_t *par)
-{
-  Double_t fit =  par[0] + par[1]*x[0] +par[2]*pow(x[0],2) + par[3]*pow(x[0],3);
-  return fit;
-}

@@ -22,6 +22,28 @@ Double_t yMax= 0.4;
 Double_t xMin = -0.06;
 Double_t xMax= 0.06;
 
+TString FileName1="../output/sbs9_oct9.root";
+TString FileName2="../output/sbs8_oct9.root";
+
+TString HistName = "h_BBgr_clusydiff_trph_allclus_mirror2";
+int PolyOrder = 3;
+
+TString HistNameMirror1 =  "h_BBgr_clusydiff_trph_allclus_mirror1";
+int PolyOrderMirror1 = 3;
+
+TString HistNameMirror2 =  "h_BBgr_clusydiff_trph_allclus_mirror2";
+int PolyOrderMirror2 = 3;
+
+TString HistNameMirror3 =  "h_BBgr_clusydiff_trph_allclus_mirror3";
+int PolyOrderMirror3 = 3;
+
+TString HistNameMirror4 =  "h_BBgr_clusydiff_trph_allclus_mirror4";
+int PolyOrderMirror4 = 3;
+
+
+double MeanPredictionSlope = -2.44;
+double MeanPredictionOffset = 0;
+
 // Function Declarations 
 Double_t linear(Double_t *x, Double_t *par);
 Double_t trad(Double_t *x, Double_t *par);
@@ -30,113 +52,53 @@ Double_t poly2(Double_t *x, Double_t *par);
 Double_t poly3(Double_t *x, Double_t *par);
 Double_t poly4(Double_t *x, Double_t *par);
 Double_t poly5(Double_t *x, Double_t *par);
-TGraphErrors* FitBinsGausTH2D(TH2D* hist, TH1D* sigmahist);
+TGraphErrors* FitBinsGausTH2D(TH2D* hist, TH1D* sigmahist, double xMin, double xMax, double MeanPredictionSlope, double MeanPredictionOffset);
 
 // MAIN
-void fit_clusdy_ph(){ 
+void fit_clusdy_ph(int MirrorNumber =3){
 
-  TFile *f1 = TFile::Open("../output/sbs9_oct9.root"); // Load rootfile
-  TFile *f2 = TFile::Open("../output/sbs8_oct9.root"); // Load rootfile
+  if(MirrorNumber == 1){
+    HistName = HistNameMirror1;
+    PolyOrder = PolyOrderMirror1;
+  }else if(MirrorNumber == 2){
+    HistName = HistNameMirror2;
+    PolyOrder = PolyOrderMirror2;
+  }else if(MirrorNumber == 3){
+    HistName = HistNameMirror3;
+    PolyOrder = PolyOrderMirror3;
+  }else if(MirrorNumber == 4){
+    HistName = HistNameMirror4;
+    PolyOrder = PolyOrderMirror4;
+  }else{
+    cout<<"error with mirror number input"<<endl;
+    return;
+  }
 
-  // Set Up Canvas
 
-  // Load Histograms
-  TH2D* hist1 = (TH2D*)f1->Get("h_BBgr_clusydiff_trph_allclus_mirror2");
-  TH2D* hist2 = (TH2D*)f2->Get("h_BBgr_clusydiff_trph_allclus_mirror2");
-
-  TH2D* hist3 = (TH2D*)f1->Get("h_BBgr_clusydiff_trph_allclus_mirror3");
-  TH2D* hist4 = (TH2D*)f2->Get("h_BBgr_clusydiff_trph_allclus_mirror3");
-
-  TH2D* hist5 = (TH2D*)f1->Get("h_BBgr_clusydiff_trph_allclus_mirror1");
-  TH2D* hist6 = (TH2D*)f2->Get("h_BBgr_clusydiff_trph_allclus_mirror1");
-
-
-  TH2D* hist7 = (TH2D*)f1->Get("h_BBgr_clusydiff_trph_allclus_mirror4");
-  TH2D* hist8 = (TH2D*)f2->Get("h_BBgr_clusydiff_trph_allclus_mirror4");
+  TFile *f1 = TFile::Open(FileName1); // Load rootfile
+  TFile *f2 = TFile::Open(FileName2); // Load rootfile
 
  
+  // Load Histograms
+  TH2D* hist1 = (TH2D*)f1->Get(HistName);
+  TH2D* hist2 = (TH2D*)f2->Get(HistName);
 
-
-  // TH2D* hist3 = (TH2D*)f1->Get("h_BBtr_p_th_cut_mirror3");
-  // TH2D* hist4 = (TH2D*)f2->Get("h_BBtr_p_th_cut_mirror3");
-
-
+  // Add the histos from the two kinematics together
   TH2D* combinedhist = (TH2D*)(hist1->Clone("combinedhist"));
   combinedhist ->Add(hist2);
-  TH2D* combinedhist2 = (TH2D*)(hist3->Clone("combinedhist2"));
-  combinedhist2 ->Add(hist4);
-  TH2D* combinedhist3 = (TH2D*)(hist5->Clone("combinedhist3"));
-  combinedhist3 ->Add(hist6);
-  TH2D* combinedhist4 = (TH2D*)(hist7->Clone("combinedhist4"));
-  combinedhist4 ->Add(hist8);
 
   
 
   TH1D* sigmahist =  new TH1D("sigmahist",";sigma from gaussian fit;",25,0,0.05);
   
-  // TH2D* origHist = (TH2D*)(combinedhist->Clone("origHist"));
-
- //  // Clone Histogram and limit Y range. (Maybe should also limit x range?) 
- //  // Could maybe use a clone command instead of doing it manually like this 
- //  TH2D* clonedHist = new TH2D("clonedHist", origHist->GetTitle(),
- //                                origHist->GetXaxis()->GetNbins(),
- //                                origHist->GetXaxis()->GetXmin(),
- //                                origHist->GetXaxis()->GetXmax(),
- //                                origHist->GetYaxis()->FindBin(yMax) - origHist->GetYaxis()->FindBin(yMin) + 1,
- //                                yMin, yMax);
-
- // // Loop over the X and Y bins of the original TH2D
- //    for (int i = 1; i <= origHist->GetXaxis()->GetNbins(); i++) {
- //        for (int j = origHist->GetYaxis()->FindBin(yMin); j <= origHist->GetYaxis()->FindBin(yMax); j++) {
- //            double binContent = origHist->GetBinContent(i, j);
- //            clonedHist->SetBinContent(i, j - origHist->GetYaxis()->FindBin(yMin) + 1, binContent);
- //        }
- //    }
-
-//  TH2D* clonedHist2 = new TH2D("clonedHist2", origHist->GetTitle(),
-//                                 origHist->GetXaxis()->GetNbins(),
-//                                 origHist->GetXaxis()->GetXmin(),
-//                                 origHist->GetXaxis()->GetXmax(),
-//                                 origHist->GetYaxis()->FindBin(yMax) - origHist->GetYaxis()->FindBin(yMin) + 1,
-//                                 yMin, yMax);
-
-//  // Loop over the X and Y bins of the original TH2D
-//     for (int i = 1; i <= origHist->GetXaxis()->GetNbins(); i++) {
-//         for (int j = origHist->GetYaxis()->FindBin(yMin); j <= origHist->GetYaxis()->FindBin(yMax); j++) {
-//             double binContent = origHist->GetBinContent(i, j);
-//             clonedHist2->SetBinContent(i, j - origHist->GetYaxis()->FindBin(yMin) + 1, binContent);
-//         }
-//     }
-
-// TH2D* clonedHist3 = new TH2D("clonedHist3", origHist->GetTitle(),
-//                                 origHist->GetXaxis()->GetNbins(),
-//                                 origHist->GetXaxis()->GetXmin(),
-//                                 origHist->GetXaxis()->GetXmax(),
-//                                 origHist->GetYaxis()->FindBin(yMax) - origHist->GetYaxis()->FindBin(yMin) + 1,
-//                                 yMin, yMax);
-
-//  // Loop over the X and Y bins of the original TH2D
-//     for (int i = 1; i <= origHist->GetXaxis()->GetNbins(); i++) {
-//         for (int j = origHist->GetYaxis()->FindBin(yMin); j <= origHist->GetYaxis()->FindBin(yMax); j++) {
-//             double binContent = origHist->GetBinContent(i, j);
-//             clonedHist3->SetBinContent(i, j - origHist->GetYaxis()->FindBin(yMin) + 1, binContent);
-//         }
-//     }
-
-//   //  TH2D *clonedHist = (TH2D*)(origHist->Clone("clonedHist"));
-//   //  TH2D *clonedHist2 = (TH2D*)(origHist->Clone("clonedHist2"));
-   
+  
 
     TCanvas* canvas =  new TCanvas("canvas","2D histo with gaussian fits");
-    //hist4->Draw("colz");
-    //combinedhist ->Draw("colz");
-    //combinedhist2 ->Draw("colz same");
-     //combinedhist3 ->Draw("colz");
 
 
     TGraphErrors* graph = new TGraphErrors();
-    // TH2D *testHist = (TH2D*)(origHist->Clone("clonedHist"));
-    graph = FitBinsGausTH2D(combinedhist4,sigmahist);
+    //// This function goes and fits each vertical slice of the TH2D over a given range. A prediction of what the fit is going to be is also needed. It returns a TGraphErrors that is the mean of each gaussian with the error bars being 1 sigma of those gausians 
+    graph = FitBinsGausTH2D(combinedhist,sigmahist, xMin, xMax, MeanPredictionSlope, MeanPredictionOffset);
     // customize graph
     graph ->SetTitle("Vertical Bin Means with Gaussian fit");
     graph ->GetXaxis()->SetTitle("x axis");
@@ -144,29 +106,12 @@ void fit_clusdy_ph(){
     graph ->SetMarkerStyle(6);
     //graph ->SetMarkerSize(1.2);
     //draw graph
-    combinedhist4->SetContour(256);
-    combinedhist4->Draw("colz");
+    combinedhist->Draw("colz");
     graph ->Draw("P SAME");
 
 
-
-    // TF1 *fit_linear = new TF1("fit_linear", linear, xMin, xMax, 2);
-    // fit_linear ->SetParameters(-0.01,-2.44);
-    // TFitResultPtr r = graph ->Fit("fit_linear", "MQR","",xMin,xMax);
-    // Int_t fitStatus = r;
-    // //if (fitStatus !=0) {cout<<"fit error" <<endl;}
-    // Double_t linear_offset = fit_linear->GetParameter(0);
-    // Double_t linear_slope = fit_linear->GetParameter(1);
-    // canvas ->Update();
-    
-    // cout<<endl;
-    // cout<<"linear fit: "<<endl;
-    // cout<< "offset "<<linear_offset<<endl; 
-    // cout<<"slope "<< linear_slope<<endl;
-    // cout<<endl;    
-
-    TF1 *fit_poly3 = new TF1("fit_poly3", poly3, xMin, xMax, 4);
-    fit_poly3 ->SetParameters(0.04,-1.7,0.9,-300);
+    TF1 *fit_poly3 = new TF1("fit_poly3", "pol3", xMin, xMax);
+    fit_poly3 ->SetParameters(0.04,-1.7,0.9,0);
     //fit_poly3 ->SetParLimits(2,0,0);
     // fit_poly3 ->SetParLimits(2,-10,10);
     // fit_poly3 ->SetParLimits(1,-10,10);
@@ -200,123 +145,15 @@ void fit_clusdy_ph(){
     cout<<endl; 
     
 
-    // TF1 *fit_poly4 = new TF1("fit_poly4", poly4, xMin, xMax, 5);
-    // fit_poly4 ->SetParameters(0.04,-1.7,0.9,-300,1);
-    // //fit_poly4 ->SetParLimits(4,-1000,0);
-    // // fit_poly3 ->SetParLimits(2,-10,10);
-    // // fit_poly3 ->SetParLimits(1,-10,10);
-    // TFitResultPtr r = graph ->Fit("fit_poly4", "MQR","",xMin,xMax);
-    // Int_t fitStatus = r;
-    // //if (fitStatus !=0) {cout<<"fit error" <<endl;}
-    // Double_t poly4_par0 = fit_poly4->GetParameter(0);
-    // Double_t poly4_par1 = fit_poly4->GetParameter(1);
-    // Double_t poly4_par2 = fit_poly4->GetParameter(2);
-    // Double_t poly4_par3 = fit_poly4->GetParameter(3);
-    // Double_t poly4_par4 = fit_poly4->GetParameter(4);
-    // canvas ->Update();
-    
-    // cout<<endl;
-    // cout<<"4th order poly fit: "<<endl;
-    // cout<< "par0 "<<poly4_par0<<endl; 
-    // cout<<"par1 "<< poly4_par1<<endl;
-    // cout<< "par2 "<<poly4_par2<<endl; 
-    // cout<<"par3 "<< poly4_par3<<endl;
-    // cout<<"par4 "<< poly4_par4<<endl;
-    // cout<<endl;   
-    
-    // TF1 *fit_poly2 = new TF1("fit_poly2", poly3, xMin, xMax, 3);
-    // fit_poly2 ->SetParameters(0.04,1,-1);
-    // // fit_poly3 ->SetParLimits(3,-400,-200);
-    // // fit_poly3 ->SetParLimits(2,-10,10);
-    // // fit_poly3 ->SetParLimits(1,-10,10);
-    // TFitResultPtr r = graph ->Fit("fit_poly2", "MQR","",xMin,xMax);
-    // Int_t fitStatus = r;
-    // //if (fitStatus !=0) {cout<<"fit error" <<endl;}
-    // Double_t poly2_par0 = fit_poly2->GetParameter(0);
-    // Double_t poly2_par1 = fit_poly2->GetParameter(1);
-    // Double_t poly2_par2 = fit_poly2->GetParameter(2);
-    // canvas ->Update();
-    
-    // cout<<endl;
-    // cout<<"2nd order poly fit: "<<endl;
-    // cout<< "par0 "<<poly2_par0<<endl; 
-    // cout<< "par1 "<< poly2_par1<<endl;
-    // cout<< "par2 "<<poly2_par2<<endl;
-    // cout<<endl;    
 
-    // TF1 *fit_poly5 = new TF1("fit_poly5", poly5, xMin, xMax, 6);
-    // fit_poly5->SetParameters(0.04,-1.7,0.9,-300,1,1);
-    // //fit_poly4 ->SetParLimits(4,-1000,0);
-    // // fit_poly3 ->SetParLimits(2,-10,10);
-    // // fit_poly3 ->SetParLimits(1,-10,10);
-    // TFitResultPtr r = graph ->Fit("fit_poly5", "MQR","",xMin,xMax);
-    // Int_t fitStatus = r;
-    // //if (fitStatus !=0) {cout<<"fit error" <<endl;}
-    // Double_t poly5_par0 = fit_poly5->GetParameter(0);
-    // Double_t poly5_par1 = fit_poly5->GetParameter(1);
-    // Double_t poly5_par2 = fit_poly5->GetParameter(2);
-    // Double_t poly5_par3 = fit_poly5->GetParameter(3);
-    // Double_t poly5_par4 = fit_poly5->GetParameter(4);
-    // Double_t poly5_par5 = fit_poly5->GetParameter(5);
-    // canvas ->Update();
-    
-    // cout<<endl;
-    // cout<<"5th order poly fit: "<<endl;
-    // cout<< "par0 "<<poly5_par0<<endl; 
-    // cout<<"par1 "<< poly5_par1<<endl;
-    // cout<< "par2 "<<poly5_par2<<endl; 
-    // cout<<"par3 "<< poly5_par3<<endl;
-    // cout<<"par4 "<< poly5_par4<<endl;
-    // cout<<"par5 "<< poly5_par5<<endl;
-    // cout<<endl; 
-
-
-    // TCanvas* canvas2 =  new TCanvas("canvas2","sigmas");
-    // sigmahist ->Draw();
+    TCanvas* canvas2 =  new TCanvas("canvas2","sigmas");
+    sigmahist ->Draw();
 
 
        
 }//end main
 
 //FUNCTIONS
-
-Double_t linear(Double_t *x, Double_t *par)
-{
-  Double_t fit =  par[0] + par[1]*x[0];
-  return fit;
-}
-
-Double_t poly2(Double_t *x, Double_t *par)
-{
-  Double_t fit =  par[0] + par[1]*x[0] +par[2]*pow(x[0],2);
-  return fit;
-}
-
-Double_t poly3(Double_t *x, Double_t *par)
-{
-  Double_t fit =  par[0] + par[1]*x[0] +par[2]*pow(x[0],2) + par[3]*pow(x[0],3);
-  return fit;
-}
-
-Double_t poly4(Double_t *x, Double_t *par)
-{
-  Double_t fit =  par[0] + par[1]*x[0] +par[2]*pow(x[0],2) + par[3]*pow(x[0],3) + par[4]*pow(x[0],4);
-  return fit;
-}
-
-Double_t poly5(Double_t *x, Double_t *par)
-{
-  Double_t fit =  par[0] + par[1]*x[0] +par[2]*pow(x[0],2) + par[3]*pow(x[0],3) + par[4]*pow(x[0],4) + par[5]*pow(x[0],5);
-  return fit;
-}
-
-
-Double_t trad(Double_t *x, Double_t *par)
-{
-  Double_t fit =  par[0] +  par[1]* pow(x[0],-0.5);
-  return fit;
-}
-
 
 Double_t gausFit(Double_t *x, Double_t *par)
 {
@@ -328,84 +165,74 @@ Double_t gausFit(Double_t *x, Double_t *par)
   return fit;
 }
 
-
-TGraphErrors* FitBinsGausTH2D(TH2D* hist, TH1D* sigmahist)
-//// Fits each vertical bin in a TH2D to a gaussian and returns a TGraphErros with the means and the sigma as the vertical error bars. 
+TGraphErrors* FitBinsGausTH2D(TH2D* hist, TH1D* sigmahist, double xMin, double xMax, double MeanPredictionSlope = 1.35, double MeanPredictionOffset  = 0)
 {
-  // Fit each vertical bin to a gaussian and plot the means on top of the 2D histo. 
   // Define parameters
-  const int nBinsX = hist ->GetNbinsX();
-  const int nBinsY = hist ->GetNbinsY();
-  const int nBins =  nBinsX;
-  const double xmin = hist ->GetXaxis()->GetXmin();
-  const double xmax = hist ->GetXaxis()->GetXmax();
-  const double ymin = hist ->GetYaxis()->GetXmin();
-  const double ymax = hist ->GetYaxis()->GetXmax();
+  const int nBinsX = hist->GetNbinsX();
+  const double ymin = hist->GetYaxis()->GetXmin();
+  const double ymax = hist->GetYaxis()->GetXmax();
 
-  // cout<<endl;
-  // cout<<"nBins: "<<nBins<<endl;
-  // cout<<endl;
+  // Vectors to store fit results
+  std::vector<double> binCenters;
+  std::vector<double> means;
+  std::vector<double> sigmas;
+  std::vector<double> half_sigmas;
+  std::vector<double> zeros;
 
-  // arrays to store fit results
-  std::vector<double> binCenters(nBins);
-  std::vector<double> means(nBins);
-  std::vector<double> sigmas(nBins);
-  std::vector<double> half_sigmas(nBins);
-  std::vector<double> zeros(nBins);
-
-  //TH1D* sigmahist =  new TH1D("sigmahist",";sigma from gaussian fit;",0,1);
-
-  //loop through the bins
-  for (int i = 0; i<nBins; i++) // 
-    {
-      // get 1d histo of y projection
-      TH1D* binHist =  hist->ProjectionY("_py",i +1, i+1);
-      // get bin center
-      double binCenter = hist->GetXaxis()->GetBinCenter(i+1);
-      // define fit and gaussian fcn
-      TF1* gaussian =  new TF1("gaussian",gausFit,ymin,ymax,3); // this uses the default "gaus" from root. Could potentially be worth it to make your own gaus function as sometimes the default can be weird
-      //cout<<"ymin "<<ymin<<" ymax: "<<ymax <<endl;
-      double mean_prediction = -2.44*binCenter +0;
-      gaussian ->SetParameters(1000,mean_prediction,0.2);
-      gaussian->SetParLimits(1,mean_prediction - 0.1, mean_prediction +0.1);
-      gaussian ->SetParLimits(2,0.01,0.1);
-
-      binHist->Fit(gaussian, "Q");// "quiet" option
-      cout<<"bincenter: " <<binCenter<< " mean pred: "<<mean_prediction<<endl;
-      //get fit results
-      double mean = gaussian -> GetParameter(1);
-      double sigma = gaussian ->GetParameter(2);
-      //store results 
-      binCenters[i] = binCenter;
-      means[i] = mean;
-      sigmas[i] = sigma;
-      if(binCenter > xMin && binCenter < xMax)
-	{
-	  sigmahist->Fill(sigma);
-	}
-      half_sigmas[i] = sigma*0.5;
-      zeros[i] = 0;
-      // cout<<"bin center: "<<binCenter<<endl;
-      // cout<<"mean: "<<mean<<endl;
-      // cout<<"sigma: "<<sigma<<endl;
-      // cout<<endl;
-      //// clean up
-      delete gaussian;
-    }// end loop over bins
-
-  // convert vectors to arrays suitable for TGraphErrors 
-  int nPoints = nBins;
-  double* xValues =  &binCenters[0];
-  double* yValues = &means[0];
-  double* yErrors = &half_sigmas[0];
-  double* xErrors = &zeros[0];
+  // Loop through the x bins and only consider the bins within the specified xMin to xMax range
+  for (int i = 1; i <= nBinsX; i++) 
+  {
+    double binCenter = hist->GetXaxis()->GetBinCenter(i);
     
-  // make TGraphErrors
-  TGraphErrors* graph =  new TGraphErrors(nPoints, xValues, yValues, xErrors, yErrors);
-  
-  //TCanvas* canvas2 =  new TCanvas("canvas","2D histo with gaussian fits");
-  //sigmahist->Draw();
+    // Skip bins outside the specified range
+    if (binCenter < xMin || binCenter > xMax)
+      continue;
 
+    // Get 1D projection of the current bin in the Y direction
+    TH1D* binHist = hist->ProjectionY("_py", i, i);
+    
+    // Define the Gaussian fit function
+    TF1* gaussian = new TF1("gaussian", gausFit, ymin, ymax, 3);
+    
+    // Initial guesses for the fit parameters
+    double mean_prediction = MeanPredictionSlope * binCenter + MeanPredictionOffset;
+    gaussian->SetParameters(1000, mean_prediction, 0.02);
+    gaussian->SetParLimits(1, mean_prediction - 0.1, mean_prediction + 0.1);
+    gaussian->SetParLimits(2, 0.005, 0.1);
+
+    // Perform the fit
+    binHist->Fit(gaussian, "Q R");
+
+    // Store fit results
+    double mean = gaussian->GetParameter(1);
+    double sigma = gaussian->GetParameter(2);
+
+    ////  if the stdev got filled to the smallest value possible, it probably didn't fit right. Going to make it bigger so that it doesn't affect the fit so much. 
+    if (sigma == 0.005){
+      sigma = 0.1;
+    }
+    
+    binCenters.push_back(binCenter);
+    means.push_back(mean);
+    sigmas.push_back(sigma);
+    sigmahist->Fill(sigma);
+    half_sigmas.push_back(sigma * 0.5);
+    zeros.push_back(0);
+
+    // Clean up
+    delete gaussian;
+  }
+
+  // Convert vectors to arrays suitable for TGraphErrors 
+  int nPoints = binCenters.size();
+  double* xValues = &binCenters[0];
+  double* yValues = &means[0];
+  double* yErrors = &sigmas[0];
+  double* xErrors = &zeros[0];
+  
+  // Create the TGraphErrors
+  TGraphErrors* graph = new TGraphErrors(nPoints, xValues, yValues, xErrors, yErrors);
 
   return graph;
 }
+

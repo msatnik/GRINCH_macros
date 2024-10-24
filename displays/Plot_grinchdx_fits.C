@@ -18,47 +18,36 @@
 
 // Global params
 
+/// Fits obtained in the fit_grinchdx_th script. This is just plotting them.
+
+// Mirror 1
 Double_t xmin_mirror1 = -0.25;
 Double_t xmax_mirror1 = -0.12;
-Double_t xmin_mirror2 = -0.2;
-Double_t xmax_mirror2 = 0.01;
-Double_t xmin_mirror3 = -0.05;
-Double_t xmax_mirror3 = 0.15;
-Double_t xmin_mirror4 = 0.09;
-Double_t xmax_mirror4 = 0.22;
-
 Double_t intercept_mirror1 = 0.170;
 Double_t slope_mirror1=1.361;
+Double_t SIGMA_mirror1 = 0.013;
+
+// Mirror 2
+Double_t xmin_mirror2 = -0.2;
+Double_t xmax_mirror2 = 0.01;
 Double_t intercept_mirror2 = 0.005;
 Double_t slope_mirror2 = 1.424;
+Double_t SIGMA_mirror2 = 0.012;
+
+// Mirror 3
+Double_t xmin_mirror3 = -0.05;
+Double_t xmax_mirror3 = 0.15;
 Double_t intercept_mirror3 = 0.0095;
 Double_t slope_mirror3 = 1.339;
+Double_t SIGMA_mirror3 = 0.013;
+
+//Mirror 4
+Double_t xmin_mirror4 = 0.09;
+Double_t xmax_mirror4 = 0.22;
 Double_t intercept_mirror4 = -0.270;
 Double_t slope_mirror4 = 1.4658;
-
-//// first try at fits
-// Double_t intercept_mirror1 = 0.143;
-// Double_t slope_mirror1=1.252;
-// Double_t intercept_mirror2 = 0.006;
-// Double_t slope_mirror2 = 1.432;
-// Double_t intercept_mirror3 = 0.01;
-// Double_t slope_mirror3 = 1.334;
-// Double_t intercept_mirror4 = -0.244;
-// Double_t slope_mirror4 = 1.323;
-
-
-
-//// sbs9
-Double_t SIGMA_mirror1 = 0.013;
-Double_t SIGMA_mirror2 = 0.012;
-Double_t SIGMA_mirror3 = 0.013;
 Double_t SIGMA_mirror4 = 0.011;
 
-//// sbs8
-// Double_t SIGMA_mirror1 = 0.02;
-// Double_t SIGMA_mirror2 = 0.0114; 
-// Double_t SIGMA_mirror3 = 0.0130;
-// Double_t SIGMA_mirror4 = 0.0107;
 
 Double_t nSIGMA = 3;
 
@@ -66,7 +55,7 @@ Double_t nSIGMA = 3;
 Double_t linear(Double_t *x, Double_t *par);
 
 // MAIN
-void Plot_grinchdx_fits(){ 
+void Plot_grinchdx_fits(int MirrorNumber = 3){
 
   TFile *f1 = TFile::Open("../output/sbs14.root"); // Load rootfile
   TFile *f2 = TFile::Open("../output/sbs14.root"); // Load rootfile
@@ -80,16 +69,16 @@ void Plot_grinchdx_fits(){
   combinedhist ->Add(hist2);
 
   // set up linear fits
-  TF1 *fit_mirror1 = new TF1("fit_mirror1", linear, xmin_mirror1,xmax_mirror1,2);
+  TF1 *fit_mirror1 = new TF1("fit_mirror1", "pol1", xmin_mirror1,xmax_mirror1);
   fit_mirror1 ->SetParameters(intercept_mirror1,slope_mirror1);
 
-  TF1 *fit_mirror2 = new TF1("fit_mirror2", linear, xmin_mirror2,xmax_mirror2,2);
+  TF1 *fit_mirror2 = new TF1("fit_mirror2", "pol1", xmin_mirror2,xmax_mirror2);
   fit_mirror2 ->SetParameters(intercept_mirror2,slope_mirror2);
 
-  TF1 *fit_mirror3 = new TF1("fit_mirror3", linear, xmin_mirror3,xmax_mirror3,2);
+  TF1 *fit_mirror3 = new TF1("fit_mirror3", "pol1", xmin_mirror3,xmax_mirror3);
   fit_mirror3 ->SetParameters(intercept_mirror3,slope_mirror3);
 
-  TF1 *fit_mirror4 = new TF1("fit_mirror4", linear, xmin_mirror4,xmax_mirror4,2);
+  TF1 *fit_mirror4 = new TF1("fit_mirror4", "pol1", xmin_mirror4,xmax_mirror4);
   fit_mirror4 ->SetParameters(intercept_mirror4,slope_mirror4);
 
 
