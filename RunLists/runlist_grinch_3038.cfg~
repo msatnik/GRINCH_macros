@@ -1,9 +1,0 @@
-#####################################
-#sseeds 2.28.23 -  Modified by msatnik.
-#####################################
-/volatile/halla/sbs/msatnik/e1209016_replayed_grinch_3038_stream0_seg0_0_firstevent0_nevent10000.root
-endlist
-Event_Branch.fEvtHdr.fTrigBits==16
-endcut
-GR_cut 30
-PS_cut 0.2
